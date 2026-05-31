@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django.contrib import admin
 
 from .models import UserProfile, DeviceToken, Notification

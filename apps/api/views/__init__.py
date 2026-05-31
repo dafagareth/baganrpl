@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 """Views API dipecah per domain. Semua view di-re-export di sini agar
 `from . import views` di urls.py tetap bekerja seperti sebelumnya."""
 

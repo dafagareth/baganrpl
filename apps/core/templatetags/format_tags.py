@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django import template
 from decimal import Decimal, InvalidOperation
 from datetime import date, datetime

@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 """
 Utilitas FCM (Firebase Cloud Messaging) untuk push notification ke owner.
 

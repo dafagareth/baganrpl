@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response

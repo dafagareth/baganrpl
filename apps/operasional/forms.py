@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django import forms
 from .models import Trip, TripABK, BiayaOperasional
 from apps.master.models import ABK

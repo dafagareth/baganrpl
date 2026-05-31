@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 """Endpoint sinkronisasi offline (outbox) untuk input operator.
 
 Prinsip:

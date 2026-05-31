@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsOwner(BasePermission):

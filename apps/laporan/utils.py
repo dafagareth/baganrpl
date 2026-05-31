@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django.db.models import Sum, F, Count
 from apps.operasional.models import Trip
 from apps.penjualan.models import Penjualan

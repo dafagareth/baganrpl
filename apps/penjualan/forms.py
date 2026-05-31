@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Dafa Al Hafiz. MIT License.
+# Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django import forms
 from django.db.models import Sum, F, DecimalField, ExpressionWrapper, Q
 from django.db.models.functions import Coalesce
