@@ -3,7 +3,7 @@
 Backend REST API untuk manajemen operasional usaha bagan (perikanan).
 Dibangun dengan Django REST Framework + JWT + Firebase Cloud Messaging.
 
-Mobile app: [bagan-app](https://github.com/dafaalhafiz/bagan-app) (Flutter Android)
+Mobile app: [bagan-app](https://github.com/dafagareth/bagan_app) (Flutter Android)
 
 ---
 
