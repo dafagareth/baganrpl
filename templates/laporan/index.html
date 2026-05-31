@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load laporan_filters format_tags %}
+{% block title %}Laporan{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Laporan</h1>
+    <a href="{% url 'laporan:export_excel' %}?bulan={{ bulan }}&tahun={{ tahun }}" class="btn btn-outline-secondary">
+        Export Excel
+    </a>
+</header>
+
+<form method="get" class="search-inline mb-4" style="max-width: 100%;">
+    <select name="bulan" class="form-select" style="max-width: 180px;">
+        {% for b in bulan_list %}
+        <option value="{{ b }}" {% if b == bulan %}selected{% endif %}>{{ b|nama_bulan }}</option>
+        {% endfor %}
+    </select>
+    <select name="tahun" class="form-select" style="max-width: 120px;">
+        {% for t in tahun_list %}
+        <option value="{{ t }}" {% if t == tahun %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Tampilkan</button>
+</form>
+
+<div class="metrics" style="margin-top: var(--space-lg); margin-bottom: var(--space-section);">
+    <div class="metric">
+        <div class="metric-label">Jumlah trip</div>
+        <div class="metric-value">{{ rekap.jumlah_trip }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Total tangkap</div>
+        <div class="metric-value">{{ rekap.total_tangkap|floatformat:0 }}<span class="metric-unit">kg</span></div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Total pendapatan</div>
+        <div class="metric-value">{{ rekap.total_pendapatan|rupiah }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Laba bersih</div>
+        <div class="metric-value {% if rekap.total_laba < 0 %}text-danger{% else %}text-success{% endif %}">{{ rekap.total_laba|rupiah }}</div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">Rekap trip</h2>
+        <span class="section-meta mb-0">{{ bulan|nama_bulan }} {{ tahun }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-plain">
+            <thead>
+                <tr>
+                    <th>Kapal</th>
+                    <th>Berangkat</th>
+                    <th>Kembali</th>
+                    <th class="num">Tangkap</th>
+                    <th class="num">Pendapatan</th>
+                    <th class="num">Biaya</th>
+                    <th class="num">Bagi hasil</th>
+                    <th class="num">Laba bersih</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in rekap.data %}
+                <tr>
+                    <td class="fw-medium">{{ d.trip.kapal }}</td>
+                    <td>{{ d.trip.tgl_berangkat|tgl_indo }}</td>
+                    <td>{{ d.trip.tgl_kembali|tgl_indo|default:"Belum kembali" }}</td>
+                    <td class="num">{{ d.total_tangkap|floatformat:1 }} kg</td>
+                    <td class="num">{{ d.pendapatan|rupiah }}</td>
+                    <td class="num">{{ d.biaya|rupiah }}</td>
+                    <td class="num text-danger">({{ d.bagi_hasil|rupiah }})</td>
+                    <td class="num fw-medium {% if d.laba >= 0 %}text-success{% else %}text-danger{% endif %}">{{ d.laba|rupiah }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-muted py-4">Tidak ada data pada periode ini.</td></tr>
+                {% endfor %}
+            </tbody>
+            {% if rekap.data %}
+            <tfoot>
+                <tr class="fw-bold">
+                    <td colspan="3">Total</td>
+                    <td class="num">{{ rekap.total_tangkap|floatformat:1 }} kg</td>
+                    <td class="num">{{ rekap.total_pendapatan|rupiah }}</td>
+                    <td class="num">{{ rekap.total_biaya|rupiah }}</td>
+                    <td class="num text-danger">({{ rekap.total_bagi_hasil|rupiah }})</td>
+                    <td class="num {% if rekap.total_laba >= 0 %}text-success{% else %}text-danger{% endif %}">{{ rekap.total_laba|rupiah }}</td>
+                </tr>
+            </tfoot>
+            {% endif %}
+        </table>
+    </div>
+</section>
+
+<section class="section" style="margin-top: var(--space-section);">
+    <div class="section-head">
+        <h2 class="section-title">Rekap per kapal</h2>
+        <span class="section-meta mb-0">Tahun {{ tahun }}</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-plain">
+            <thead>
+                <tr>
+                    <th>Kapal</th>
+                    <th class="num">Trip</th>
+                    <th class="num">Tangkap</th>
+                    <th class="num">Pendapatan</th>
+                    <th class="num">Bagi hasil</th>
+                    <th class="num">Laba</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k in rekap_kapal %}
+                <tr>
+                    <td class="fw-medium">{{ k.kapal.nama_kapal }}</td>
+                    <td class="num">{{ k.jumlah_trip }}</td>
+                    <td class="num">{{ k.total_tangkap|floatformat:1 }} kg</td>
+                    <td class="num">{{ k.total_pendapatan|rupiah }}</td>
+                    <td class="num text-danger">({{ k.total_bagi_hasil|rupiah }})</td>
+                    <td class="num fw-medium {% if k.total_laba >= 0 %}text-success{% else %}text-danger{% endif %}">{{ k.total_laba|rupiah }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-muted py-4">Belum ada data.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

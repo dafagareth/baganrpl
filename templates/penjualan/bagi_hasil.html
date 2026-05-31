@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Bagi Hasil{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">Bagi hasil ABK</h1>
+</header>
+
+<table class="table-plain">
+    <thead>
+        <tr>
+            <th>Trip</th>
+            <th>ABK</th>
+            <th class="num">Nominal</th>
+            <th>Status</th>
+            <th>Tgl bayar</th>
+            <th style="width: 1%;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bh in bagi_hasil_list %}
+        <tr>
+            <td>
+                <div class="fw-medium">{{ bh.trip.kapal }}</div>
+                <div class="text-muted small">{{ bh.trip.tgl_berangkat|tgl_indo }}</div>
+            </td>
+            <td>{{ bh.abk.nama }}</td>
+            <td class="num">{{ bh.nominal|rupiah }}</td>
+            <td>
+                {% if bh.sudah_dibayar %}
+                <span class="badge bg-success">Sudah dibayar</span>
+                {% else %}
+                <span class="badge bg-warning">Belum dibayar</span>
+                {% endif %}
+            </td>
+            <td>{{ bh.tgl_bayar|tgl_indo }}</td>
+            <td>
+                <a href="{% url 'penjualan:bagi_hasil_update' bh.id %}" class="link-action">Ubah</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-muted py-4">Belum ada bagi hasil tercatat.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+myworld/
+venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+*.log
+/staticfiles/
+media/
+
+# Environment
+.env
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Project notes (lokal)
+laporan_lengkap.txt
+
+# notes
+agents.md
+claude.md
+design.md
+project.txt
+strucuture.txt
+.claude

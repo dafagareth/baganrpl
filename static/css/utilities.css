@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════════
+   utilities.css — Text utilities, weight, semantic colors.
+   Material 3 / Google palette via tokens.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Text colors ─────────────────────────────────────────── */
+.text-muted     { color: var(--ink-muted)     !important; }
+.text-secondary { color: var(--ink-secondary) !important; }
+.text-success   { color: var(--success)       !important; }
+.text-danger    { color: var(--danger)        !important; }
+.text-warning   { color: var(--warning-ink)   !important; }
+.text-primary   { color: var(--brand)         !important; }
+.text-info      { color: var(--brand)         !important; }
+.text-white     { color: #FFFFFF              !important; }
+.text-body      { color: var(--ink)           !important; }
+
+/* ── Font weight (Material) ──────────────────────────────── */
+.fw-light    { font-weight: 300 !important; }
+.fw-normal   { font-weight: 400 !important; }
+.fw-medium   { font-weight: 500 !important; }
+.fw-semibold { font-weight: 500 !important; }
+.fw-bold     { font-weight: 700 !important; }
+
+/* ── Font family ─────────────────────────────────────────── */
+.font-mono,
+.text-mono {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.font-display,
+.text-display {
+    font-family: var(--f-display);
+    letter-spacing: 0;
+}
+
+/* ── Backgrounds ─────────────────────────────────────────── */
+.bg-canvas         { background-color: var(--canvas)             !important; }
+.bg-surface        { background-color: var(--surface)            !important; }
+.bg-surface-hover  { background-color: var(--surface-hover)      !important; }
+.bg-surface-container { background-color: var(--surface-container) !important; }
+.bg-brand-light    { background-color: var(--brand-light)        !important; }
+.bg-success-light  { background-color: var(--success-bg)         !important; }
+.bg-danger-light   { background-color: var(--danger-bg)          !important; }
+.bg-warning-light  { background-color: var(--warning-bg)         !important; }
+
+/* ── Borders ─────────────────────────────────────────────── */
+.border         { border       : 1px solid var(--rule-soft) !important; }
+.border-top     { border-top   : 1px solid var(--rule-soft) !important; }
+.border-bottom  { border-bottom: 1px solid var(--rule-soft) !important; }
+.border-start   { border-left  : 1px solid var(--rule-soft) !important; }
+.border-end     { border-right : 1px solid var(--rule-soft) !important; }
+.border-strong  { border-color : var(--rule) !important; }
+
+/* ── Radii helpers ───────────────────────────────────────── */
+.rounded-sm  { border-radius: var(--radius-sm) !important; }
+.rounded-md  { border-radius: var(--radius-md) !important; }
+.rounded-lg  { border-radius: var(--radius-lg) !important; }
+.rounded-xl  { border-radius: var(--radius-xl) !important; }
+.rounded-pill{ border-radius: var(--radius-pill) !important; }
+
+/* ── Small visual helpers ────────────────────────────────── */
+.divider-h {
+    height       : 1px;
+    background   : var(--rule-soft);
+    margin       : var(--space-lg) 0;
+    border       : 0;
+}
+
+.uppercase-label {
+    font-family   : var(--f-body);
+    font-size     : 11px;
+    font-weight   : 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color         : var(--ink-muted);
+}
+
+.numeric {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Material 3 elevation utility helpers */
+.elev-0 { box-shadow: none           !important; }
+.elev-1 { box-shadow: var(--shadow-sm) !important; }
+.elev-2 { box-shadow: var(--shadow-md) !important; }
+.elev-3 { box-shadow: var(--shadow-lg) !important; }
+
+/* ── Accessibility ───────────────────────────────────────── */
+.sr-only,
+.visually-hidden {
+    position: absolute !important;
+    width   : 1px;
+    height  : 1px;
+    padding : 0;
+    margin  : -1px;
+    overflow: hidden;
+    clip    : rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border  : 0;
+}

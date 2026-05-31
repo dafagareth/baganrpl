@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Ubah Trip{% else %}Tambah Trip{% endif %}{% endblock %}
+
+{% block content %}
+<div class="content-narrow">
+    <header class="page-header">
+        <h1 class="page-title">{% if object %}Ubah trip{% else %}Tambah trip{% endif %}</h1>
+    </header>
+
+    <form method="post" class="form-stack">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a href="{% url 'operasional:trip_list' %}" class="btn btn-link">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

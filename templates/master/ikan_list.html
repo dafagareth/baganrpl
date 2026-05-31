@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Jenis Ikan{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Jenis ikan</h1>
+    <a href="{% url 'master:ikan_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah jenis</a>
+</header>
+
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari nama jenis ikan">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'master:ikan_list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
+<div class="d-none d-lg-block table-responsive">
+    <table class="table-plain">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Satuan</th>
+                <th>Keterangan</th>
+                <th style="width: 1%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ikan in ikan_list %}
+            <tr>
+                <td class="fw-medium">{{ ikan.nama }}</td>
+                <td>{{ ikan.satuan }}</td>
+                <td class="text-muted">{{ ikan.keterangan }}</td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{% url 'master:ikan_update' ikan.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ ikan.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada jenis ikan terdaftar.{% endif %}
+            </td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-lg-none">
+    {% for ikan in ikan_list %}
+    <div class="list-row">
+        <div>
+            <div class="list-row-title">{{ ikan.nama }}</div>
+            <div class="list-row-meta">
+                Satuan {{ ikan.satuan }}{% if ikan.keterangan %} · {{ ikan.keterangan }}{% endif %}
+            </div>
+        </div>
+        <div class="row-actions">
+            <a href="{% url 'master:ikan_update' ikan.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
+            <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ ikan.id }}"><i class="bi bi-trash3"></i></button>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada jenis ikan terdaftar.{% endif %}
+    </p>
+    {% endfor %}
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% for ikan in ikan_list %}
+<div class="modal fade" id="deleteModal{{ ikan.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'master:ikan_delete' ikan.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Hapus jenis ikan?</h5></div>
+                <div class="modal-body">Data <strong>{{ ikan.nama }}</strong> akan dihapus permanen.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block fab %}
+<a href="{% url 'master:ikan_create' %}" class="fab-add d-lg-none" title="Tambah jenis ikan">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

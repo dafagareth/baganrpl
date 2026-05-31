@@ -1,0 +1,390 @@
+/* ═══════════════════════════════════════════════════════════
+   layout.css — App bar, drawer (sidebar), shell, main,
+                mobile bottom nav. Material 3 / Google.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── App bar / Navbar ────────────────────────────────────── */
+.navbar {
+    background  : var(--surface) !important;
+    border-bottom: 1px solid var(--rule-soft);
+    height      : var(--topbar-height);
+    padding     : 0 var(--space-md) 0 var(--space-md);
+    position    : fixed;
+    top         : 0;
+    left        : 0;
+    right       : 0;
+    z-index     : 1060;
+    display     : flex;
+    align-items : center;
+    gap         : var(--space-sm);
+    box-shadow  : none;
+    transition  : box-shadow var(--t-fast);
+}
+
+.navbar.scrolled { box-shadow: var(--shadow-sm); }
+
+.navbar-brand {
+    font-family   : var(--f-display);
+    font-size     : 1.25rem;
+    font-weight   : 500;
+    letter-spacing: 0;
+    color         : var(--ink) !important;
+    display       : flex;
+    align-items   : center;
+    gap           : var(--space-sm);
+    flex-shrink   : 0;
+    padding       : 0 var(--space-xs);
+}
+
+.navbar-brand i {
+    color    : var(--brand);
+    font-size: 22px;
+}
+
+.navbar-toggler {
+    background    : transparent;
+    border        : none;
+    color         : var(--ink-secondary);
+    border-radius : var(--radius-pill);
+    width         : 40px;
+    height        : 40px;
+    display       : flex;
+    align-items   : center;
+    justify-content: center;
+    cursor        : pointer;
+    transition    : background var(--t-fast);
+    font-size     : 20px;
+}
+
+.navbar-toggler:hover { background: var(--surface-hover); }
+
+.navbar-spacer { flex: 1; }
+
+.navbar-actions {
+    display    : flex;
+    align-items: center;
+    gap        : var(--space-xs);
+}
+
+.navbar-icon-btn {
+    width        : 40px;
+    height       : 40px;
+    border-radius: var(--radius-pill);
+    background   : transparent;
+    border       : none;
+    color        : var(--ink-secondary);
+    display      : flex;
+    align-items  : center;
+    justify-content: center;
+    font-size    : 18px;
+    cursor       : pointer;
+    transition   : background var(--t-fast), color var(--t-fast);
+    text-decoration: none;
+}
+
+.navbar-icon-btn:hover {
+    background: var(--surface-hover);
+    color     : var(--ink);
+}
+
+.navbar-avatar {
+    width        : 36px;
+    height       : 36px;
+    border-radius: var(--radius-pill);
+    background   : var(--brand-light);
+    color        : var(--on-brand-light);
+    border       : none;
+    display      : flex;
+    align-items  : center;
+    justify-content: center;
+    font-size    : 13px;
+    font-weight  : 600;
+    cursor       : pointer;
+    flex-shrink  : 0;
+    margin-left  : var(--space-xs);
+}
+
+/* ── App shell ───────────────────────────────────────────── */
+.app-shell {
+    display    : flex;
+    padding-top: var(--topbar-height);
+    min-height : 100vh;
+}
+
+/* ── Sidebar (Material drawer) ───────────────────────────── */
+.sidebar {
+    width         : var(--sidebar-width);
+    min-width     : var(--sidebar-width);
+    background    : var(--surface);
+    border-right  : 1px solid var(--rule-soft);
+    position      : fixed;
+    top           : var(--topbar-height);
+    left          : 0;
+    bottom        : 0;
+    overflow-y    : auto;
+    z-index       : 1040;
+    padding       : var(--space-sm) 0 var(--space-lg);
+    transition    : transform var(--t-normal);
+    display       : flex;
+    flex-direction: column;
+    gap           : 0;
+}
+
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--rule-soft); }
+
+.sidebar-section-label {
+    font-family   : var(--f-body);
+    font-size     : 11px;
+    font-weight   : 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color         : var(--ink-muted);
+    padding       : var(--space-lg) var(--space-lg) var(--space-xs);
+}
+
+.sidebar-section-label:first-child { margin-top: 0; }
+
+/* Nav links — Material drawer items (pill highlight) */
+.sidebar .nav-link {
+    display       : flex;
+    align-items   : center;
+    gap           : var(--space-md);
+    padding       : 0 var(--space-md);
+    margin        : 1px var(--space-sm);
+    height        : 44px;
+    font-size     : 14px;
+    font-weight   : 500;
+    color         : var(--ink-secondary) !important;
+    border-radius : var(--radius-pill);
+    border-left   : none;
+    transition    : background var(--t-fast), color var(--t-fast);
+    white-space   : nowrap;
+    overflow      : hidden;
+}
+
+.sidebar .nav-link i,
+.sidebar .nav-link .material-symbols-outlined {
+    font-size  : 22px;
+    width      : 22px;
+    flex-shrink: 0;
+    color      : var(--ink-muted);
+    transition : color var(--t-fast);
+    text-align : center;
+}
+
+.sidebar .nav-link:hover {
+    background: var(--surface-hover);
+    color     : var(--ink) !important;
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link:hover .material-symbols-outlined { color: var(--ink-secondary); }
+
+.sidebar .nav-link.active {
+    background : var(--brand-light);
+    color      : var(--on-brand-light) !important;
+    font-weight: 600;
+}
+
+.sidebar .nav-link.active i,
+.sidebar .nav-link.active .material-symbols-outlined {
+    color: var(--on-brand-light);
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.sidebar-badge {
+    margin-left  : auto;
+    background   : var(--surface-container);
+    color        : var(--ink-secondary);
+    font-family  : var(--f-body);
+    font-size    : 11px;
+    font-weight  : 500;
+    padding      : 2px 8px;
+    border-radius: var(--radius-pill);
+}
+
+.sidebar .nav-link.active .sidebar-badge {
+    background: var(--surface);
+    color     : var(--on-brand-light);
+}
+
+.sidebar-footer {
+    margin-top : auto;
+    padding    : var(--space-md) var(--space-md) 0;
+    border-top : 1px solid var(--rule-soft);
+}
+
+/* Collapsible groups */
+.sidebar-group-toggle {
+    display        : flex;
+    align-items    : center;
+    justify-content: space-between;
+    cursor         : pointer;
+    user-select    : none;
+    padding        : 8px var(--space-lg);
+    color          : var(--ink-muted) !important;
+    font-family    : var(--f-body);
+    font-size      : 11px;
+    font-weight    : 500;
+    letter-spacing : 0.08em;
+    text-transform : uppercase;
+    transition     : color var(--t-fast);
+    margin-top     : var(--space-sm);
+}
+
+.sidebar-group-toggle:hover { color: var(--ink-secondary) !important; }
+
+.sidebar-group-toggle .bi-chevron-down,
+.sidebar-group-toggle .chevron {
+    font-size : 13px;
+    transition: transform var(--t-normal);
+}
+
+.sidebar-group-toggle.collapsed .bi-chevron-down,
+.sidebar-group-toggle.collapsed .chevron {
+    transform: rotate(-90deg);
+}
+
+.sidebar-group-items {
+    overflow  : hidden;
+    transition: max-height var(--t-normal);
+    max-height: 800px;
+}
+
+.sidebar-group-items.collapsed { max-height: 0; }
+
+/* ── Main content ────────────────────────────────────────── */
+.main-content {
+    flex      : 1;
+    min-width : 0;
+    margin-left: var(--sidebar-width);
+    background : var(--canvas);
+    min-height : calc(100vh - var(--topbar-height));
+}
+
+.content-area {
+    padding  : var(--space-xxl);
+    max-width: 1280px;
+}
+
+.page-header {
+    margin-bottom: var(--space-xl);
+}
+
+.page-title {
+    font-family   : var(--f-display);
+    font-size     : 28px;
+    font-weight   : 400;
+    color         : var(--ink);
+    letter-spacing: 0;
+    margin-bottom : 4px;
+    line-height   : 1.2;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color    : var(--ink-muted);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background   : transparent;
+    padding      : 0;
+    margin-bottom: var(--space-sm);
+    gap          : 0;
+}
+
+.breadcrumb-item,
+.breadcrumb-item a {
+    font-size: 13px;
+    color    : var(--ink-muted);
+}
+
+.breadcrumb-item.active { color: var(--ink-secondary); }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--ink-disabled); }
+
+/* ── Mobile bottom navigation (Material) ─────────────────── */
+.mobile-nav {
+    position       : fixed;
+    bottom         : 0;
+    left           : 0;
+    right          : 0;
+    height         : 68px;
+    background     : var(--surface);
+    border-top     : 1px solid var(--rule-soft);
+    display        : flex;
+    justify-content: space-around;
+    align-items    : center;
+    z-index        : 1080;
+    padding-bottom : env(safe-area-inset-bottom);
+}
+
+.mobile-nav-item {
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : 2px;
+    color          : var(--ink-muted);
+    text-decoration: none;
+    font-size      : 12px;
+    font-weight    : 500;
+    flex           : 1;
+    height         : 100%;
+    justify-content: center;
+    transition     : color var(--t-fast);
+    position       : relative;
+}
+
+.mobile-nav-item i {
+    font-size  : 22px;
+    padding    : 4px 16px;
+    border-radius: var(--radius-pill);
+    transition : background var(--t-fast);
+}
+
+.mobile-nav-item.active {
+    color      : var(--on-brand-light);
+    font-weight: 600;
+}
+
+.mobile-nav-item.active i {
+    background: var(--brand-light);
+    color     : var(--on-brand-light);
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+footer {
+    color     : var(--ink-muted);
+    border-top: 1px solid var(--rule-soft);
+}
+
+footer a { color: var(--ink-secondary); }
+footer a:hover { color: var(--brand); }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    /* Mobile: sidebar tidak ada — navigasi via bottom nav */
+    .sidebar { display: none !important; }
+
+    .main-content {
+        margin-left  : 0;
+        padding-bottom: 84px;
+    }
+
+    .content-area { padding: var(--space-lg); }
+    .navbar       { padding: 0 var(--space-md); }
+    .page-title   { font-size: 22px; }
+}
+
+@media (min-width: 992px) {
+    .mobile-nav { display: none !important; }
+
+    .sidebar {
+        display  : flex !important;
+        transform: none !important;
+    }
+
+    .main-content { margin-left: var(--sidebar-width); }
+    .navbar-toggler { display: none !important; }
+}

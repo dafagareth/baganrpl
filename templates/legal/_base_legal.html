@@ -1,0 +1,159 @@
+{% extends 'public_base.html' %}
+
+{% block extra_head %}
+<style>
+  .legal-wrap {
+      max-width: 720px;
+      margin   : 0 auto;
+      padding  : var(--space-section) var(--space-xl);
+  }
+
+  .legal-title {
+      font-size     : clamp(1.75rem, 4vw, 2.25rem);
+      font-weight   : 500;
+      line-height   : 1.2;
+      letter-spacing: -0.01em;
+      color         : var(--ink);
+      margin        : 0 0 var(--space-xs);
+  }
+
+  .legal-updated {
+      font-size    : 13px;
+      color        : var(--ink-muted);
+      margin       : 0 0 var(--space-xl);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .legal-body { color: var(--ink-secondary); font-size: 15px; line-height: 1.7; }
+
+  .legal-body h2 {
+      font-size     : 1.25rem;
+      font-weight   : 500;
+      color         : var(--ink);
+      margin        : var(--space-xxl) 0 var(--space-sm);
+      letter-spacing: -0.005em;
+  }
+
+  .legal-body h2 .num {
+      font-family : var(--f-mono);
+      font-size   : 12px;
+      color       : var(--ink-muted);
+      margin-right: 8px;
+      font-weight : 400;
+  }
+
+  .legal-body h3 {
+      font-size  : 1rem;
+      font-weight: 600;
+      color      : var(--ink);
+      margin     : var(--space-lg) 0 var(--space-xs);
+  }
+
+  .legal-body p { margin: 0 0 var(--space-sm); }
+
+  .legal-body ul,
+  .legal-body ol {
+      padding-left: 22px;
+      margin      : 0 0 var(--space-md);
+  }
+
+  .legal-body li {
+      margin    : 0 0 4px;
+      padding-left: 4px;
+  }
+
+  .legal-body li::marker { color: var(--ink-muted); }
+  .legal-body strong { color: var(--ink); font-weight: 600; }
+  .legal-body a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+  .legal-body a:hover { color: var(--brand-hover); }
+
+  .legal-callout {
+      background  : var(--brand-subtle);
+      border-left : 3px solid var(--brand);
+      padding     : var(--space-md) var(--space-lg);
+      margin      : var(--space-md) 0;
+      font-size   : 14px;
+      line-height : 1.6;
+      color       : var(--ink-secondary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .legal-callout strong { color: var(--ink); }
+
+  .legal-contact {
+      margin-top  : var(--space-xxl);
+      padding-top : var(--space-lg);
+      border-top  : 1px solid var(--rule-soft);
+  }
+
+  .legal-contact dl {
+      display              : grid;
+      grid-template-columns: 160px 1fr;
+      gap                  : 8px 16px;
+      margin               : var(--space-sm) 0 0;
+  }
+
+  .legal-contact dt {
+      font-size : 13px;
+      color     : var(--ink-muted);
+      align-self: center;
+  }
+
+  .legal-contact dd { margin: 0; font-size: 14.5px; color: var(--ink); }
+
+  @media (max-width: 575.98px) {
+      .legal-contact dl { grid-template-columns: 1fr; gap: 2px 0; }
+      .legal-contact dt { margin-top: 12px; }
+  }
+
+  .legal-toc {
+      margin       : var(--space-md) 0 var(--space-xl);
+      padding      : var(--space-md) var(--space-lg);
+      background   : var(--surface);
+      border       : 1px solid var(--rule-soft);
+      border-radius: var(--radius-sm);
+      font-size    : 13.5px;
+  }
+
+  .legal-toc-label {
+      font-size     : 12px;
+      color         : var(--ink-muted);
+      display       : block;
+      margin-bottom : var(--space-xs);
+      font-weight   : 500;
+  }
+
+  .legal-toc ol {
+      list-style: none;
+      padding   : 0;
+      margin    : 0;
+      counter-reset: toc;
+      columns   : 2;
+      column-gap: var(--space-xl);
+  }
+
+  .legal-toc li {
+      padding-left: 0;
+      margin      : 0 0 4px;
+      counter-increment: toc;
+      break-inside: avoid;
+  }
+
+  .legal-toc li::before {
+      content    : counter(toc, decimal-leading-zero);
+      font-family: var(--f-mono);
+      font-size  : 11px;
+      color      : var(--ink-muted);
+      margin-right: 8px;
+  }
+
+  .legal-toc a {
+      color: var(--ink-secondary);
+      text-decoration: none;
+  }
+
+  .legal-toc a:hover { color: var(--brand); text-decoration: underline; }
+
+  @media (max-width: 575.98px) { .legal-toc ol { columns: 1; } }
+</style>
+{% endblock %}

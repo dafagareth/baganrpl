@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Konfirmasi Hapus{% endblock %}
+
+{% block content %}
+<div class="content-narrow">
+    <header class="page-header">
+        <h1 class="page-title">Hapus data?</h1>
+    </header>
+
+    <p>Data <strong>{{ object }}</strong> akan dihapus permanen dan tidak bisa dikembalikan.</p>
+
+    <form method="post" class="form-actions">
+        {% csrf_token %}
+        <a href="javascript:history.back()" class="btn btn-link">Batal</a>
+        <button type="submit" class="btn btn-danger">Hapus</button>
+    </form>
+</div>
+{% endblock %}

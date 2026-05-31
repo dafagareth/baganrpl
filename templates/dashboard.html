@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+</header>
+
+<div class="metrics">
+    <div class="metric">
+        <div class="metric-label">Kapal aktif</div>
+        <div class="metric-value">{{ total_kapal }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Trip bulan ini</div>
+        <div class="metric-value">{{ trip_bulan_ini }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Tangkap bulan ini</div>
+        <div class="metric-value">{{ tangkap_bulan_ini|ribuan }}<span class="metric-unit">kg</span></div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Pendapatan bulan ini</div>
+        <div class="metric-value">{{ pendapatan_bulan_ini|rupiah }}</div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">Pendapatan vs biaya</h2>
+        <span class="section-meta mb-0">6 bulan terakhir</span>
+    </div>
+    <div style="position: relative; min-height: 260px; height: 36vh;">
+        <canvas id="revenueChart"></canvas>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">Trip terbaru</h2>
+        <a href="{% url 'operasional:trip_list' %}" class="link-action">Lihat semua</a>
+    </div>
+
+    <div class="d-none d-lg-block">
+        <table class="table-plain">
+            <thead>
+                <tr>
+                    <th>Kapal</th>
+                    <th>Berangkat</th>
+                    <th>Kembali</th>
+                    <th>Status</th>
+                    <th style="width: 1%;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trip_terbaru %}
+                <tr>
+                    <td class="fw-medium">{{ trip.kapal }}</td>
+                    <td>{{ trip.tgl_berangkat|tgl_indo }}</td>
+                    <td>{{ trip.tgl_kembali|tgl_indo|default:"Belum kembali" }}</td>
+                    <td>
+                        <span class="badge {% if trip.status == 'berlayar' %}bg-primary{% elif trip.status == 'selesai' %}bg-success{% elif trip.status == 'batal' %}bg-danger{% else %}bg-secondary{% endif %}">
+                            {{ trip.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'operasional:trip_detail' trip.id %}" class="link-action">Detail</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-muted py-4">Belum ada trip tercatat.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-lg-none">
+        {% for trip in trip_terbaru %}
+        <a href="{% url 'operasional:trip_detail' trip.id %}" class="list-row">
+            <div>
+                <div class="list-row-title">{{ trip.kapal }}</div>
+                <div class="list-row-meta">{{ trip.tgl_berangkat|tgl_indo }}</div>
+            </div>
+            <span class="badge {% if trip.status == 'berlayar' %}bg-primary{% elif trip.status == 'selesai' %}bg-success{% elif trip.status == 'batal' %}bg-danger{% else %}bg-secondary{% endif %}">
+                {{ trip.get_status_display }}
+            </span>
+        </a>
+        {% empty %}
+        <p class="text-muted py-3 mb-0">Belum ada trip tercatat.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [
+                { label: 'Pendapatan', data: {{ chart_pendapatan|safe }}, backgroundColor: '#1E8E3E', borderRadius: 4, borderSkipped: false },
+                { label: 'Biaya',      data: {{ chart_biaya|safe }},      backgroundColor: '#D93025', borderRadius: 4, borderSkipped: false }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#3C4043', font: { family: 'Google Sans Text, Roboto', size: 12 }, usePointStyle: true, padding: 18, boxWidth: 8 }
+                },
+                tooltip: {
+                    backgroundColor: '#202124',
+                    titleFont: { family: 'Google Sans Text, Roboto', size: 13 },
+                    bodyFont:  { family: 'Google Sans Text, Roboto', size: 12 },
+                    padding: 10, cornerRadius: 4, displayColors: false,
+                    callbacks: { label: c => c.dataset.label + ': Rp ' + (c.raw || 0).toLocaleString('id-ID') }
+                }
+            },
+            scales: {
+                x: { ticks: { color: '#5F6368', font: { family: 'Google Sans Text, Roboto', size: 11 } }, grid: { display: false } },
+                y: {
+                    ticks: { color: '#5F6368', font: { family: 'Google Sans Text, Roboto', size: 11 },
+                        callback: v => v >= 1000000 ? 'Rp ' + (v/1000000).toFixed(1) + 'jt'
+                                       : v >= 1000  ? 'Rp ' + (v/1000).toFixed(0) + 'rb'
+                                       : 'Rp ' + v },
+                    grid: { color: '#E8EAED', drawBorder: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F8F9FA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="{% block meta_description %}Sistem manajemen armada kapal bagan. Pencatatan operasional, hasil tangkap, dan laporan keuangan harian.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Usaha Bagan{% endblock %}">
+  <meta property="og:type" content="website">
+
+  <title>{% block title %}Usaha Bagan{% endblock %}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!-- Terapkan tema tersimpan sebelum halaman dirender, supaya tidak berkedip -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') {
+          document.documentElement.setAttribute('data-theme', t);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    /* ── Public-site scoped styles ─────────────────────────
+       Pakai token dari style.css (Google Sans / Roboto Mono / Google Blue).
+       Yang ditambah di sini cuma layout khusus public: navbar sticky,
+       container max-width, footer grid.
+       ──────────────────────────────────────────────────── */
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .public-shell {
+      max-width: 1120px;
+      margin   : 0 auto;
+      padding  : 0 var(--space-xl);
+    }
+
+    /* ── Contact strip (paling atas) ─────────────────────── */
+    .public-topbar {
+      background  : var(--surface-container);
+      border-bottom: 1px solid var(--rule-soft);
+      font-size   : 12.5px;
+      color       : var(--ink-muted);
+    }
+
+    .public-topbar-inner {
+      max-width  : 1120px;
+      margin     : 0 auto;
+      padding    : 6px var(--space-xl);
+      display    : flex;
+      align-items: center;
+      gap        : var(--space-lg);
+      flex-wrap  : wrap;
+    }
+
+    .public-topbar a {
+      color          : var(--ink-secondary);
+      text-decoration: none;
+      display        : inline-flex;
+      align-items    : center;
+      gap            : 6px;
+    }
+
+    .public-topbar a:hover { color: var(--brand); }
+
+    .public-topbar .sep {
+      width   : 1px;
+      height  : 12px;
+      background: var(--rule);
+    }
+
+    /* ── Top bar ─────────────────────────────────────────── */
+    .public-navbar {
+      position    : sticky;
+      top         : 0;
+      z-index     : 1000;
+      background  : var(--surface);
+      border-bottom: 1px solid var(--rule-soft);
+    }
+
+    .public-navbar-inner {
+      max-width      : 1120px;
+      margin         : 0 auto;
+      padding        : 0 var(--space-xl);
+      height         : 64px;
+      display        : flex;
+      align-items    : center;
+      justify-content: space-between;
+      gap            : var(--space-md);
+    }
+
+    .public-brand {
+      font-family    : var(--f-body);
+      font-size      : 1.05rem;
+      font-weight    : 600;
+      color          : var(--ink);
+      text-decoration: none;
+      letter-spacing : -0.005em;
+    }
+
+    .public-brand:hover { color: var(--ink); }
+
+    .public-nav {
+      display    : flex;
+      align-items: center;
+      gap        : 4px;
+      list-style : none;
+      margin     : 0;
+      padding    : 0;
+    }
+
+    .public-nav a {
+      font-size      : 13.5px;
+      color          : var(--ink-secondary);
+      text-decoration: none;
+      padding        : 8px 14px;
+      border-radius  : var(--radius-sm);
+      transition     : background var(--t-fast), color var(--t-fast);
+    }
+
+    .public-nav a:hover {
+      color     : var(--ink);
+      background: var(--surface-hover);
+      text-decoration: none;
+    }
+
+    /* ── Theme toggle ────────────────────────────────────── */
+    .public-nav-right {
+      display    : flex;
+      align-items: center;
+      gap        : 6px;
+    }
+
+    .theme-toggle {
+      display        : inline-flex;
+      align-items    : center;
+      justify-content: center;
+      width          : 38px;
+      height         : 38px;
+      padding        : 0;
+      border         : 1px solid var(--rule-soft);
+      border-radius  : var(--radius-sm);
+      background     : transparent;
+      color          : var(--ink-secondary);
+      font-size      : 17px;
+      line-height    : 1;
+      cursor         : pointer;
+      transition     : background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+    }
+
+    .theme-toggle:hover {
+      background  : var(--surface-hover);
+      color       : var(--ink);
+      border-color: var(--rule);
+    }
+
+    /* ── Main shell ──────────────────────────────────────── */
+    .public-main { background: var(--canvas); min-height: 70vh; }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .public-footer {
+      border-top: 1px solid var(--rule-soft);
+      background: var(--surface);
+      padding   : var(--space-xxl) 0 var(--space-lg);
+      margin-top: var(--space-section);
+    }
+
+    .public-footer-inner {
+      max-width: 1120px;
+      margin   : 0 auto;
+      padding  : 0 var(--space-xl);
+    }
+
+    .public-footer-cols {
+      display              : grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap                  : var(--space-xxl);
+      padding-bottom       : var(--space-xl);
+    }
+
+    .public-footer h4 {
+      font-size    : 13px;
+      font-weight  : 600;
+      color        : var(--ink);
+      margin-bottom: var(--space-sm);
+    }
+
+    .public-footer p,
+    .public-footer li {
+      font-size  : 13.5px;
+      color      : var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    .public-footer ul {
+      list-style: none;
+      padding   : 0;
+      margin    : 0;
+    }
+
+    .public-footer li + li { margin-top: 6px; }
+
+    .public-footer a {
+      color          : var(--ink-secondary);
+      text-decoration: none;
+    }
+
+    .public-footer a:hover { color: var(--brand); text-decoration: underline; }
+
+    .public-footer-bottom {
+      border-top  : 1px solid var(--rule-soft);
+      padding-top : var(--space-md);
+      display     : flex;
+      justify-content: space-between;
+      flex-wrap   : wrap;
+      gap         : var(--space-sm);
+      font-size   : 12.5px;
+      color       : var(--ink-muted);
+    }
+
+    .public-disclaimer {
+      font-size  : 12px;
+      color      : var(--ink-muted);
+      line-height: 1.6;
+      max-width  : 640px;
+      margin-top : var(--space-md);
+    }
+
+    @media (max-width: 767.98px) {
+      .public-footer-cols { grid-template-columns: 1fr; gap: var(--space-xl); }
+      .public-topbar-inner { gap: var(--space-md); padding: 6px var(--space-md); }
+      .public-topbar .sep  { display: none; }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <div class="public-topbar" aria-label="Kontak">
+    <div class="public-topbar-inner">
+      <a href="mailto:dafagareth@gmail.com">
+        <i class="bi bi-envelope"></i> dafagareth@gmail.com
+      </a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="tel:+6282173927763">
+        <i class="bi bi-telephone"></i> +62 821-7392-7763
+      </a>
+    </div>
+  </div>
+
+  <nav class="public-navbar" aria-label="Navigasi">
+    <div class="public-navbar-inner">
+      <a class="public-brand" href="/">Usaha Bagan</a>
+
+      <div class="public-nav-right">
+        <ul class="public-nav">
+          <li><a href="/#overview">Ikhtisar</a></li>
+          <li><a href="/#fleet">Armada</a></li>
+          <li><a href="{% url 'disclaimer' %}">Disclaimer</a></li>
+        </ul>
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Ganti tema" title="Ganti tema">
+          <i class="bi bi-moon-stars" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="public-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="public-footer">
+    <div class="public-footer-inner">
+      <div class="public-footer-cols">
+        <div>
+          <h4>Usaha Bagan</h4>
+          <p>Sistem manajemen armada kapal bagan. Pencatatan operasional harian, hasil tangkap, dan rekap keuangan.</p>
+        </div>
+        <div>
+          <h4>Navigasi</h4>
+          <ul>
+            <li><a href="/#overview">Ikhtisar</a></li>
+            <li><a href="/#fleet">Armada</a></li>
+            <li><a href="/#performance">Performa</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="{% url 'privasi' %}">Kebijakan privasi</a></li>
+            <li><a href="{% url 'syarat' %}">Syarat &amp; ketentuan</a></li>
+            <li><a href="{% url 'disclaimer' %}">Disclaimer</a></li>
+            <li><a href="mailto:dafagareth@gmail.com">Kontak</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="public-footer-bottom">
+        <span>&copy; {{ now_year|default:"2026" }} Usaha Bagan.</span>
+        <span>Website made by <strong>Dafa Al Hafiz</strong>.</span>
+      </div>
+
+      <p class="public-disclaimer">
+        Situs ini bukan penawaran efek atau ajakan investasi publik sebagaimana diatur UU Pasar Modal dan POJK. Diskusi kemitraan dilakukan privat langsung dengan pihak yang dihubungi. Data operasional ditarik real-time dari sistem internal, bukan laporan keuangan teraudit. Selengkapnya di <a href="{% url 'disclaimer' %}">halaman disclaimer</a>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Tombol ganti tema: terang ⇄ gelap, pilihan disimpan di localStorage -->
+  <script>
+    (function () {
+      var btn = document.getElementById('themeToggle');
+      if (!btn) return;
+      var root = document.documentElement;
+      var icon = btn.querySelector('i');
+
+      function effective() {
+        var t = root.getAttribute('data-theme');
+        if (t === 'dark' || t === 'light') return t;
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark' : 'light';
+      }
+
+      function sync() {
+        var dark = effective() === 'dark';
+        if (icon) icon.className = dark ? 'bi bi-sun' : 'bi bi-moon-stars';
+        var label = dark ? 'Beralih ke mode terang' : 'Beralih ke mode gelap';
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+      }
+
+      btn.addEventListener('click', function () {
+        var next = effective() === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync();
+        // Grafik (Chart.js) tidak ikut CSS, jadi minta ia warnai ulang
+        if (typeof window.__refreshChartTheme === 'function') window.__refreshChartTheme();
+      });
+
+      sync();
+    })();
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Kapal{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Kapal</h1>
+    <a href="{% url 'master:kapal_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah kapal</a>
+</header>
+
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari nama atau jenis kapal">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'master:kapal_list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
+<div class="d-none d-lg-block table-responsive">
+    <table class="table-plain">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Jenis</th>
+                <th class="num">Kapasitas</th>
+                <th>Status</th>
+                <th style="width: 1%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kapal in kapal_list %}
+            <tr>
+                <td class="fw-medium">{{ kapal.nama_kapal }}</td>
+                <td>{{ kapal.jenis }}</td>
+                <td class="num">{{ kapal.kapasitas }} ton</td>
+                <td>
+                    <span class="badge {% if kapal.status == 'aktif' %}bg-success{% elif kapal.status == 'perbaikan' %}bg-warning{% else %}bg-secondary{% endif %}">
+                        {{ kapal.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{% url 'master:kapal_update' kapal.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada kapal terdaftar.{% endif %}
+            </td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-lg-none">
+    {% for kapal in kapal_list %}
+    <div class="list-row">
+        <div>
+            <div class="list-row-title">{{ kapal.nama_kapal }}</div>
+            <div class="list-row-meta">{{ kapal.jenis }} · {{ kapal.kapasitas }} ton</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge {% if kapal.status == 'aktif' %}bg-success{% elif kapal.status == 'perbaikan' %}bg-warning{% else %}bg-secondary{% endif %}">{{ kapal.get_status_display }}</span>
+            <div class="row-actions">
+                <a href="{% url 'master:kapal_update' kapal.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
+                <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada kapal terdaftar.{% endif %}
+    </p>
+    {% endfor %}
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% for kapal in kapal_list %}
+<div class="modal fade" id="deleteModal{{ kapal.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'master:kapal_delete' kapal.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Hapus kapal?</h5></div>
+                <div class="modal-body">Data <strong>{{ kapal.nama_kapal }}</strong> akan dihapus permanen.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block fab %}
+<a href="{% url 'master:kapal_create' %}" class="fab-add d-lg-none" title="Tambah kapal">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

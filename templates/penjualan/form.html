@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Ubah Penjualan{% else %}Tambah Penjualan{% endif %}{% endblock %}
+
+{% block content %}
+<div class="content-narrow">
+    <header class="page-header">
+        <h1 class="page-title">{% if object %}Ubah penjualan{% else %}Tambah penjualan{% endif %}</h1>
+    </header>
+
+    <form method="post" class="form-stack">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}<span>{{ error }}</span>{% endfor %}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+        <div>
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% if field.name == 'berat_terjual' %}
+            <div class="input-group">
+                {{ field }}
+                <button type="button" class="btn btn-outline-secondary" id="btn-semua">Semua</button>
+            </div>
+            <div class="form-text" id="info-stok"></div>
+            {% else %}
+            {{ field }}
+            {% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a href="{% url 'penjualan:list' %}" class="btn btn-link">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stockData = {{ form.stock_data_json|safe }};
+    const selectHasil = document.getElementById('id_hasil_tangkap');
+    const inputBerat = document.getElementById('id_berat_terjual');
+    const btnSemua = document.getElementById('btn-semua');
+    const infoStok = document.getElementById('info-stok');
+
+    function updateStokInfo() {
+        const selectedId = selectHasil ? selectHasil.value : null;
+        if (selectedId && stockData[selectedId] !== undefined) {
+            infoStok.textContent = 'Stok tersedia: ' + stockData[selectedId] + ' kg';
+            btnSemua.disabled = false;
+        } else {
+            infoStok.textContent = '';
+            btnSemua.disabled = true;
+        }
+    }
+
+    if (selectHasil) { selectHasil.addEventListener('change', updateStokInfo); updateStokInfo(); }
+    if (btnSemua)    {
+        btnSemua.addEventListener('click', function() {
+            const selectedId = selectHasil ? selectHasil.value : null;
+            if (selectedId && stockData[selectedId] !== undefined) {
+                inputBerat.value = stockData[selectedId];
+                inputBerat.focus();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

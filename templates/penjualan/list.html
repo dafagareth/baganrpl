@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Penjualan{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Penjualan</h1>
+    <a href="{% url 'penjualan:create_multi' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah penjualan</a>
+</header>
+
+<div class="metrics" style="grid-template-columns: 1fr;">
+    <div class="metric">
+        <div class="metric-label">Total pendapatan keseluruhan</div>
+        <div class="metric-value text-success">{{ total_pendapatan|rupiah }}</div>
+    </div>
+</div>
+
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari ikan, kapal, atau pembeli">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'penjualan:list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
+<div class="d-none d-lg-block table-responsive">
+    <table class="table-plain">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Jenis ikan</th>
+                <th>Kapal</th>
+                <th>Pembeli</th>
+                <th class="num">Berat</th>
+                <th class="num">Harga/kg</th>
+                <th class="num">Total</th>
+                <th style="width: 1%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in penjualan_list %}
+            <tr>
+                <td>{{ p.tgl_jual|tgl_indo }}</td>
+                <td class="fw-medium">{{ p.hasil_tangkap.jenis_ikan }}</td>
+                <td>{{ p.hasil_tangkap.trip.kapal }}</td>
+                <td>{{ p.pembeli }}</td>
+                <td class="num">{{ p.berat_terjual }} kg</td>
+                <td class="num">{{ p.harga_per_kg|rupiah }}</td>
+                <td class="num fw-medium">{{ p.total_nilai|rupiah }}</td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{% url 'penjualan:update' p.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada penjualan tercatat.{% endif %}
+            </td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-lg-none">
+    {% for p in penjualan_list %}
+    <div class="list-row">
+        <div>
+            <div class="list-row-title">{{ p.hasil_tangkap.jenis_ikan }}</div>
+            <div class="list-row-meta">
+                {{ p.pembeli }} · {{ p.berat_terjual }} kg · {{ p.tgl_jual|tgl_indo }}
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="fw-medium">{{ p.total_nilai|rupiah }}</span>
+            <div class="row-actions">
+                <a href="{% url 'penjualan:update' p.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
+                <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}"><i class="bi bi-trash3"></i></button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada penjualan tercatat.{% endif %}
+    </p>
+    {% endfor %}
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% for p in penjualan_list %}
+<div class="modal fade" id="deleteModal{{ p.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'penjualan:delete' p.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Hapus penjualan?</h5></div>
+                <div class="modal-body">
+                    Penjualan <strong>{{ p.hasil_tangkap.jenis_ikan }}</strong> akan dihapus permanen.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block fab %}
+<a href="{% url 'penjualan:create_multi' %}" class="fab-add d-lg-none" title="Tambah penjualan">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

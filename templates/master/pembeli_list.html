@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Pembeli{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Pembeli</h1>
+    <a href="{% url 'master:pembeli_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah pembeli</a>
+</header>
+
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari nama, no. HP, atau alamat">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'master:pembeli_list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
+<div class="d-none d-lg-block table-responsive">
+    <table class="table-plain">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>No. HP</th>
+                <th>Alamat</th>
+                <th>Keterangan</th>
+                <th style="width: 1%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pembeli in pembeli_list %}
+            <tr>
+                <td class="fw-medium">{{ pembeli.nama }}</td>
+                <td class="text-muted">{{ pembeli.no_hp }}</td>
+                <td class="text-muted">{{ pembeli.alamat|truncatewords:10 }}</td>
+                <td class="text-muted">{{ pembeli.keterangan|truncatewords:10 }}</td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{% url 'master:pembeli_update' pembeli.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ pembeli.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada pembeli terdaftar.{% endif %}
+            </td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-lg-none">
+    {% for pembeli in pembeli_list %}
+    <div class="list-row">
+        <div>
+            <div class="list-row-title">{{ pembeli.nama }}</div>
+            {% if pembeli.no_hp or pembeli.alamat %}
+            <div class="list-row-meta">
+                {{ pembeli.no_hp }}{% if pembeli.no_hp and pembeli.alamat %} · {% endif %}{{ pembeli.alamat|truncatewords:6 }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="row-actions">
+            <a href="{% url 'master:pembeli_update' pembeli.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
+            <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ pembeli.id }}"><i class="bi bi-trash3"></i></button>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada pembeli terdaftar.{% endif %}
+    </p>
+    {% endfor %}
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% for pembeli in pembeli_list %}
+<div class="modal fade" id="deleteModal{{ pembeli.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'master:pembeli_delete' pembeli.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Hapus pembeli?</h5></div>
+                <div class="modal-body">Data <strong>{{ pembeli.nama }}</strong> akan dihapus permanen.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block fab %}
+<a href="{% url 'master:pembeli_create' %}" class="fab-add d-lg-none" title="Tambah pembeli">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}

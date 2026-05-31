@@ -1,0 +1,217 @@
+{% extends 'legal/_base_legal.html' %}
+{% block title %}Kebijakan Privasi · Usaha Bagan{% endblock %}
+{% block meta_description %}Apa saja data yang dikumpulkan aplikasi Usaha Bagan, kenapa, dan bagaimana kamu bisa menghapusnya.{% endblock %}
+
+{% block content %}
+<div class="legal-wrap">
+  
+  <h1 class="legal-title">Kebijakan Privasi</h1>
+  <p class="legal-updated">Berlaku sejak 28 Mei 2026</p>
+
+  <div class="legal-body">
+
+    <p>
+      Halaman ini menjelaskan data apa yang kami simpan dari kamu saat memakai aplikasi
+      mobile <strong>Usaha Bagan</strong> (untuk operator dan pemilik kapal) maupun
+      situs publik <strong>usahabagan.id</strong>, kenapa kami menyimpannya, dan bagaimana
+      kamu bisa meminta kami menghapusnya.
+    </p>
+    <p>
+      Aturan yang kami pakai sebagai acuan: <strong>UU 27/2022 tentang Pelindungan Data
+      Pribadi (UU PDP)</strong>. Jika ada bagian yang bertentangan dengan UU PDP atau
+      peraturan turunannya, yang berlaku adalah aturan tersebut, bukan teks di sini.
+    </p>
+
+    <div class="legal-toc" aria-label="Daftar isi">
+      <span class="legal-toc-label">Daftar isi</span>
+      <ol>
+        <li><a href="#siapa">Siapa pengelola data</a></li>
+        <li><a href="#data">Data apa yang dikumpulkan</a></li>
+        <li><a href="#tujuan">Untuk apa data dipakai</a></li>
+        <li><a href="#dasar">Dasar hukum pemrosesan</a></li>
+        <li><a href="#pihak-ketiga">Pihak ketiga yang menerima data</a></li>
+        <li><a href="#retensi">Berapa lama data disimpan</a></li>
+        <li><a href="#hakmu">Hak-hak kamu</a></li>
+        <li><a href="#keamanan">Keamanan data</a></li>
+        <li><a href="#anak">Anak di bawah umur</a></li>
+        <li><a href="#perubahan">Kalau ada perubahan</a></li>
+      </ol>
+    </div>
+
+    <h2 id="siapa"><span class="num">01</span>Siapa pengelola data</h2>
+    <p>
+      Pengelola data, dalam UU PDP disebut <em>Pengendali Data Pribadi</em>, adalah:
+    </p>
+    <ul>
+      <li>Nama: <strong>Dafa Al Hafiz</strong></li>
+      <li>Kedudukan: Pengembang sekaligus penanggung jawab platform Usaha Bagan</li>
+      <li>Email: <a href="mailto:dafagareth@gmail.com">dafagareth@gmail.com</a></li>
+      <li>Lokasi operasi: Padang, Sumatera Barat</li>
+    </ul>
+    <p>
+      Untuk pertanyaan apa pun terkait privasi (akses, koreksi, penghapusan, atau
+      keluhan), email ke alamat di atas dengan subjek diawali <code>[Privasi]</code>.
+      Kami berusaha membalas paling lambat 7 hari kerja.
+    </p>
+
+    <h2 id="data"><span class="num">02</span>Data apa yang dikumpulkan</h2>
+
+    <h3>a. Data akun</h3>
+    <ul>
+      <li>Username</li>
+      <li>Password (disimpan dalam bentuk <em>hash</em>, tidak dalam teks asli)</li>
+      <li>Peran: operator atau pemilik (owner)</li>
+      <li>Tanggal pembuatan akun dan login terakhir</li>
+    </ul>
+
+    <h3>b. Data operasional yang kamu input</h3>
+    <ul>
+      <li>Catatan trip: tanggal berangkat, tanggal kembali, kapal yang dipakai</li>
+      <li>Catatan biaya: kategori, jumlah, keterangan</li>
+      <li>Catatan hasil tangkap: jenis ikan, berat, kondisi</li>
+      <li>Catatan penjualan: pembeli, berat terjual, harga per kg, tanggal jual</li>
+      <li>Catatan bagi hasil ABK</li>
+    </ul>
+
+    <h3>c. Data lokasi (GPS)</h3>
+    <p>
+      Saat kamu mengambil foto bukti tangkap atau penjualan, aplikasi merekam
+      <strong>koordinat lat/long</strong> dan <strong>jam pengambilan</strong>, lalu
+      menempelkannya sebagai <em>watermark</em> di foto. Koordinat ini juga dikirim ke
+      layanan <em>reverse geocoding</em> OpenStreetMap (Nominatim) untuk menerjemahkan
+      titik GPS jadi nama tempat (mis. "Padang Barat, Padang, Sumatera Barat").
+    </p>
+    <p>
+      Kami <strong>tidak</strong> melacak lokasi kamu di luar momen pengambilan foto.
+      Tidak ada <em>background tracking</em>.
+    </p>
+
+    <h3>d. Foto</h3>
+    <p>
+      Foto bukti operasional (hasil tangkap, transaksi penjualan) disimpan di server kami
+      dan ditampilkan ke owner serta investor terdaftar. Jika ada wajah orang lain
+      (mis. ABK, pembeli) dalam foto, <strong>tanggung jawab izin foto ada pada operator
+      yang mengambilnya</strong>. Jika kamu adalah orang yang tidak setuju difoto, hubungi
+      kami untuk meminta foto tersebut dihapus.
+    </p>
+
+    <h3>e. Data teknis</h3>
+    <ul>
+      <li>Token notifikasi (FCM) untuk mengirim pemberitahuan push</li>
+      <li>Versi aplikasi, model perangkat, dan OS (untuk diagnosa bug)</li>
+      <li>Log akses API: waktu, endpoint yang dipanggil, status respons</li>
+    </ul>
+
+    <h2 id="tujuan"><span class="num">03</span>Untuk apa data dipakai</h2>
+    <ul>
+      <li><strong>Operasional usaha</strong>. Supaya owner bisa melihat performa armada secara real-time.</li>
+      <li><strong>Transparansi ke mitra modal</strong>. Angka yang dilihat investor diambil dari sumber yang sama dengan yang dilihat owner. Tidak ada angka "versi marketing" terpisah.</li>
+      <li><strong>Anti-pemalsuan</strong>. Watermark GPS+waktu di foto bukti membuat data lapangan tidak bisa dipalsukan dengan mudah.</li>
+      <li><strong>Notifikasi</strong>. Owner dapat pemberitahuan saat operator input data baru.</li>
+      <li><strong>Diagnosa &amp; perbaikan</strong>. Log dipakai untuk memperbaiki bug, bukan untuk profil iklan.</li>
+    </ul>
+    <p>
+      Data kamu <strong>tidak</strong> dijual ke pihak mana pun. Tidak ada pengiklanan
+      pihak ketiga. Tidak ada <em>analytics</em> komersial seperti Google Analytics atau
+      Facebook Pixel di dalam aplikasi.
+    </p>
+
+    <h2 id="dasar"><span class="num">04</span>Dasar hukum pemrosesan</h2>
+    <p>Kami memproses data kamu berdasarkan dua hal (Psl. 20 UU PDP):</p>
+    <ul>
+      <li><strong>Persetujuan kamu</strong>. Diberikan saat pertama kali mendaftar dan menggunakan aplikasi.</li>
+      <li><strong>Pelaksanaan kontrak</strong>. Antara kamu dan pemilik usaha bagan, di mana aplikasi ini adalah alat operasional yang disepakati.</li>
+    </ul>
+
+    <h2 id="pihak-ketiga"><span class="num">05</span>Pihak ketiga yang menerima data</h2>
+    <p>Data kamu bisa diakses oleh pihak ketiga berikut, terbatas pada keperluan teknis:</p>
+    <ul>
+      <li><strong>Google Firebase (Firebase Cloud Messaging)</strong>. Untuk pengiriman notifikasi push. Yang dikirim hanya token perangkat dan teks notifikasi singkat. Server Firebase berlokasi di luar Indonesia.</li>
+      <li><strong>OpenStreetMap / Nominatim</strong>. Untuk reverse geocoding GPS jadi nama tempat. Yang dikirim hanya koordinat lat/long, tidak ada identitas kamu. Server Nominatim berlokasi di Eropa.</li>
+      <li><strong>Penyedia hosting server</strong>. Server tempat aplikasi dijalankan. Saat ini berlokasi di Indonesia.</li>
+    </ul>
+    <p>
+      Selain di atas, data kamu <strong>tidak</strong> kami serahkan ke pihak ketiga
+      lain, kecuali ada permintaan resmi penegak hukum yang sah secara hukum Indonesia.
+    </p>
+
+    <h2 id="retensi"><span class="num">06</span>Berapa lama data disimpan</h2>
+    <ul>
+      <li><strong>Data akun</strong>. Selama akunmu aktif. Setelah kamu menghapus akun, data identitas dihapus dalam 30 hari.</li>
+      <li><strong>Data operasional (trip, biaya, tangkap, penjualan)</strong>. Disimpan selama-lamanya selama dibutuhkan untuk laporan keuangan dan audit. Aturan pembukuan di Indonesia mewajibkan penyimpanan sampai 10 tahun.</li>
+      <li><strong>Foto bukti</strong>. Disimpan selama trip terkait belum dihapus atau diarsipkan.</li>
+      <li><strong>Log teknis</strong>. Disimpan paling lama 90 hari.</li>
+    </ul>
+
+    <h2 id="hakmu"><span class="num">07</span>Hak-hak kamu</h2>
+    <p>Sesuai Pasal 5–13 UU PDP, kamu punya hak untuk:</p>
+    <ul>
+      <li>Mendapatkan informasi yang jelas tentang data kamu (hak akses).</li>
+      <li>Memperbaiki data yang salah (hak koreksi).</li>
+      <li>Meminta data kamu dihapus (hak penghapusan).</li>
+      <li>Menarik kembali persetujuan yang sudah kamu berikan.</li>
+      <li>Memperoleh salinan data kamu dalam format yang bisa dibaca komputer (hak portabilitas).</li>
+      <li>Mengajukan keberatan atas pemrosesan data.</li>
+      <li>Menyampaikan pengaduan ke lembaga pengawas pelindungan data.</li>
+    </ul>
+    <p>
+      Cara menggunakan hak-hak di atas: kirim email ke
+      <a href="mailto:dafagareth@gmail.com">dafagareth@gmail.com</a> dengan subjek
+      <code>[Privasi] Permintaan Hak</code> dan sebutkan hak yang ingin kamu pakai.
+    </p>
+
+    <div class="legal-callout">
+      <strong>Catatan penting.</strong> Permintaan penghapusan data tidak bisa dilakukan
+      untuk catatan transaksi yang sudah masuk laporan keuangan terkunci, karena
+      itu termasuk kewajiban pembukuan menurut hukum perpajakan Indonesia. Yang bisa
+      dihapus: data identitas pribadi, foto, dan catatan yang belum terkunci.
+    </div>
+
+    <h2 id="keamanan"><span class="num">08</span>Keamanan data</h2>
+    <p>
+      Kami pakai langkah pengamanan teknis standar: password di-<em>hash</em> sebelum
+      disimpan, koneksi ke server pakai HTTPS, akses ke database dibatasi via akun
+      bertingkat. Token autentikasi (JWT) punya masa berlaku terbatas.
+    </p>
+    <p>
+      Tapi: tidak ada sistem yang 100% aman. Kalau terjadi kebocoran data yang
+      berdampak pada kamu, kami akan memberi tahu paling lambat 3×24 jam sejak
+      kebocoran diketahui (sesuai Pasal 46 UU PDP).
+    </p>
+
+    <h2 id="anak"><span class="num">09</span>Anak di bawah umur</h2>
+    <p>
+      Aplikasi ini ditujukan untuk pemilik kapal dan operator dewasa yang menjalankan
+      usaha bagan. Kami <strong>tidak</strong> mengizinkan pendaftaran akun untuk anak
+      di bawah 17 tahun. Kalau ada akun yang terbukti milik anak di bawah umur, akan
+      kami hapus segera.
+    </p>
+
+    <h2 id="perubahan"><span class="num">10</span>Kalau ada perubahan</h2>
+    <p>
+      Kebijakan ini bisa berubah seiring pertumbuhan platform. Setiap perubahan
+      yang berdampak material akan diumumkan minimal 14 hari sebelum berlaku, lewat
+      notifikasi di aplikasi dan banner di halaman ini.
+    </p>
+    <p>
+      Versi historis kebijakan disimpan; kalau kamu butuh versi sebelumnya untuk
+      keperluan tertentu, hubungi kami via email.
+    </p>
+
+    <div class="legal-contact">
+      <h2 style="margin-top:0;">Hubungi kami</h2>
+      <dl>
+        <dt>Nama</dt>
+        <dd>Dafa Al Hafiz</dd>
+        <dt>Email</dt>
+        <dd><a href="mailto:dafagareth@gmail.com">dafagareth@gmail.com</a></dd>
+        <dt>Subjek email</dt>
+        <dd><code>[Privasi] &lt;keperluan kamu&gt;</code></dd>
+        <dt>Waktu balas</dt>
+        <dd>Paling lambat 7 hari kerja</dd>
+      </dl>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

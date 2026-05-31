@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}{% if object %}Ubah{% else %}Tambah{% endif %} Hasil Tangkap{% endblock %}
+
+{% block content %}
+<div class="content-narrow">
+    <header class="page-header">
+        <h1 class="page-title">{% if object %}Ubah hasil tangkap{% else %}Tambah hasil tangkap{% endif %}</h1>
+        {% if trip %}
+        <p class="page-subtitle">Trip {{ trip.kapal }}, {{ trip.tgl_berangkat|tgl_indo }}</p>
+        {% endif %}
+    </header>
+
+    <form method="post" class="form-stack">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a href="javascript:history.back()" class="btn btn-link">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

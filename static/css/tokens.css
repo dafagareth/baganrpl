@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════════════════════
+   tokens.css — Design tokens (light mode, Google Material 3).
+   Selaras dengan bagan_app (Flutter) — primary #1A73E8,
+   scaffold #F8F9FA, card border bukan shadow, input filled.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Fonts ───────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&family=Google+Sans+Text:wght@400;500;700&display=swap');
+
+:root {
+    /* ── Type stacks (Google-style) ─────────────────────── */
+    --f-body    : 'Google Sans Text', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-display : 'Google Sans Text', 'Roboto', system-ui, sans-serif;
+    --f-mono    : 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* ── Canvas / surfaces (Google Gray 50 base) ────────── */
+    --canvas               : #F8F9FA;   /* Gray 50 — scaffold */
+    --canvas-alt           : #F1F3F4;   /* Gray 100 */
+    --surface              : #FFFFFF;
+    --surface-hover        : #F1F3F4;
+    --surface-sunken       : #F1F3F4;
+    --surface-container    : #F1F3F4;   /* M3 surfaceContainer */
+    --surface-container-hi : #E8EAED;   /* M3 surfaceContainerHighest — input fill */
+
+    /* ── Ink / text (Google Gray scale) ─────────────────── */
+    --ink            : #202124;   /* Gray 900 — primary text */
+    --ink-secondary  : #3C4043;   /* Gray 800 */
+    --ink-muted      : #5F6368;   /* Gray 700 — onSurfaceVariant */
+    --ink-faint      : #80868B;   /* Gray 600 */
+    --ink-disabled   : #BDC1C6;   /* Gray 400 */
+
+    /* ── Hairlines / outlines ───────────────────────────── */
+    --rule           : #DADCE0;   /* Gray 300 — outline */
+    --rule-soft      : #E8EAED;   /* Gray 200 — outlineVariant */
+
+    /* ── Brand — Google Blue ────────────────────────────── */
+    --brand          : #1A73E8;   /* Google Blue 600 */
+    --brand-hover    : #1967D2;   /* Google Blue 700 */
+    --brand-active   : #185ABC;   /* Google Blue 800 */
+    --brand-mid      : #4285F4;   /* Google Blue 500 */
+    --brand-light    : #D2E3FC;   /* Google Blue 100 — primaryContainer */
+    --brand-subtle   : #E8F0FE;   /* Google Blue 50 */
+    --on-brand       : #FFFFFF;
+    --on-brand-light : #174EA6;   /* onPrimaryContainer */
+
+    /* ── Semantic — Google palette ──────────────────────── */
+    --success        : #1E8E3E;   /* Google Green 700 */
+    --success-hover  : #188038;
+    --success-bg     : #E6F4EA;   /* Green 50 */
+    --success-mid    : #34A853;
+
+    --danger         : #D93025;   /* Google Red 600 */
+    --danger-hover   : #C5221F;
+    --danger-bg      : #FCE8E6;   /* Red 50 */
+
+    --warning        : #F9AB00;   /* Google Yellow 700 */
+    --warning-hover  : #E37400;
+    --warning-bg     : #FEF7E0;   /* Yellow 50 */
+    --warning-ink    : #B06000;   /* darker text on warning bg */
+
+    --info           : #1A73E8;
+    --info-bg        : #E8F0FE;
+
+    /* ── Spacing (8pt grid, Material) ───────────────────── */
+    --space-xxs      : 4px;
+    --space-xs       : 8px;
+    --space-sm       : 12px;
+    --space-md       : 16px;
+    --space-lg       : 20px;
+    --space-xl       : 24px;
+    --space-xxl      : 32px;
+    --space-section  : 64px;
+
+    /* ── Radii (Material 3) ─────────────────────────────── */
+    --radius-xs      : 4px;
+    --radius-sm      : 8px;     /* button / input / chip */
+    --radius-md      : 8px;
+    --radius-lg      : 12px;    /* card */
+    --radius-xl      : 16px;
+    --radius-xxl     : 28px;    /* modal / large surface */
+    --radius-pill    : 9999px;
+
+    /* ── Elevation (M3 — subtle, mostly border-based) ───── */
+    --shadow-none    : none;
+    --shadow-sm      : 0 1px 2px 0 rgba(60, 64, 67, 0.05),
+                       0 1px 3px 1px rgba(60, 64, 67, 0.04);
+    --shadow-md      : 0 1px 3px 0 rgba(60, 64, 67, 0.10),
+                       0 4px 8px 3px rgba(60, 64, 67, 0.08);
+    --shadow-lg      : 0 4px 8px 3px rgba(60, 64, 67, 0.10),
+                       0 12px 24px 6px rgba(60, 64, 67, 0.12);
+    --shadow-fab     : 0 1px 2px 0 rgba(60, 64, 67, 0.30),
+                       0 2px 6px 2px rgba(60, 64, 67, 0.15);
+
+    /* ── Layout ─────────────────────────────────────────── */
+    --sidebar-width  : 256px;     /* Material drawer */
+    --topbar-height  : 64px;      /* Material app bar */
+
+    /* ── Motion (Material easing) ───────────────────────── */
+    --t-fast         : 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --t-normal       : 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --t-emphasized   : 0.3s cubic-bezier(0.2, 0, 0, 1);
+
+    /* ── Legacy compatibility aliases ───────────────────── */
+    --color-canvas              : var(--canvas);
+    --color-surface-base        : var(--surface);
+    --color-surface-raised      : var(--surface);
+    --color-surface-overlay     : var(--surface);
+    --color-surface-hover       : var(--surface-hover);
+    --color-ink                 : var(--ink);
+    --color-ink-secondary       : var(--ink-secondary);
+    --color-ink-muted           : var(--ink-muted);
+    --color-ink-disabled        : var(--ink-disabled);
+    --color-on-primary          : var(--on-brand);
+    --color-primary             : var(--brand);
+    --color-primary-hover       : var(--brand-hover);
+    --color-primary-active      : var(--brand-active);
+    --color-primary-subtle      : var(--brand-subtle);
+    --color-hairline            : var(--rule);
+    --color-hairline-soft       : var(--rule-soft);
+    --color-success             : var(--success);
+    --color-success-bg          : var(--success-bg);
+    --color-danger              : var(--danger);
+    --color-danger-bg           : var(--danger-bg);
+    --color-warning             : var(--warning);
+    --color-warning-bg          : var(--warning-bg);
+    --color-info                : var(--info);
+    --color-info-bg             : var(--info-bg);
+    --bg-body                   : var(--canvas);
+    --bg-surface                : var(--surface);
+    --bg-surface-hover          : var(--surface-hover);
+    --bg-navbar                 : var(--surface);
+    --bg-sidebar                : var(--surface);
+    --border-color              : var(--rule);
+    --text-primary              : var(--ink);
+    --text-secondary            : var(--ink-secondary);
+    --text-muted                : var(--ink-muted);
+    --radius-none               : 0;
+    --radius-full               : var(--radius-pill);
+    --transition-fast           : var(--t-fast);
+    --transition-normal         : var(--t-normal);
+}
+
+/* ============================================================
+   DARK MODE — palet token gelap.
+   Dipakai dua jalur:
+     (a) preferensi sistem/browser, SELAMA pengguna belum memilih
+         mode terang lewat tombol  →  :root:not([data-theme="light"])
+     (b) pilihan manual lewat tombol             →  [data-theme="dark"]
+   Hanya token warna yang di-override; spacing/radius/font tetap.
+   Daftar token sengaja diduplikasi supaya kedua jalur identik.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Brand — biru tetap cukup gelap utk teks putih di atas tombol */
+    --brand: #1A73E8;
+    --brand-hover: #1B6FE0;
+    --brand-active: #2D7BF0;
+    --brand-light: #1E2A3A;
+    --brand-subtle: #1A2230;
+
+    --ink: #E3E3E3;
+    --ink-secondary: #C7C7C7;
+    --ink-muted: #9AA0A6;
+    --ink-faint: #80868B;
+    --ink-disabled: #5F6368;
+
+    --canvas: #131314;
+    --canvas-alt: #1A1B1E;
+    --surface: #1E1F22;
+    --surface-hover: #2A2B2E;
+    --surface-sunken: #181A1C;
+    --surface-container: #181A1C;
+    --surface-container-hi: #2A2B2E;
+    --surface-active: #28344A;
+
+    --rule: #3C4043;
+    --rule-soft: #2A2C2F;
+    --rule-strong: #5F6368;
+
+    --shadow-color: 0 0% 0%;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
+    --shadow: 0 1px 3px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.30);
+    --shadow-md: 0 2px 6px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.40);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.50), 0 16px 48px rgba(0,0,0,0.55);
+  }
+}
+
+/* Pilihan manual "Gelap" — menang atas preferensi sistem */
+:root[data-theme="dark"] {
+  --brand: #1A73E8;
+  --brand-hover: #1B6FE0;
+  --brand-active: #2D7BF0;
+  --brand-light: #1E2A3A;
+  --brand-subtle: #1A2230;
+
+  --ink: #E3E3E3;
+  --ink-secondary: #C7C7C7;
+  --ink-muted: #9AA0A6;
+  --ink-faint: #80868B;
+  --ink-disabled: #5F6368;
+
+  --canvas: #131314;
+  --canvas-alt: #1A1B1E;
+  --surface: #1E1F22;
+  --surface-hover: #2A2B2E;
+  --surface-sunken: #181A1C;
+  --surface-container: #181A1C;
+  --surface-container-hi: #2A2B2E;
+  --surface-active: #28344A;
+
+  --rule: #3C4043;
+  --rule-soft: #2A2C2F;
+  --rule-strong: #5F6368;
+
+  --shadow-color: 0 0% 0%;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
+  --shadow: 0 1px 3px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.30);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.40);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.50), 0 16px 48px rgba(0,0,0,0.55);
+}

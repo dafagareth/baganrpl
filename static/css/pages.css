@@ -1,0 +1,428 @@
+/* ═══════════════════════════════════════════════════════════
+   pages.css — Page-specific styles (login, empty state, etc.)
+   Material 3 / Google.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Login ───────────────────────────────────────────────── */
+.login-page {
+    background     : var(--canvas);
+    min-height     : 100vh;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    padding        : var(--space-xl);
+}
+
+.login-card {
+    background   : var(--surface);
+    border       : 1px solid var(--rule-soft);
+    border-radius: var(--radius-xxl);
+    box-shadow   : var(--shadow-sm);
+    width        : 100%;
+    max-width    : 420px;
+    padding      : var(--space-xxl);
+}
+
+.login-card .login-logo {
+    font-family   : var(--f-display);
+    font-size     : 1.75rem;
+    font-weight   : 400;
+    letter-spacing: 0;
+    color         : var(--ink);
+    text-align    : center;
+    margin-bottom : var(--space-xs);
+}
+
+.login-card .login-subtitle {
+    text-align : center;
+    color      : var(--ink-muted);
+    font-size  : 14px;
+    margin-bottom: var(--space-xl);
+}
+
+.login-card .text-muted {
+    color: var(--ink-muted) !important;
+}
+
+.login-card .form-control,
+.login-card .form-select {
+    padding   : 14px 16px;
+    font-size : 15px;
+}
+
+.login-card .btn-primary {
+    padding   : 14px 24px;
+    font-size : 15px;
+    width     : 100%;
+    margin-top: var(--space-sm);
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding   : var(--space-section) var(--space-xl);
+    color     : var(--ink-muted);
+}
+
+.empty-state i {
+    font-size    : 56px;
+    color        : var(--ink-disabled);
+    margin-bottom: var(--space-md);
+    display      : block;
+}
+
+.empty-state h5 {
+    color        : var(--ink);
+    font-size    : 16px;
+    font-weight  : 500;
+    margin-bottom: 4px;
+}
+
+.empty-state p {
+    font-size    : 14px;
+    color        : var(--ink-muted);
+    margin-bottom: var(--space-md);
+}
+
+/* ── Detail meta / definition list ───────────────────────── */
+.detail-meta {
+    display              : grid;
+    grid-template-columns: max-content 1fr;
+    column-gap           : var(--space-xl);
+    row-gap              : var(--space-sm);
+    font-size            : 14px;
+}
+
+.detail-meta dt {
+    font-family   : var(--f-body);
+    font-size     : 13px;
+    font-weight   : 500;
+    color         : var(--ink-muted);
+    align-self    : center;
+}
+
+.detail-meta dd {
+    color : var(--ink);
+    margin: 0;
+}
+
+/* ── Form section divider ────────────────────────────────── */
+.form-section-title {
+    font-family    : var(--f-body);
+    font-size      : 13px;
+    font-weight    : 500;
+    letter-spacing : 0.02em;
+    color          : var(--ink-secondary);
+    padding-bottom : var(--space-xs);
+    border-bottom  : 1px solid var(--rule-soft);
+    margin-bottom  : var(--space-md);
+    margin-top     : var(--space-xl);
+}
+
+.form-section-title:first-child { margin-top: 0; }
+
+/* ── KPI ribbon (dashboard) ──────────────────────────────── */
+.kpi-ribbon {
+    display              : grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap                  : var(--space-md);
+    margin-bottom        : var(--space-xl);
+}
+
+/* ── Snackbar (Material) ─────────────────────────────────── */
+.snackbar {
+    position     : fixed;
+    bottom       : 24px;
+    left         : 50%;
+    transform    : translateX(-50%);
+    background   : var(--ink);
+    color        : var(--surface);
+    padding      : 14px 16px;
+    border-radius: var(--radius-xs);
+    font-size    : 14px;
+    box-shadow   : var(--shadow-md);
+    z-index      : 1090;
+    min-width    : 280px;
+    max-width    : 560px;
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-md);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.page-header-row {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : baseline;
+    gap            : var(--space-md);
+    flex-wrap      : wrap;
+    margin-bottom  : var(--space-lg);
+}
+
+.page-actions {
+    display    : flex;
+    align-items: center;
+    gap        : 8px;
+    flex-wrap  : wrap;
+}
+
+/* ── Metrics row (no card, hairlines only) ───────────────── */
+.metrics {
+    display              : grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap                  : 0;
+    border-top           : 1px solid var(--rule-soft);
+    border-bottom        : 1px solid var(--rule-soft);
+    margin               : var(--space-md) 0 var(--space-xxl);
+}
+
+.metric {
+    padding     : var(--space-md) var(--space-lg) var(--space-md) 0;
+    border-right: 1px solid var(--rule-soft);
+}
+
+.metric:last-child { border-right: none; }
+
+.metric-label {
+    font-size    : 13px;
+    color        : var(--ink-muted);
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    font-family : var(--f-display);
+    font-size   : 26px;
+    font-weight : 500;
+    color       : var(--ink);
+    line-height : 1.1;
+    letter-spacing: 0;
+}
+
+.metric-unit {
+    font-size : 13px;
+    color     : var(--ink-muted);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+@media (max-width: 575px) {
+    .metric { border-right: none; border-bottom: 1px solid var(--rule-soft); padding: var(--space-md) 0; }
+    .metric:last-child { border-bottom: none; }
+}
+
+/* ── Section block (substitute untuk card berlebih) ──────── */
+.section {
+    margin-bottom: var(--space-xxl);
+}
+
+.section-head {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : baseline;
+    gap            : var(--space-md);
+    margin-bottom  : var(--space-sm);
+    padding-bottom : 6px;
+    border-bottom  : 1px solid var(--rule-soft);
+}
+
+.section-title {
+    font-family   : var(--f-display);
+    font-size     : 17px;
+    font-weight   : 500;
+    color         : var(--ink);
+    margin        : 0;
+    letter-spacing: 0;
+}
+
+.section-meta {
+    font-size: 13px;
+    color    : var(--ink-muted);
+    margin   : 4px 0 var(--space-md);
+}
+
+.link-action {
+    font-size      : 13px;
+    color          : var(--brand);
+    text-decoration: none;
+    font-weight    : 500;
+}
+
+.link-action:hover { text-decoration: underline; }
+
+/* ── Plain table (no card wrapper) ───────────────────────── */
+.table-plain {
+    width        : 100%;
+    font-size    : 14px;
+    border-collapse: collapse;
+}
+
+/* Saat dibungkus .table-responsive (overflow-x: auto), sel jangan
+   wrap supaya total width melebihi container → scroll kanan-kiri aktif. */
+.table-responsive .table-plain th,
+.table-responsive .table-plain td {
+    white-space: nowrap;
+}
+
+.table-responsive {
+    overflow-x : auto;
+    overflow-y : hidden;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: var(--space-md);
+}
+
+.table-responsive::-webkit-scrollbar { height: 8px; }
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: var(--radius-pill);
+}
+
+.table-plain thead th {
+    text-align    : left;
+    font-size     : 12px;
+    font-weight   : 500;
+    color         : var(--ink-muted);
+    padding       : 8px 12px 8px 0;
+    border-bottom : 1px solid var(--rule);
+    letter-spacing: 0.02em;
+}
+
+.table-plain tbody td {
+    padding      : 12px 12px 12px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    color        : var(--ink);
+    vertical-align: middle;
+}
+
+.table-plain tbody tr:hover td {
+    background: var(--surface-hover);
+}
+
+.table-plain tbody tr:last-child td { border-bottom: 0; }
+
+.table-plain th:last-child,
+.table-plain td:last-child { padding-right: 0; }
+
+.table-plain .num {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+/* ── List row (mobile alternatif tabel, hairline saja) ───── */
+.list-row {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : flex-start;
+    gap            : var(--space-sm);
+    padding        : var(--space-md) 0;
+    border-bottom  : 1px solid var(--rule-soft);
+    text-decoration: none;
+    color          : var(--ink);
+}
+
+.list-row:last-child { border-bottom: 0; }
+.list-row:hover { color: var(--ink); }
+
+.list-row-title {
+    font-size  : 15px;
+    font-weight: 500;
+    color      : var(--ink);
+}
+
+.list-row-meta {
+    font-size: 13px;
+    color    : var(--ink-muted);
+    margin-top: 2px;
+}
+
+/* ── Row actions (icon button cluster di table cell) ─────── */
+.row-actions {
+    display    : inline-flex;
+    align-items: center;
+    gap        : 2px;
+}
+
+.row-actions .btn-icon {
+    width        : 32px;
+    height       : 32px;
+    border-radius: var(--radius-pill);
+    background   : transparent;
+    border       : none;
+    color        : var(--ink-muted);
+    font-size    : 15px;
+    transition   : background var(--t-fast), color var(--t-fast);
+    display      : inline-flex;
+    align-items  : center;
+    justify-content: center;
+}
+
+.row-actions .btn-icon:hover {
+    background: var(--surface-hover);
+    color     : var(--ink);
+}
+
+.row-actions .btn-icon.text-danger:hover {
+    background: var(--danger-bg);
+    color     : var(--danger);
+}
+
+/* ── Form layout (no card wrapper by default) ────────────── */
+.form-stack > * + * { margin-top: var(--space-lg); }
+
+.form-actions {
+    display        : flex;
+    justify-content: flex-end;
+    gap            : var(--space-xs);
+    padding-top    : var(--space-lg);
+    border-top     : 1px solid var(--rule-soft);
+    margin-top     : var(--space-xl);
+}
+
+/* ── Content widths ──────────────────────────────────────── */
+.content-narrow { max-width: 560px; }
+.content-medium { max-width: 800px; }
+
+/* Checkbox row khusus (label di kanan, input di kiri) */
+.form-check-row {
+    display    : flex;
+    align-items: center;
+    gap        : 10px;
+}
+
+.form-check-row .form-check-input { margin: 0; }
+
+/* ── Search input (inline, no card) ──────────────────────── */
+.search-inline {
+    display      : flex;
+    align-items  : center;
+    gap          : 8px;
+    max-width    : 420px;
+    margin-bottom: var(--space-md);
+}
+
+.search-inline .form-control { flex: 1; }
+
+/* ── Print ───────────────────────────────────────────────── */
+@media print {
+    .navbar,
+    .sidebar,
+    .mobile-nav,
+    .fab-add,
+    .navbar-actions { display: none !important; }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding    : 0 !important;
+    }
+
+    body {
+        background: #fff !important;
+        color     : #000 !important;
+        font-size : 11pt;
+    }
+
+    .card {
+        box-shadow  : none !important;
+        border      : 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load format_tags %}
+{% block title %}Trip{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <h1 class="page-title">Trip</h1>
+    <a href="{% url 'operasional:trip_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah trip</a>
+</header>
+
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari kapal atau status">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'operasional:trip_list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
+<div class="d-none d-lg-block table-responsive">
+    <table class="table-plain">
+        <thead>
+            <tr>
+                <th>Kapal</th>
+                <th>Berangkat</th>
+                <th>Kembali</th>
+                <th>Status</th>
+                <th class="num">Total biaya</th>
+                <th style="width: 1%;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trip in trip_list %}
+            <tr>
+                <td class="fw-medium">{{ trip.kapal }}</td>
+                <td>{{ trip.tgl_berangkat|tgl_indo }}</td>
+                <td>{{ trip.tgl_kembali|tgl_indo|default:"Belum kembali" }}</td>
+                <td>
+                    <span class="badge {% if trip.status == 'berlayar' %}bg-primary{% elif trip.status == 'selesai' %}bg-success{% elif trip.status == 'batal' %}bg-danger{% else %}bg-secondary{% endif %}">
+                        {{ trip.get_status_display }}
+                    </span>
+                </td>
+                <td class="num">{{ trip.total_biaya_operasional|rupiah }}</td>
+                <td>
+                    <div class="row-actions">
+                        <a href="{% url 'operasional:trip_detail' trip.id %}" class="btn-icon" title="Detail"><i class="bi bi-eye"></i></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ trip.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada trip tercatat.{% endif %}
+            </td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="d-lg-none">
+    {% for trip in trip_list %}
+    <a href="{% url 'operasional:trip_detail' trip.id %}" class="list-row">
+        <div>
+            <div class="list-row-title">{{ trip.kapal }}</div>
+            <div class="list-row-meta">
+                {{ trip.tgl_berangkat|tgl_indo }} · {{ trip.total_biaya_operasional|rupiah }}
+            </div>
+        </div>
+        <span class="badge {% if trip.status == 'berlayar' %}bg-primary{% elif trip.status == 'selesai' %}bg-success{% elif trip.status == 'batal' %}bg-danger{% else %}bg-secondary{% endif %}">
+            {{ trip.get_status_display }}
+        </span>
+    </a>
+    {% empty %}
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada trip tercatat.{% endif %}
+    </p>
+    {% endfor %}
+</div>
+
+{% include 'includes/pagination.html' %}
+
+{% for trip in trip_list %}
+<div class="modal fade" id="deleteModal{{ trip.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_delete' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Hapus trip?</h5></div>
+                <div class="modal-body">
+                    Trip <strong>{{ trip.kapal }}</strong> tanggal {{ trip.tgl_berangkat|tgl_indo }} akan dihapus permanen.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block fab %}
+<a href="{% url 'operasional:trip_create' %}" class="fab-add d-lg-none" title="Tambah trip">
+    <i class="bi bi-plus-lg"></i>
+</a>
+{% endblock %}
