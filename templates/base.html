@@ -56,6 +56,7 @@
             </li>
         </ul>
 
+        {% if is_owner %}
         <div class="sidebar-section-label">Master Data</div>
         <ul class="nav flex-column">
             <li><a href="{% url 'master:kapal_list' %}" class="nav-link"><span class="material-symbols-outlined">directions_boat</span> Kapal</a></li>
@@ -63,6 +64,7 @@
             <li><a href="{% url 'master:ikan_list' %}" class="nav-link"><span class="material-symbols-outlined">set_meal</span> Jenis Ikan</a></li>
             <li><a href="{% url 'master:pembeli_list' %}" class="nav-link"><span class="material-symbols-outlined">storefront</span> Pembeli</a></li>
         </ul>
+        {% endif %}
 
         <div class="sidebar-section-label">Operasional</div>
         <ul class="nav flex-column">
@@ -73,13 +75,17 @@
         <ul class="nav flex-column">
             <li><a href="{% url 'tangkap:list' %}" class="nav-link"><span class="material-symbols-outlined">shopping_basket</span> Hasil Tangkap</a></li>
             <li><a href="{% url 'penjualan:list' %}" class="nav-link"><span class="material-symbols-outlined">payments</span> Penjualan</a></li>
+            {% if is_owner %}
             <li><a href="{% url 'penjualan:bagi_hasil_list' %}" class="nav-link"><span class="material-symbols-outlined">account_balance_wallet</span> Bagi Hasil</a></li>
+            {% endif %}
         </ul>
 
+        {% if is_owner %}
         <div class="sidebar-section-label">Laporan</div>
         <ul class="nav flex-column">
             <li><a href="{% url 'laporan:index' %}" class="nav-link"><span class="material-symbols-outlined">bar_chart</span> Laporan</a></li>
         </ul>
+        {% endif %}
 
         <div class="sidebar-footer">
             <a href="mailto:dafagareth@gmail.com" class="nav-link"><span class="material-symbols-outlined">mail</span> Kontak</a>
@@ -114,10 +120,12 @@
         <i class="bi bi-speedometer2"></i>
         <span>Dashboard</span>
     </a>
+    {% if is_owner %}
     <a href="{% url 'master:kapal_list' %}" class="mobile-nav-item {% if '/master/' in request.path %}active{% endif %}">
         <i class="bi bi-database"></i>
         <span>Master</span>
     </a>
+    {% endif %}
     <a href="{% url 'operasional:trip_list' %}" class="mobile-nav-item {% if '/operasional/' in request.path %}active{% endif %}">
         <i class="bi bi-compass"></i>
         <span>Trip</span>
@@ -126,10 +134,12 @@
         <i class="bi bi-basket3"></i>
         <span>Produksi</span>
     </a>
+    {% if is_owner %}
     <a href="{% url 'laporan:index' %}" class="mobile-nav-item {% if '/laporan/' in request.path %}active{% endif %}">
         <i class="bi bi-bar-chart"></i>
         <span>Laporan</span>
     </a>
+    {% endif %}
 </nav>
 
 {% block fab %}{% endblock %}

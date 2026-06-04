@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
-from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.core.mixins import OwnerRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -11,7 +11,7 @@ from apps.penjualan.models import Penjualan, BagiHasil
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 
-class LaporanIndexView(LoginRequiredMixin, TemplateView):
+class LaporanIndexView(OwnerRequiredMixin, TemplateView):
     template_name = 'laporan/index.html'
 
     def get_context_data(self, **kwargs):
@@ -32,7 +32,7 @@ class LaporanIndexView(LoginRequiredMixin, TemplateView):
         ]
         return ctx
 
-class ExportExcelView(LoginRequiredMixin, TemplateView):
+class ExportExcelView(OwnerRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         now = timezone.now()
@@ -116,7 +116,7 @@ class ExportExcelView(LoginRequiredMixin, TemplateView):
         wb.save(response)
         return response
 
-class ExportPDFTripView(LoginRequiredMixin, TemplateView):
+class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
     """Ekspor laporan satu trip ke PDF menggunakan ReportLab."""
 
     def get(self, request, pk, *args, **kwargs):

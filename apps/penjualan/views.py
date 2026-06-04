@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.core.mixins import OwnerRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -82,7 +83,7 @@ def penjualan_multi_create(request):
         'stock_data_json': stock_data_json,
     })
 
-class BagiHasilListView(LoginRequiredMixin, ListView):
+class BagiHasilListView(OwnerRequiredMixin, ListView):
     model = BagiHasil
     template_name = 'penjualan/bagi_hasil_list.html'
     context_object_name = 'bagi_hasil_list'
@@ -92,7 +93,7 @@ class BagiHasilListView(LoginRequiredMixin, ListView):
             'trip__kapal', 'abk'
         ).order_by('-trip__tgl_berangkat')
 
-class BagiHasilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class BagiHasilCreateView(OwnerRequiredMixin, SuccessMessageMixin, CreateView):
     model = BagiHasil
     form_class = BagiHasilForm
     template_name = 'penjualan/bagi_hasil_form.html'
@@ -114,14 +115,14 @@ class BagiHasilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_success_url(self):
         return reverse('operasional:trip_detail', kwargs={'pk': self.kwargs['trip_id']})
 
-class BagiHasilCreateGlobalView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class BagiHasilCreateGlobalView(OwnerRequiredMixin, SuccessMessageMixin, CreateView):
     model = BagiHasil
     form_class = BagiHasilGlobalForm
     template_name = 'penjualan/bagi_hasil_form.html'
     success_message = 'Bagi hasil berhasil ditambahkan'
     success_url = reverse_lazy('penjualan:bagi_hasil_list')
 
-class BagiHasilUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class BagiHasilUpdateView(OwnerRequiredMixin, SuccessMessageMixin, UpdateView):
     model = BagiHasil
     form_class = BagiHasilForm
     template_name = 'penjualan/bagi_hasil_form.html'
