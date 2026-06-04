@@ -70,83 +70,8 @@
 </form>
 {% endblock %}
 
+{% load static %}
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const stockData = {{ stock_data_json|safe }};
-    const tbody = document.getElementById('formset-body');
-    const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
-    const btnAdd = document.getElementById('btn-add-row');
-
-    const firstRow = tbody.querySelector('.formset-row');
-    if (!firstRow) return;
-
-    tbody.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-semua');
-        if (!btn) return;
-        const row = btn.closest('.formset-row');
-        const select = row.querySelector('select[name$="-hasil_tangkap"]');
-        const inputBerat = row.querySelector('input[name$="-berat_terjual"]');
-        if (select && inputBerat && select.value) {
-            const tersedia = stockData[select.value];
-            if (tersedia !== undefined) { inputBerat.value = tersedia; inputBerat.focus(); }
-        }
-    });
-
-    tbody.addEventListener('change', function(e) {
-        if (!e.target.matches('select[name$="-hasil_tangkap"]')) return;
-        const row = e.target.closest('.formset-row');
-        const btn = row.querySelector('.btn-semua');
-        const selectedId = e.target.value;
-        if (selectedId && stockData[selectedId] !== undefined) {
-            btn.title = 'Stok tersedia: ' + stockData[selectedId] + ' kg';
-            btn.disabled = false;
-        } else {
-            btn.title = 'Pilih hasil tangkap dulu';
-            btn.disabled = true;
-        }
-    });
-
-    btnAdd.addEventListener('click', function() {
-        const totalForms = parseInt(totalFormsInput.value);
-        const newRow = firstRow.cloneNode(true);
-        newRow.querySelectorAll('input, select, textarea').forEach(function(el) {
-            if (el.name) el.name = el.name.replace(/form-\d+-/, 'form-' + totalForms + '-');
-            if (el.id)   el.id   = el.id.replace(/id_form-\d+-/, 'id_form-' + totalForms + '-');
-            if (el.tagName === 'SELECT') el.selectedIndex = 0;
-            else if (el.type === 'checkbox') el.checked = false;
-            else el.value = '';
-        });
-        tbody.appendChild(newRow);
-        totalFormsInput.value = totalForms + 1;
-        updateRemoveButtons();
-    });
-
-    tbody.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-remove-row');
-        if (!btn) return;
-        const rows = tbody.querySelectorAll('.formset-row');
-        if (rows.length <= 1) return;
-        btn.closest('.formset-row').remove();
-        const remainingRows = tbody.querySelectorAll('.formset-row');
-        remainingRows.forEach(function(row, idx) {
-            row.querySelectorAll('input, select, textarea').forEach(function(el) {
-                if (el.name) el.name = el.name.replace(/form-\d+-/, 'form-' + idx + '-');
-                if (el.id)   el.id   = el.id.replace(/id_form-\d+-/, 'id_form-' + idx + '-');
-            });
-        });
-        totalFormsInput.value = remainingRows.length;
-        updateRemoveButtons();
-    });
-
-    function updateRemoveButtons() {
-        const rows = tbody.querySelectorAll('.formset-row');
-        rows.forEach(function(row) {
-            const btn = row.querySelector('.btn-remove-row');
-            if (btn) btn.disabled = rows.length <= 1;
-        });
-    }
-    updateRemoveButtons();
-});
-</script>
+<script type="application/json" id="penjualanFormsetData">{{ stock_data_json|safe }}</script>
+<script src="{% static 'js/penjualan_formset.js' %}"></script>
 {% endblock %}
