@@ -1,7 +1,5 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
-from django.shortcuts import render
 
-# Create your views here.
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages

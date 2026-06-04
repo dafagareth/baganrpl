@@ -1,11 +1,12 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django.urls import path
-from . import views
+from .views import LaporanIndexView
+from .views_export import ExportExcelView, ExportPDFTripView
 
 app_name = 'laporan'
 
 urlpatterns = [
-    path('', views.LaporanIndexView.as_view(), name='index'),
-    path('export/excel/', views.ExportExcelView.as_view(), name='export_excel'),
-    path('trip/<int:pk>/pdf/', views.ExportPDFTripView.as_view(), name='export_pdf_trip'),
+    path('', LaporanIndexView.as_view(), name='index'),
+    path('export/excel/', ExportExcelView.as_view(), name='export_excel'),
+    path('trip/<int:pk>/pdf/', ExportPDFTripView.as_view(), name='export_pdf_trip'),
 ]
