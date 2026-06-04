@@ -333,9 +333,9 @@ class SyncView(APIView):
             return _fail(client_uuid, serializer.errors)
         vd = serializer.validated_data
 
-        if vd['trip'].status == 'selesai':
+        if vd['trip'].is_laporan_locked:
             return _fail(client_uuid,
-                         'Biaya tidak bisa ditambahkan — trip sudah selesai.')
+                         'Biaya tidak bisa ditambahkan — laporan trip sudah dikunci.')
 
         try:
             obj = BiayaOperasional.objects.create(client_uuid=client_uuid, **vd)

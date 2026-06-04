@@ -154,7 +154,7 @@ class FCMSyncIntegrationTest(TestCase):
         self.assertEqual(resp.data['results'][0]['status'], 'synced')
         # Notification DB harus ada untuk owner
         self.assertEqual(
-            Notification.objects.filter(user=self.owner_user, event='sync').count(), 1)
+            Notification.objects.filter(user=self.owner_user, event='biaya').count(), 1)
 
     @override_settings(**NO_FCM)
     def test_sync_duplikat_tidak_buat_notifikasi(self):
