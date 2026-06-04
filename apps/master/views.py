@@ -284,70 +284,106 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        now = timezone.now()
         import json
         from datetime import date
         from dateutil.relativedelta import relativedelta
-
+        from django.db.models import Count
         from apps.tangkap.models import HasilTangkap
+        from apps.operasional.models import BiayaOperasional
 
+        now = date.today()
+        nama_bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+                      'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']
+
+        # ── KPI ────────────────────────────────────────────────────
         ctx['total_kapal'] = Kapal.objects.filter(status='aktif').count()
-
+        ctx['trip_bulan_ini'] = Trip.objects.filter(
+            tgl_berangkat__month=now.month, tgl_berangkat__year=now.year
+        ).count()
         ctx['tangkap_bulan_ini'] = HasilTangkap.objects.filter(
             trip__tgl_berangkat__month=now.month,
-            trip__tgl_berangkat__year=now.year
+            trip__tgl_berangkat__year=now.year,
         ).aggregate(total=Sum('berat_kg'))['total'] or 0
 
-        ctx['trip_bulan_ini'] = Trip.objects.filter(
-            tgl_berangkat__month=now.month,
-            tgl_berangkat__year=now.year
-        ).count()
-        ctx['pendapatan_bulan_ini'] = Penjualan.objects.filter(
-            tgl_jual__month=now.month,
-            tgl_jual__year=now.year
-        ).aggregate(
-            total=Sum(F('berat_terjual') * F('harga_per_kg'))
-        )['total'] or 0
+        pendapatan_bulan = Penjualan.objects.filter(
+            tgl_jual__month=now.month, tgl_jual__year=now.year
+        ).aggregate(total=Sum(F('berat_terjual') * F('harga_per_kg')))['total'] or 0
+        biaya_bulan = BiayaOperasional.objects.filter(
+            trip__tgl_berangkat__month=now.month,
+            trip__tgl_berangkat__year=now.year,
+        ).aggregate(total=Sum('jumlah'))['total'] or 0
+
+        ctx['pendapatan_bulan_ini'] = pendapatan_bulan
+        ctx['biaya_bulan_ini']      = biaya_bulan
+        ctx['laba_bulan_ini']       = float(pendapatan_bulan) - float(biaya_bulan)
+
         ctx['trip_terbaru'] = Trip.objects.select_related('kapal').order_by('-tgl_berangkat')[:5]
 
-        # Chart data: last 6 months revenue & costs
-        bulan_labels = []
-        pendapatan_data = []
-        biaya_data = []
-        nama_bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-                       'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']
-
+        # ── Chart 1: Pendapatan vs Biaya 6 bulan ──────────────────
+        labels, pend_data, biaya_data, laba_data = [], [], [], []
         for i in range(5, -1, -1):
-            try:
-                d = date.today() - relativedelta(months=i)
-            except Exception:
-                # Fallback if python-dateutil not installed
-                m = now.month - i
-                y = now.year
-                while m <= 0:
-                    m += 12
-                    y -= 1
-                d = date(y, m, 1)
-
-            bulan_labels.append(f"{nama_bulan[d.month]} {d.year}")
-
-            pendapatan = Penjualan.objects.filter(
-                tgl_jual__month=d.month,
-                tgl_jual__year=d.year
-            ).aggregate(
-                total=Sum(F('berat_terjual') * F('harga_per_kg'))
-            )['total'] or 0
-            pendapatan_data.append(float(pendapatan))
-
-            from apps.operasional.models import BiayaOperasional
-            biaya = BiayaOperasional.objects.filter(
+            d = now - relativedelta(months=i)
+            p = float(Penjualan.objects.filter(
+                tgl_jual__month=d.month, tgl_jual__year=d.year
+            ).aggregate(total=Sum(F('berat_terjual') * F('harga_per_kg')))['total'] or 0)
+            b = float(BiayaOperasional.objects.filter(
                 trip__tgl_berangkat__month=d.month,
-                trip__tgl_berangkat__year=d.year
-            ).aggregate(total=Sum('jumlah'))['total'] or 0
-            biaya_data.append(float(biaya))
+                trip__tgl_berangkat__year=d.year,
+            ).aggregate(total=Sum('jumlah'))['total'] or 0)
+            labels.append(f"{nama_bulan[d.month]} '{str(d.year)[2:]}")
+            pend_data.append(p)
+            biaya_data.append(b)
+            laba_data.append(round(p - b, 2))
 
-        ctx['chart_labels'] = json.dumps(bulan_labels)
-        ctx['chart_pendapatan'] = json.dumps(pendapatan_data)
-        ctx['chart_biaya'] = json.dumps(biaya_data)
+        ctx['chart_labels']     = json.dumps(labels)
+        ctx['chart_pendapatan'] = json.dumps(pend_data)
+        ctx['chart_biaya']      = json.dumps(biaya_data)
+        ctx['chart_laba']       = json.dumps(laba_data)
+
+        # ── Chart 2: Top 5 jenis ikan (kg, bulan ini) ─────────────
+        top_ikan = list(
+            HasilTangkap.objects.filter(
+                trip__tgl_berangkat__month=now.month,
+                trip__tgl_berangkat__year=now.year,
+            ).values('jenis_ikan__nama')
+            .annotate(total=Sum('berat_kg'))
+            .order_by('-total')[:5]
+        )
+        ctx['chart_ikan_labels'] = json.dumps([x['jenis_ikan__nama'] for x in top_ikan])
+        ctx['chart_ikan_data']   = json.dumps([float(x['total']) for x in top_ikan])
+
+        # ── Chart 3: Top 5 pembeli (nilai, bulan ini) ─────────────
+        top_pembeli = list(
+            Penjualan.objects.filter(
+                tgl_jual__month=now.month, tgl_jual__year=now.year,
+            ).values('pembeli__nama')
+            .annotate(total=Sum(F('berat_terjual') * F('harga_per_kg')))
+            .order_by('-total')[:5]
+        )
+        ctx['chart_pembeli_labels'] = json.dumps([x['pembeli__nama'] for x in top_pembeli])
+        ctx['chart_pembeli_data']   = json.dumps([float(x['total']) for x in top_pembeli])
+
+        # ── Chart 4: Komposisi biaya per kategori (tahun ini) ─────
+        KAT = {'bbm': 'BBM', 'es': 'Es Balok', 'logistik': 'Logistik',
+               'perawatan': 'Perawatan', 'lainnya': 'Lainnya'}
+        kat_data = list(
+            BiayaOperasional.objects.filter(
+                trip__tgl_berangkat__year=now.year,
+            ).values('kategori')
+            .annotate(total=Sum('jumlah'))
+            .order_by('-total')
+        )
+        ctx['chart_kat_labels'] = json.dumps([KAT.get(x['kategori'], x['kategori']) for x in kat_data])
+        ctx['chart_kat_data']   = json.dumps([float(x['total']) for x in kat_data])
+
+        # ── Chart 5: Utilisasi armada (trip per kapal, tahun ini) ─
+        util = list(
+            Trip.objects.filter(tgl_berangkat__year=now.year)
+            .values('kapal__nama_kapal')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')
+        )
+        ctx['chart_util_labels'] = json.dumps([x['kapal__nama_kapal'] for x in util])
+        ctx['chart_util_data']   = json.dumps([x['jumlah'] for x in util])
 
         return ctx

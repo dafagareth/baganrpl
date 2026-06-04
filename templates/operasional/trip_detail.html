@@ -13,6 +13,10 @@
         <h1 class="page-title">{{ trip.kapal }}</h1>
     </div>
     <div class="page-actions">
+        {% load laporan_filters %}
+        <a href="{% url 'laporan:export_pdf_trip' trip.id %}" class="btn btn-outline-secondary" target="_blank">
+            Ekspor PDF
+        </a>
         {% if trip.status != 'selesai' or request.user.is_superuser %}
         <a href="{% url 'operasional:trip_update' trip.id %}" class="btn btn-outline-secondary">Ubah trip</a>
         {% endif %}
