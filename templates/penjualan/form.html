@@ -39,36 +39,8 @@
 </div>
 {% endblock %}
 
+{% load static %}
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const stockData = {{ form.stock_data_json|safe }};
-    const selectHasil = document.getElementById('id_hasil_tangkap');
-    const inputBerat = document.getElementById('id_berat_terjual');
-    const btnSemua = document.getElementById('btn-semua');
-    const infoStok = document.getElementById('info-stok');
-
-    function updateStokInfo() {
-        const selectedId = selectHasil ? selectHasil.value : null;
-        if (selectedId && stockData[selectedId] !== undefined) {
-            infoStok.textContent = 'Stok tersedia: ' + stockData[selectedId] + ' kg';
-            btnSemua.disabled = false;
-        } else {
-            infoStok.textContent = '';
-            btnSemua.disabled = true;
-        }
-    }
-
-    if (selectHasil) { selectHasil.addEventListener('change', updateStokInfo); updateStokInfo(); }
-    if (btnSemua)    {
-        btnSemua.addEventListener('click', function() {
-            const selectedId = selectHasil ? selectHasil.value : null;
-            if (selectedId && stockData[selectedId] !== undefined) {
-                inputBerat.value = stockData[selectedId];
-                inputBerat.focus();
-            }
-        });
-    }
-});
-</script>
+<script type="application/json" id="penjualanFormData">{{ form.stock_data_json|safe }}</script>
+<script src="{% static 'js/penjualan_form.js' %}"></script>
 {% endblock %}
