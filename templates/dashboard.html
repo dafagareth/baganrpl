@@ -162,141 +162,24 @@
 </section>
 {% endblock %}
 
+{% load static %}
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
-const FONT = { family: 'Google Sans Text, Roboto', size: 12 };
-const COLORS = ['#1E8E3E','#1A73E8','#E37400','#D93025','#9334E6','#00796B'];
-
-function rpShort(v) {
-    if (v >= 1e9) return 'Rp ' + (v/1e9).toFixed(1) + ' M';
-    if (v >= 1e6) return 'Rp ' + (v/1e6).toFixed(1) + ' jt';
-    if (v >= 1e3) return 'Rp ' + (v/1e3).toFixed(0) + ' rb';
-    return 'Rp ' + v;
+<script type="application/json" id="dashboardData">
+{
+    "labels":       {{ chart_labels|safe }},
+    "pendapatan":   {{ chart_pendapatan|safe }},
+    "biaya":        {{ chart_biaya|safe }},
+    "laba":         {{ chart_laba|safe }},
+    "ikanLabels":   {{ chart_ikan_labels|safe }},
+    "ikanData":     {{ chart_ikan_data|safe }},
+    "pembeliLabels":{{ chart_pembeli_labels|safe }},
+    "pembeliData":  {{ chart_pembeli_data|safe }},
+    "katLabels":    {{ chart_kat_labels|safe }},
+    "katData":      {{ chart_kat_data|safe }},
+    "utilLabels":   {{ chart_util_labels|safe }},
+    "utilData":     {{ chart_util_data|safe }}
 }
-
-const labels = {{ chart_labels|safe }};
-
-// ── Chart 1: Pendapatan vs Biaya ─────────────────────────────────
-new Chart(document.getElementById('chartRevenue'), {
-    type: 'bar',
-    data: {
-        labels,
-        datasets: [
-            { label: 'Pendapatan', data: {{ chart_pendapatan|safe }}, backgroundColor: '#1E8E3E', borderRadius: 4, borderSkipped: false },
-            { label: 'Biaya',      data: {{ chart_biaya|safe }},      backgroundColor: '#D93025', borderRadius: 4, borderSkipped: false }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { font: FONT, usePointStyle: true, padding: 16, boxWidth: 8 } },
-            tooltip: { callbacks: { label: c => c.dataset.label + ': ' + rpShort(c.raw || 0) } }
-        },
-        scales: {
-            x: { ticks: { font: FONT }, grid: { display: false } },
-            y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } }
-        }
-    }
-});
-
-// ── Chart 2: Laba bersih ─────────────────────────────────────────
-new Chart(document.getElementById('chartLaba'), {
-    type: 'bar',
-    data: {
-        labels,
-        datasets: [{
-            label: 'Laba Bersih',
-            data: {{ chart_laba|safe }},
-            backgroundColor: {{ chart_laba|safe }}.map(v => v >= 0 ? '#1E8E3E' : '#D93025'),
-            borderRadius: 4, borderSkipped: false
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: c => 'Laba: ' + rpShort(Math.abs(c.raw)) + (c.raw < 0 ? ' (rugi)' : '') } }
-        },
-        scales: {
-            x: { ticks: { font: FONT }, grid: { display: false } },
-            y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } }
-        }
-    }
-});
-
-// ── Chart 3: Top tangkapan ────────────────────────────────────────
-new Chart(document.getElementById('chartIkan'), {
-    type: 'bar',
-    data: {
-        labels: {{ chart_ikan_labels|safe }},
-        datasets: [{ label: 'kg', data: {{ chart_ikan_data|safe }},
-            backgroundColor: COLORS, borderRadius: 4 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false },
-            tooltip: { callbacks: { label: c => (c.raw||0).toFixed(1) + ' kg' } } },
-        scales: {
-            x: { ticks: { font: FONT, callback: v => v + ' kg' }, grid: { color: '#E8EAED' } },
-            y: { ticks: { font: FONT }, grid: { display: false } }
-        }
-    }
-});
-
-// ── Chart 4: Top pembeli ──────────────────────────────────────────
-new Chart(document.getElementById('chartPembeli'), {
-    type: 'bar',
-    data: {
-        labels: {{ chart_pembeli_labels|safe }},
-        datasets: [{ label: 'Nilai', data: {{ chart_pembeli_data|safe }},
-            backgroundColor: COLORS.slice().reverse(), borderRadius: 4 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false },
-            tooltip: { callbacks: { label: c => rpShort(c.raw||0) } } },
-        scales: {
-            x: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } },
-            y: { ticks: { font: FONT }, grid: { display: false } }
-        }
-    }
-});
-
-// ── Chart 5: Komposisi biaya (donut) ─────────────────────────────
-new Chart(document.getElementById('chartKat'), {
-    type: 'doughnut',
-    data: {
-        labels: {{ chart_kat_labels|safe }},
-        datasets: [{ data: {{ chart_kat_data|safe }}, backgroundColor: COLORS,
-            borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { font: FONT, usePointStyle: true, padding: 12, boxWidth: 8 } },
-            tooltip: { callbacks: { label: c => c.label + ': ' + rpShort(c.raw||0) } }
-        }
-    }
-});
-
-// ── Chart 6: Utilisasi armada ────────────────────────────────────
-new Chart(document.getElementById('chartUtil'), {
-    type: 'bar',
-    data: {
-        labels: {{ chart_util_labels|safe }},
-        datasets: [{ label: 'Trip', data: {{ chart_util_data|safe }},
-            backgroundColor: '#1A73E8', borderRadius: 4 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false },
-            tooltip: { callbacks: { label: c => (c.raw||0) + ' trip' } } },
-        scales: {
-            x: { ticks: { font: FONT, stepSize: 1 }, grid: { color: '#E8EAED' } },
-            y: { ticks: { font: FONT }, grid: { display: false } }
-        }
-    }
-});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
