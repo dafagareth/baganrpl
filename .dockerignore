@@ -1,0 +1,27 @@
+# Virtualenv lokal
+myworld/
+venv/
+.venv/
+
+# Secrets & DB lokal (di-inject via env_file / volume saat runtime)
+.env
+db.sqlite3
+backups/
+
+# Static hasil collect (di-generate ulang saat start)
+staticfiles/
+
+# Media (di-mount sebagai volume)
+media/
+
+# Git & cache
+.git/
+.gitignore
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Tooling / docs
+.claude/
+latex/
+*.md
