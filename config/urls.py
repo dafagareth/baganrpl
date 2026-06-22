@@ -37,7 +37,9 @@ urlpatterns = [
     path('tangkap/', include('apps.tangkap.urls')),
     path('penjualan/', include('apps.penjualan.urls')),
     path('laporan/', include('apps.laporan.urls')),
-    path('api/', include('apps.api.urls')),
+    # REST API (untuk app Flutter) — dinonaktifkan, proyek fokus web.
+    # Aktifkan lagi (beserta rest_framework & corsheaders di settings) bila mobile dilanjut.
+    # path('api/', include('apps.api.urls')),
 ]
 
 admin.site.site_header = 'Sistem Informasi Usaha Bagan'

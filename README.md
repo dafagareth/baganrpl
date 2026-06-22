@@ -1,20 +1,36 @@
-# bagan-api
+# Sistem Informasi Usaha Bagan
 
-Backend REST API untuk manajemen operasional usaha bagan (perikanan).
-Dibangun dengan Django REST Framework + JWT + Firebase Cloud Messaging.
+Aplikasi **web** untuk mengelola operasional usaha bagan (perikanan): pencatatan trip,
+biaya, hasil tangkap, penjualan ikan, bagi hasil ABK, sampai laporan keuangan.
 
-Mobile app: [bagan-app](https://github.com/dafagareth/bagan_app) (Flutter Android)
+Dibangun dengan Django (HTML server-rendered, bukan SPA). Database PostgreSQL (lewat Docker)
+atau SQLite (dev lokal).
+
+> Proyek ini awalnya juga punya REST API + app Flutter, tapi yang disetujui & dipakai
+> sekarang **fokus web saja**. Kode API tetap disimpan sebagai arsip — lihat
+> [Arsip: REST API & Mobile](#arsip-rest-api--mobile).
 
 ---
 
 ## Gambaran Singkat
 
-Sistem ini membantu pemilik usaha bagan mengelola operasional armada kapal secara digital — pencatatan trip, biaya, hasil tangkap, penjualan ikan, hingga bagi hasil ABK.
+Membantu pemilik usaha bagan mengelola armada kapal secara digital. Dua peran, tampilan
+menyesuaikan otomatis setelah login:
 
-**Masalah yang diselesaikan:**
-- Operator di lapangan sering tanpa sinyal → butuh input **offline** di mobile
-- Pemilik usaha perlu pantau kondisi dari HP → butuh **notifikasi push**
-- Investor perlu lihat profil usaha → tersedia **landing page publik**
+- **Pemilik (owner)** — dashboard, master data (kapal/ABK/jenis ikan/pembeli), semua laporan, bagi hasil.
+- **Operator** — fokus trip miliknya: mulai berlayar, catat biaya, hasil tangkap, dan penjualan.
+
+---
+
+## Fitur
+
+- Pencatatan **Trip** dengan alur status: persiapan → berlayar → selesai
+- **Biaya operasional**, **hasil tangkap**, dan **penjualan** (bisa input banyak baris sekaligus)
+- **Bagi hasil ABK** — nominal ditentukan manual oleh owner
+- **Dashboard** grafik: pendapatan & biaya, laba, top ikan/pembeli, utilisasi armada
+- **Laporan** rekap per bulan & per kapal + **ekspor Excel dan PDF**
+- **Mode gelap**, tampilan **ramah HP** (mobile-friendly), ikon Material Symbols
+- Halaman **publik** (landing page) untuk pengunjung
 
 ---
 
@@ -22,12 +38,11 @@ Sistem ini membantu pemilik usaha bagan mengelola operasional armada kapal secar
 
 | Komponen | Versi |
 |---|---|
-| Python | 3.14 |
+| Python | 3.12 |
 | Django | 6.0.4 |
-| Django REST Framework | 3.17.1 |
-| SimpleJWT | 5.5.1 |
-| firebase-admin | latest |
-| python-dotenv | 1.2.2 |
+| Database | PostgreSQL 16 (Docker) / SQLite (dev lokal) |
+| WhiteNoise | sajikan file statis di gunicorn |
+| Gunicorn | server WSGI (produksi/Docker) |
 
 ---
 
@@ -35,129 +50,83 @@ Sistem ini membantu pemilik usaha bagan mengelola operasional armada kapal secar
 
 ```
 apps/
-├── api/           ← REST API: endpoint, serializer, sync, FCM, permissions
-├── master/        ← Kapal, ABK, JenisIkan, Pembeli
-├── operasional/   ← Trip, BiayaOperasional
-├── tangkap/       ← HasilTangkap
-├── penjualan/     ← Penjualan, BagiHasil
-└── laporan/       ← Laporan web + ekspor
+├── core/         ← peran (owner/operator), login, dashboard, halaman publik
+├── master/       ← Kapal, ABK, JenisIkan, Pembeli
+├── operasional/  ← Trip, BiayaOperasional, halaman Operasional gabungan
+├── tangkap/      ← HasilTangkap
+├── penjualan/    ← Penjualan, BagiHasil
+├── laporan/      ← laporan web + ekspor Excel/PDF
+└── api/          ← arsip REST API + UserProfile (peran). API nonaktif, lihat bawah.
 
 config/
-├── settings.py    ← Konfigurasi dari .env
+├── settings.py   ← konfigurasi dari .env (DB otomatis Postgres/SQLite)
 └── urls.py
 
-templates/         ← HTML (landing page, laporan web)
-static/            ← CSS, JS
+templates/        ← HTML (web admin + landing page)
+static/           ← CSS, JS
 ```
 
 ---
 
-## Setup
+## Jalankan dengan Docker (disarankan)
 
 ```bash
-# 1. Clone
-git clone https://github.com/dafaalhafiz/bagan-api.git
-cd bagan-api
-
-# 2. Virtual environment
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Konfigurasi environment
-cp .env.example .env
-# Edit .env — isi SECRET_KEY, DEBUG, ALLOWED_HOSTS
-
-# 5. Migrasi
-python manage.py migrate
-
-# 6. Buat akun admin
-python manage.py createsuperuser
-
-# 7. Jalankan
-python manage.py runserver 0.0.0.0:8000
+cp .env.example .env          # isi SECRET_KEY, DEBUG, ALLOWED_HOSTS
+docker compose up --build
 ```
 
-> Gunakan `0.0.0.0:8000` agar bisa diakses dari HP fisik di jaringan yang sama.
+Buka **http://localhost:8000**. Saat start, container otomatis menjalankan `migrate` dan
+`collectstatic`, lalu gunicorn. Data PostgreSQL tersimpan permanen di volume `pg_data`.
+
+```bash
+docker compose up -d      # jalankan di belakang layar
+docker compose logs -f web
+docker compose down       # hentikan
+```
+
+---
+
+## Jalankan Lokal (tanpa Docker)
+
+```bash
+# 1. Virtual environment
+python -m venv myworld
+source myworld/bin/activate          # Windows: myworld\Scripts\activate
+
+# 2. Install dependency
+pip install -r requirements.txt
+
+# 3. Konfigurasi
+cp .env.example .env                 # isi SECRET_KEY, DEBUG, ALLOWED_HOSTS
+
+# 4. Migrasi (otomatis pakai SQLite)
+python manage.py migrate
+
+# 5. Buat akun admin
+python manage.py createsuperuser
+
+# 6. Jalankan
+python manage.py runserver
+```
+
+Tersedia juga `Makefile`: `make run`, `make migrate`, `make migrations`, `make test`, `make static`.
 
 ---
 
 ## Variabel Environment
 
-Lihat `.env.example` untuk template lengkap. Variabel utama:
+Lihat `.env.example`. Variabel utama:
 
 ```env
 SECRET_KEY=ganti-dengan-secret-key-kuat
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
 
-# Firebase — kosongkan jika belum setup (FCM dilewati, DB notification tetap jalan)
-FIREBASE_CREDENTIALS_PATH=
+# Password PostgreSQL untuk Docker (default: bagan123). Dev lokal pakai SQLite, abaikan.
+DB_PASSWORD=bagan123
 ```
 
----
-
-## API Endpoints
-
-Base URL: `http://server:8000/api/`
-Semua endpoint butuh header `Authorization: Bearer <access_token>` kecuali login.
-
-### Auth
-| Method | Endpoint | Keterangan |
-|---|---|---|
-| POST | `auth/login/` | Login → JWT + role |
-| POST | `auth/refresh/` | Refresh access token |
-| GET/PATCH | `me/` | Profil user yang login |
-| POST | `auth/change-password/` | Ganti password |
-| POST | `devices/` | Daftarkan FCM token |
-
-### Master Data
-| Method | Endpoint | Keterangan |
-|---|---|---|
-| GET/POST | `kapal/` | Daftar + tambah kapal |
-| GET/POST | `abk/` | Daftar + tambah ABK |
-| GET/POST | `jenis-ikan/` | Daftar + tambah jenis ikan |
-| GET/POST | `pembeli/` | Daftar + tambah pembeli |
-
-### Trip & Operasional
-| Method | Endpoint | Keterangan |
-|---|---|---|
-| GET | `trips/` | Semua trip |
-| POST | `trips/create/` | Buat trip baru |
-| GET | `trips/{id}/` | Detail trip + keuangan |
-| PATCH | `trips/{id}/` | Update status trip |
-| POST | `trips/{id}/kunci/` | Kunci laporan trip |
-| GET/POST | `trips/{id}/bagi-hasil/` | List + tambah bagi hasil |
-| PATCH/DELETE | `bagi-hasil/{id}/` | Edit/hapus bagi hasil |
-
-### Sinkronisasi Offline
-| Method | Endpoint | Keterangan |
-|---|---|---|
-| POST | `sync/` | Kirim batch operasi dari outbox mobile |
-
-Format request:
-```json
-{
-  "operations": [
-    {
-      "client_uuid": "uuid-unik",
-      "type": "biaya | hasil_tangkap | penjualan | tangkap_dan_jual",
-      "data": { }
-    }
-  ]
-}
-```
-
-### Dashboard & Laporan
-| Method | Endpoint | Keterangan |
-|---|---|---|
-| GET | `dashboard/` | Ringkasan statistik owner |
-| GET | `laporan/charts/` | Data chart P&L + biaya |
-| GET | `armada/charts/` | Fleet utilization + tren |
-| GET | `armada/lokasi/` | Titik GPS tiap trip |
-| GET | `notifications/` | Inbox notifikasi owner |
+Database dipilih otomatis: ada env `POSTGRES_DB` (di Docker) → PostgreSQL, selain itu → SQLite.
 
 ---
 
@@ -167,44 +136,29 @@ Format request:
 Pendapatan  = Σ (berat_terjual × harga_per_kg)
 Biaya       = Σ biaya_operasional per trip
 Laba Kotor  = Pendapatan − Biaya
-Laba Bersih = Laba Kotor − Σ bagi_hasil (sudah_dibayar = True)
+Laba Bersih = Laba Kotor − Σ bagi_hasil
 ```
 
 Nominal bagi hasil ditentukan manual oleh owner — tidak otomatis dari persentase.
 
 ---
 
-## Offline-First
+## Arsip: REST API & Mobile
 
-Setiap operasi dari mobile punya `client_uuid` unik. Server menerima batch via `/api/sync/` dan memproses per-item:
+Folder `apps/api/` berisi REST API (Django REST Framework + JWT), sinkronisasi offline,
+dan FCM push yang dulu dipakai app Flutter
+[bagan-app](https://github.com/dafagareth/bagan_app).
 
-- `synced` → berhasil disimpan
-- `duplicate` → UUID sudah ada, skip (idempoten)
-- `failed` → validasi gagal (stok kurang, dll), dikembalikan sebagai error
+API ini **dinonaktifkan** (di-comment di `config/urls.py`, `config/settings.py`, dan
+`requirements.txt`) karena proyek fokus web. Yang **tetap dipakai** dari app ini hanya
+model `UserProfile` (peran owner/operator) + signal pembuat profil otomatis.
 
----
-
-## Notifikasi Push (FCM)
-
-Setiap kali operator sync, server kirim push notification ke semua owner via FCM. Jika `FIREBASE_CREDENTIALS_PATH` kosong, push dilewati — inbox notifikasi di database tetap dibuat.
-
----
-
-## Test
-
-```bash
-# Semua test (25 test)
-python manage.py test apps.api
-
-# Per modul
-python manage.py test apps.api.tests_sync        # 10 test sync
-python manage.py test apps.api.tests_bagi_hasil  # 9 test bagi hasil
-python manage.py test apps.api.tests_fcm         # 6 test FCM
-```
+Mengaktifkan kembali (bila mobile dilanjut): uncomment baris terkait di ketiga file di atas,
+lalu `pip install djangorestframework djangorestframework-simplejwt django-cors-headers`.
 
 ---
 
 ## Lisensi
 
-Source Available — lihat file [LICENSE](LICENSE) untuk detail.
+Source Available — lihat file [LICENSE](LICENSE).
 Kontak: dafagareth@gmail.com

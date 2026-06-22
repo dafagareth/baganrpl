@@ -2,9 +2,10 @@ Django==6.0.4
 openpyxl==3.1.5
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
-djangorestframework==3.17.1
-djangorestframework-simplejwt==5.5.1
-django-cors-headers==4.9.0
+# REST API (app Flutter) — nonaktif, fokus web. Uncomment bila mobile dilanjut:
+# djangorestframework==3.17.1
+# djangorestframework-simplejwt==5.5.1
+# django-cors-headers==4.9.0
 Pillow==12.2.0
 gunicorn
 psycopg[binary]~=3.2

@@ -18,13 +18,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.dev',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8080',
-    'http://localhost:8080',
-    'http://192.168.100.9:8080',
-]
-# Untuk development: bypass CORS sepenuhnya
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS — hanya dibutuhkan REST API (app Flutter). Nonaktif karena fokus web.
+# CORS_ALLOWED_ORIGINS = [
+#     'http://127.0.0.1:8080',
+#     'http://localhost:8080',
+#     'http://192.168.100.9:8080',
+# ]
+# CORS_ALLOW_ALL_ORIGINS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -34,8 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'corsheaders',
-    'rest_framework',
+    # REST API (app Flutter) — nonaktif, fokus web. Aktifkan bila mobile dilanjut:
+    # 'corsheaders',
+    # 'rest_framework',
 
     'apps.master',
     'apps.operasional',
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # wajib di atas CommonMiddleware
+    # 'corsheaders.middleware.CorsMiddleware',  # REST API (Flutter) — nonaktif
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static di production/gunicorn
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -134,21 +135,22 @@ LOGOUT_REDIRECT_URL = '/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50,
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
-}
+# Konfigurasi REST API (app Flutter) — nonaktif, fokus web.
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 50,
+# }
+#
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+# }
 
 # Firebase Cloud Messaging — isi path ke service account JSON dari Firebase Console.
 # Kosongkan jika belum setup; FCM dilewati, Notification DB tetap jalan.
