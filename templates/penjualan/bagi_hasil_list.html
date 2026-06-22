@@ -39,7 +39,7 @@
                 <td>{{ bh.tgl_bayar|tgl_indo }}</td>
                 <td>
                     <div class="row-actions">
-                        <a href="{% url 'penjualan:bagi_hasil_update' bh.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'penjualan:bagi_hasil_update' bh.id %}" class="btn-icon" title="Ubah"><span class="material-symbols-outlined">edit</span></a>
                     </div>
                 </td>
             </tr>
@@ -73,6 +73,6 @@
 
 {% block fab %}
 <a href="{% url 'penjualan:bagi_hasil_create_global' %}" class="fab-add d-lg-none" title="Tambah bagi hasil">
-    <i class="bi bi-plus-lg"></i>
+    <span class="material-symbols-outlined">add</span>
 </a>
 {% endblock %}

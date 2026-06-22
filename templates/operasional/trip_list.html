@@ -5,8 +5,28 @@
 {% block content %}
 <header class="page-header-row">
     <h1 class="page-title">Trip</h1>
-    <a href="{% url 'operasional:trip_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah trip</a>
+    <button type="button" class="btn btn-primary d-none d-lg-inline-flex"
+            data-bs-toggle="modal" data-bs-target="#createTripModal">Tambah trip</button>
 </header>
+
+{% if trip_aktif %}
+<div class="trip-aktif-card">
+    <div>
+        <div class="trip-aktif-label">Trip aktif</div>
+        <div class="trip-aktif-kapal">{{ trip_aktif.kapal }}</div>
+        <div class="trip-aktif-meta">
+            {{ trip_aktif.tgl_berangkat|tgl_indo }} ·
+            <span class="badge {% if trip_aktif.status == 'berlayar' %}bg-primary{% else %}bg-secondary{% endif %}">
+                {{ trip_aktif.get_status_display }}
+            </span>
+        </div>
+    </div>
+    <a href="{% url 'operasional:trip_detail' trip_aktif.id %}" class="btn btn-primary">
+        {% if trip_aktif.status == 'persiapan' %}Mulai berlayar{% else %}Tandai kembali{% endif %}
+        <span class="material-symbols-outlined">arrow_forward</span>
+    </a>
+</div>
+{% endif %}
 
 <form method="get" class="search-inline">
     <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari kapal atau status">
@@ -40,8 +60,8 @@
                 <td class="num">{{ trip.total_biaya_operasional|rupiah }}</td>
                 <td>
                     <div class="row-actions">
-                        <a href="{% url 'operasional:trip_detail' trip.id %}" class="btn-icon" title="Detail"><i class="bi bi-eye"></i></a>
-                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ trip.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                        <a href="{% url 'operasional:trip_detail' trip.id %}" class="btn-icon" title="Detail"><span class="material-symbols-outlined">visibility</span></a>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ trip.id }}" title="Hapus"><span class="material-symbols-outlined">delete</span></button>
                     </div>
                 </td>
             </tr>
@@ -95,10 +115,39 @@
     </div>
 </div>
 {% endfor %}
+
+<div class="modal fade" id="createTripModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_create' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah trip</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in trip_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block fab %}
-<a href="{% url 'operasional:trip_create' %}" class="fab-add d-lg-none" title="Tambah trip">
-    <i class="bi bi-plus-lg"></i>
-</a>
+<button type="button" class="fab-add d-lg-none" title="Tambah trip"
+        data-bs-toggle="modal" data-bs-target="#createTripModal">
+    <span class="material-symbols-outlined">add</span>
+</button>
 {% endblock %}

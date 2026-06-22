@@ -132,17 +132,17 @@
     gap           : 4px;
 }
 
-.badge.bg-success { background: var(--success-bg) !important; color: var(--success) !important; }
-.badge.bg-danger  { background: var(--danger-bg)  !important; color: var(--danger)  !important; }
-.badge.bg-warning { background: var(--warning-bg) !important; color: var(--warning-ink) !important; }
-.badge.bg-primary { background: var(--brand-light) !important; color: var(--on-brand-light) !important; }
-.badge.bg-info    { background: var(--info-bg) !important; color: var(--brand) !important; }
-.badge.bg-secondary { background: var(--surface-container) !important; color: var(--ink-secondary) !important; }
+.badge.bg-success { background: transparent !important; color: var(--success) !important; }
+.badge.bg-danger  { background: transparent !important; color: var(--danger)  !important; }
+.badge.bg-warning { background: transparent !important; color: var(--warning-ink) !important; }
+.badge.bg-primary { background: transparent !important; color: var(--on-brand-light) !important; }
+.badge.bg-info    { background: transparent !important; color: var(--brand) !important; }
+.badge.bg-secondary { background: transparent !important; color: var(--ink-secondary) !important; }
 
-.badge.bg-primary-subtle  { background: var(--brand-light) !important; color: var(--on-brand-light) !important; }
-.badge.bg-success-subtle  { background: var(--success-bg) !important; color: var(--success) !important; }
-.badge.bg-danger-subtle   { background: var(--danger-bg)  !important; color: var(--danger) !important; }
-.badge.bg-warning-subtle  { background: var(--warning-bg) !important; color: var(--warning-ink) !important; }
+.badge.bg-primary-subtle  { background: transparent !important; color: var(--on-brand-light) !important; }
+.badge.bg-success-subtle  { background: transparent !important; color: var(--success) !important; }
+.badge.bg-danger-subtle   { background: transparent !important; color: var(--danger) !important; }
+.badge.bg-warning-subtle  { background: transparent !important; color: var(--warning-ink) !important; }
 
 /* Material chip */
 .chip {
@@ -421,29 +421,29 @@
 }
 
 .alert-success {
-    background  : var(--success-bg);
-    border-color: transparent;
+    background  : transparent;
+    border-color: var(--rule-soft);
     border-left-color: var(--success);
     color       : var(--success);
 }
 
 .alert-danger {
-    background  : var(--danger-bg);
-    border-color: transparent;
+    background  : transparent;
+    border-color: var(--rule-soft);
     border-left-color: var(--danger);
     color       : var(--danger);
 }
 
 .alert-warning {
-    background  : var(--warning-bg);
-    border-color: transparent;
+    background  : transparent;
+    border-color: var(--rule-soft);
     border-left-color: var(--warning);
     color       : var(--warning-ink);
 }
 
 .alert-info {
-    background  : var(--info-bg);
-    border-color: transparent;
+    background  : transparent;
+    border-color: var(--rule-soft);
     border-left-color: var(--brand);
     color       : var(--on-brand-light);
 }
@@ -699,3 +699,43 @@
 }
 
 .tooltip .tooltip-arrow::before { color: var(--ink); }
+
+/* ── Mobile: Bottom Sheet Modal + Touch Targets ─────────── */
+@media (max-width: 991.98px) {
+    /* Modal slides up from bottom (native bottom sheet) */
+    .modal-dialog {
+        position  : fixed !important;
+        bottom    : 0;
+        left      : 0;
+        right     : 0;
+        margin    : 0 !important;
+        max-width : 100% !important;
+        transform : translateY(100%) !important;
+        transition: transform var(--t-emphasized) !important;
+    }
+    .modal.show .modal-dialog {
+        transform: translateY(0) !important;
+    }
+    .modal-content {
+        border-radius: var(--radius-xxl) var(--radius-xxl) 0 0 !important;
+        border-bottom: 0 !important;
+    }
+    .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    .modal-footer {
+        padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+    }
+
+    /* Larger touch targets */
+    .btn-icon,
+    .row-actions .btn-icon {
+        width : 44px;
+        height: 44px;
+    }
+    .list-row {
+        padding   : var(--space-lg) 0;
+        min-height: 60px;
+    }
+}

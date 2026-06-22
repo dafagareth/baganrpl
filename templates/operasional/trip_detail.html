@@ -19,7 +19,8 @@
         </a>
         {% endif %}
         {% if trip.status != 'selesai' or request.user.is_superuser %}
-        <a href="{% url 'operasional:trip_update' trip.id %}" class="btn btn-outline-secondary">Ubah trip</a>
+        <button type="button" class="btn btn-outline-secondary"
+                data-bs-toggle="modal" data-bs-target="#editTripModal">Ubah trip</button>
         {% endif %}
     </div>
 </header>
@@ -30,6 +31,16 @@
 </div>
 {% endif %}
 
+<ul class="nav nav-tabs trip-detail-tabs d-lg-none mb-0" id="tripDetailTabs">
+    <li class="nav-item">
+        <button class="nav-link active" data-panel="trip">Trip</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-panel="operasional">Operasional</button>
+    </li>
+</ul>
+
+<div id="panel-trip">
 <div class="metrics">
     <div class="metric">
         <div class="metric-label">Berangkat</div>
@@ -55,7 +66,36 @@
     </div>
 </div>
 
-<section class="section">
+{% if not is_owner and trip.status != 'batal' %}
+<div class="trip-action-bar">
+    {% if trip.status == 'persiapan' %}
+    <form method="post" action="{% url 'operasional:trip_berlayar' trip.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            <span class="material-symbols-outlined">sailing</span> Mulai Berlayar
+        </button>
+    </form>
+    <p class="trip-action-hint">Tambahkan ABK dan biaya sebelum berlayar.</p>
+    {% elif trip.status == 'berlayar' %}
+    <form method="post" action="{% url 'operasional:trip_selesai' trip.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            <span class="material-symbols-outlined">anchor</span> Kapal Sudah Kembali
+        </button>
+    </form>
+    <p class="trip-action-hint">Setelah ini kamu bisa mencatat hasil tangkap.</p>
+    {% elif trip.status == 'selesai' %}
+    <p class="trip-action-done">
+        <span class="material-symbols-outlined">check_circle</span>
+        Trip selesai — catat hasil tangkap dan penjualan di bawah.
+    </p>
+    {% endif %}
+</div>
+{% endif %}
+</div><!-- /panel-trip -->
+
+<div id="panel-operasional">
+<section class="section" id="section-abk">
     <div class="section-head">
         <h2 class="section-title">ABK trip ({{ abk_list|length }})</h2>
         {% if abk_form.fields.abk_ids.choices and trip.status != 'selesai' or request.user.is_superuser %}
@@ -73,7 +113,7 @@
                     <form method="post" action="{% url 'operasional:trip_remove_abk' trip.id ta.abk.id %}" class="row-actions">
                         {% csrf_token %}
                         <button type="submit" class="btn-icon text-danger" title="Hapus dari trip" onclick="return confirm('Hapus ABK ini dari trip?')">
-                            <i class="bi bi-trash3"></i>
+                            <span class="material-symbols-outlined">delete</span>
                         </button>
                     </form>
                     {% endif %}
@@ -86,7 +126,7 @@
     </table>
 </section>
 
-<section class="section">
+<section class="section" id="section-biaya">
     <div class="section-head">
         <h2 class="section-title">Biaya operasional</h2>
         {% if trip.status != 'selesai' or request.user.is_superuser %}
@@ -114,7 +154,7 @@
                     {% if trip.status != 'selesai' or request.user.is_superuser %}
                     <form method="post" action="{% url 'operasional:biaya_delete' biaya.id %}" class="row-actions">
                         {% csrf_token %}
-                        <button type="submit" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus biaya ini?')"><i class="bi bi-trash3"></i></button>
+                        <button type="submit" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus biaya ini?')"><span class="material-symbols-outlined">delete</span></button>
                     </form>
                     {% endif %}
                 </td>
@@ -134,13 +174,13 @@
     </div>
 </section>
 
-<section class="section">
+<section class="section" id="section-tangkap">
     <div class="section-head">
         <h2 class="section-title">Hasil tangkap</h2>
         {% if trip.status == 'selesai' %}
         <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addTangkapModal">Tambah tangkap</button>
         {% else %}
-        <span class="text-muted small">Trip harus selesai dulu</span>
+        <span class="text-muted small">Tandai kapal kembali dulu di atas.</span>
         {% endif %}
     </div>
 
@@ -168,8 +208,11 @@
                 <td class="text-muted">{{ h.catatan }}</td>
                 <td>
                     <div class="row-actions">
-                        <a href="{% url 'tangkap:update' h.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
-                        <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus hasil tangkap ini?')"><i class="bi bi-trash3"></i></a>
+                        <button type="button" class="btn-icon" title="Ubah"
+                                data-bs-toggle="modal" data-bs-target="#editTangkapModal{{ h.id }}">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                        <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus hasil tangkap ini?')"><span class="material-symbols-outlined">delete</span></a>
                     </div>
                 </td>
             </tr>
@@ -180,6 +223,7 @@
     </table>
     </div>
 </section>
+</div><!-- /panel-operasional -->
 
 <div class="modal fade" id="addABKModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -263,4 +307,94 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editTripModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_update' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah trip</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in trip_edit_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for h, edit_form in tangkap_edit_forms %}
+<div class="modal fade" id="editTangkapModal{{ h.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'tangkap:update' h.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah hasil tangkap</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in edit_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+(function () {
+    var tabs = document.querySelectorAll('#tripDetailTabs .nav-link');
+    var panels = {
+        trip       : document.getElementById('panel-trip'),
+        operasional: document.getElementById('panel-operasional'),
+    };
+    function activate(name) {
+        tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.panel === name); });
+        Object.keys(panels).forEach(function (k) {
+            if (panels[k]) panels[k].style.display = k === name ? '' : 'none';
+        });
+    }
+    function showAll() {
+        Object.values(panels).forEach(function (p) { if (p) p.style.display = ''; });
+    }
+    function init() {
+        if (window.innerWidth < 992) {
+            activate('trip');
+            tabs.forEach(function (t) {
+                t.addEventListener('click', function () { activate(t.dataset.panel); });
+            });
+        } else {
+            showAll();
+        }
+    }
+    init();
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 992) showAll();
+    });
+})();
+</script>
 {% endblock %}

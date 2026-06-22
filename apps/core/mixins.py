@@ -21,7 +21,7 @@ class OwnerRequiredMixin(LoginRequiredMixin):
         if request.user.is_authenticated and not is_owner(request.user):
             messages.warning(
                 request,
-                'Halaman tersebut hanya dapat diakses oleh pemilik usaha.',
+                'Halaman ini khusus pemilik usaha.',
             )
             return redirect('operasional:trip_list')
         return super().dispatch(request, *args, **kwargs)

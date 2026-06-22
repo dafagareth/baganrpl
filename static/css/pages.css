@@ -64,11 +64,14 @@
     color     : var(--ink-muted);
 }
 
-.empty-state i {
+.empty-state i,
+.empty-state .material-symbols-outlined {
     font-size    : 56px;
     color        : var(--ink-disabled);
     margin-bottom: var(--space-md);
     display      : block;
+    text-align   : center;
+    width        : 100%;
 }
 
 .empty-state h5 {
@@ -425,4 +428,91 @@
         border      : 1px solid #ccc !important;
         break-inside: avoid;
     }
+}
+
+/* ── Trip aktif card (operator trip list) ──────────────────── */
+.trip-aktif-card {
+    display        : flex;
+    align-items    : center;
+    justify-content: space-between;
+    gap            : var(--space-md);
+    padding        : var(--space-md) var(--space-lg);
+    border         : 1px solid var(--rule);
+    border-radius  : var(--radius-lg);
+    margin-bottom  : var(--space-xl);
+}
+.trip-aktif-label { font-size: 11px; font-weight: 500; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+.trip-aktif-kapal { font-size: 16px; font-weight: 600; color: var(--ink); }
+.trip-aktif-meta  { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ── Trip action bar (operator trip detail) ────────────────── */
+.trip-action-bar {
+    display    : flex;
+    align-items: center;
+    gap        : var(--space-lg);
+    padding    : var(--space-lg) 0;
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: var(--space-xl);
+}
+.trip-action-hint { font-size: 13px; color: var(--ink-muted); margin: 0; }
+.trip-action-done { display: flex; align-items: center; gap: var(--space-xs); font-size: 14px; color: var(--success); margin: 0; }
+
+/* ── Feed operasional (gabungan tangkap + jual) ────────────── */
+.feed-filters {
+    display      : flex;
+    gap          : var(--space-xs);
+    flex-wrap    : wrap;
+    margin-bottom: var(--space-md);
+}
+.feed-filters .chip { text-decoration: none; }
+.feed-count {
+    font-variant-numeric: tabular-nums;
+    opacity   : 0.7;
+    font-size : 12px;
+    margin-left: 2px;
+}
+.feed-icon {
+    font-size    : 22px;
+    width        : 40px;
+    height       : 40px;
+    border-radius: var(--radius-pill);
+    display      : inline-flex;
+    align-items  : center;
+    justify-content: center;
+    flex-shrink  : 0;
+}
+.feed-icon-tangkap { background: var(--brand-subtle); color: var(--brand); }
+.feed-icon-jual    { background: var(--success-bg);  color: var(--success); }
+
+/* ── Penjualan multi-input: tabel → cards di mobile ────────── */
+@media (max-width: 991.98px) {
+    #formset-table thead { display: none; }
+    #formset-table,
+    #formset-table tbody,
+    #formset-table tr,
+    #formset-table td { display: block; width: 100%; }
+
+    #formset-table .formset-row {
+        border       : 1px solid var(--rule);
+        border-radius: var(--radius-lg);
+        padding      : var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+    #formset-table .formset-row td {
+        border     : 0;
+        padding    : var(--space-xs) 0;
+        white-space: normal;
+    }
+    #formset-table .formset-row td::before {
+        content      : attr(data-label);
+        display      : block;
+        font-size    : 13px;
+        font-weight  : 500;
+        color        : var(--ink-secondary);
+        margin-bottom: 4px;
+    }
+    #formset-table .formset-row td[data-label=""]::before { display: none; }
+    #formset-table .formset-row .form-control,
+    #formset-table .formset-row .form-select { width: 100%; }
+    #formset-table .formset-row td:last-child { text-align: right; }
 }

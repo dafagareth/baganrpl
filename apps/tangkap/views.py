@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Q
 from .models import HasilTangkap
 from .forms import HasilTangkapForm
 
@@ -13,11 +14,27 @@ class HasilTangkapListView(LoginRequiredMixin, ListView):
     model = HasilTangkap
     template_name = 'tangkap/list.html'
     context_object_name = 'hasil_list'
+    paginate_by = 15
 
     def get_queryset(self):
-        return HasilTangkap.objects.select_related(
+        qs = HasilTangkap.objects.select_related(
             'trip__kapal', 'jenis_ikan'
         ).order_by('-trip__tgl_berangkat')
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(jenis_ikan__nama__icontains=q) |
+                Q(trip__kapal__nama_kapal__icontains=q)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['q'] = self.request.GET.get('q', '')
+        ctx['edit_forms'] = [
+            (h, HasilTangkapForm(instance=h)) for h in ctx['hasil_list']
+        ]
+        return ctx
 
 class HasilTangkapCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = HasilTangkap

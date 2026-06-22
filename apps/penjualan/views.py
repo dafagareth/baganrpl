@@ -17,7 +17,7 @@ class PenjualanListView(LoginRequiredMixin, ListView):
     model = Penjualan
     template_name = 'penjualan/list.html'
     context_object_name = 'penjualan_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = Penjualan.objects.select_related(
@@ -40,6 +40,9 @@ class PenjualanListView(LoginRequiredMixin, ListView):
             total=Sum(F('berat_terjual') * F('harga_per_kg'))
         )['total'] or 0
         ctx['q'] = self.request.GET.get('q', '')
+        ctx['edit_forms'] = [
+            (p, PenjualanForm(instance=p)) for p in ctx['penjualan_list']
+        ]
         return ctx
 
 class PenjualanCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

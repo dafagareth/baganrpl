@@ -47,8 +47,8 @@
                 <td class="num fw-medium">{{ p.total_nilai|rupiah }}</td>
                 <td>
                     <div class="row-actions">
-                        <a href="{% url 'penjualan:update' p.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
-                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}" title="Hapus"><i class="bi bi-trash3"></i></button>
+                        <button type="button" class="btn-icon" title="Ubah" data-bs-toggle="modal" data-bs-target="#editPenjualanModal{{ p.id }}"><span class="material-symbols-outlined">edit</span></button>
+                        <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}" title="Hapus"><span class="material-symbols-outlined">delete</span></button>
                     </div>
                 </td>
             </tr>
@@ -73,8 +73,8 @@
         <div class="d-flex align-items-center gap-2">
             <span class="fw-medium">{{ p.total_nilai|rupiah }}</span>
             <div class="row-actions">
-                <a href="{% url 'penjualan:update' p.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
-                <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}"><i class="bi bi-trash3"></i></button>
+                <button type="button" class="btn-icon" data-bs-toggle="modal" data-bs-target="#editPenjualanModal{{ p.id }}"><span class="material-symbols-outlined">edit</span></button>
+                <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ p.id }}"><span class="material-symbols-outlined">delete</span></button>
             </div>
         </div>
     </div>
@@ -106,10 +106,40 @@
     </div>
 </div>
 {% endfor %}
+
+{% for p, edit_form in edit_forms %}
+<div class="modal fade" id="editPenjualanModal{{ p.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'penjualan:update' p.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah penjualan</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in edit_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}
 
 {% block fab %}
 <a href="{% url 'penjualan:create_multi' %}" class="fab-add d-lg-none" title="Tambah penjualan">
-    <i class="bi bi-plus-lg"></i>
+    <span class="material-symbols-outlined">add</span>
 </a>
 {% endblock %}

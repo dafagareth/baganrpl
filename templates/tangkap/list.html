@@ -7,6 +7,12 @@
     <h1 class="page-title">Hasil tangkap</h1>
 </header>
 
+<form method="get" class="search-inline">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari ikan atau kapal">
+    <button type="submit" class="btn btn-outline-secondary">Cari</button>
+    {% if q %}<a href="{% url 'tangkap:list' %}" class="btn btn-link">Reset</a>{% endif %}
+</form>
+
 <div class="d-none d-lg-block table-responsive">
     <table class="table-plain">
         <thead>
@@ -34,13 +40,15 @@
                 </td>
                 <td>
                     <div class="row-actions">
-                        <a href="{% url 'tangkap:update' h.id %}" class="btn-icon" title="Ubah"><i class="bi bi-pencil"></i></a>
-                        <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus hasil tangkap ini?')"><i class="bi bi-trash3"></i></a>
+                        <button type="button" class="btn-icon" title="Ubah" data-bs-toggle="modal" data-bs-target="#editTangkapModal{{ h.id }}"><span class="material-symbols-outlined">edit</span></button>
+                        <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" title="Hapus" onclick="return confirm('Hapus hasil tangkap ini?')"><span class="material-symbols-outlined">delete</span></a>
                     </div>
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="5" class="text-muted py-4">Belum ada hasil tangkap tercatat.</td></tr>
+            <tr><td colspan="5" class="text-muted py-4">
+                {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada hasil tangkap tercatat.{% endif %}
+            </td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -58,13 +66,47 @@
         <div class="d-flex align-items-center gap-2">
             <span class="badge {% if h.kondisi == 'segar' %}bg-success{% elif h.kondisi == 'beku' %}bg-info{% else %}bg-secondary{% endif %}">{{ h.get_kondisi_display }}</span>
             <div class="row-actions">
-                <a href="{% url 'tangkap:update' h.id %}" class="btn-icon"><i class="bi bi-pencil"></i></a>
-                <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" onclick="return confirm('Hapus hasil tangkap ini?')"><i class="bi bi-trash3"></i></a>
+                <button type="button" class="btn-icon" data-bs-toggle="modal" data-bs-target="#editTangkapModal{{ h.id }}"><span class="material-symbols-outlined">edit</span></button>
+                <a href="{% url 'tangkap:delete' h.id %}" class="btn-icon text-danger" onclick="return confirm('Hapus hasil tangkap ini?')"><span class="material-symbols-outlined">delete</span></a>
             </div>
         </div>
     </div>
     {% empty %}
-    <p class="text-muted py-3">Belum ada hasil tangkap tercatat.</p>
+    <p class="text-muted py-3">
+        {% if q %}Tidak ada hasil untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada hasil tangkap tercatat.{% endif %}
+    </p>
     {% endfor %}
 </div>
+
+{% include 'includes/pagination.html' %}
+
+{% for h, edit_form in edit_forms %}
+<div class="modal fade" id="editTangkapModal{{ h.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'tangkap:update' h.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah hasil tangkap</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in edit_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

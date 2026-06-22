@@ -3,6 +3,7 @@ import json
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.views import LoginView
 from django.db.models import Count, F, Sum
 from django.utils import timezone
 from django.views.generic import TemplateView
@@ -12,7 +13,16 @@ from apps.operasional.models import BiayaOperasional, Trip
 from apps.penjualan.models import Penjualan
 from apps.tangkap.models import HasilTangkap
 
-from .mixins import OwnerRequiredMixin
+from .mixins import OwnerRequiredMixin, is_owner
+
+
+class CustomLoginView(LoginView):
+    template_name = 'auth/login.html'
+
+    def get_success_url(self):
+        if is_owner(self.request.user):
+            return '/dashboard/'
+        return '/operasional/trip/'
 
 _NAMA_BULAN = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
                'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']

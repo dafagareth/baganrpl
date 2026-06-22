@@ -12,7 +12,7 @@ class KapalListView(OwnerRequiredMixin, ListView):
     model = Kapal
     template_name = 'master/kapal_list.html'
     context_object_name = 'kapal_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -52,7 +52,7 @@ class ABKListView(OwnerRequiredMixin, ListView):
     model = ABK
     template_name = 'master/abk_list.html'
     context_object_name = 'abk_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -92,7 +92,7 @@ class JenisIkanListView(OwnerRequiredMixin, ListView):
     model = JenisIkan
     template_name = 'master/ikan_list.html'
     context_object_name = 'ikan_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -129,7 +129,7 @@ class PembeliListView(OwnerRequiredMixin, ListView):
     model = Pembeli
     template_name = 'master/pembeli_list.html'
     context_object_name = 'pembeli_list'
-    paginate_by = 10
+    paginate_by = 15
 
     def get_queryset(self):
         qs = super().get_queryset()
