@@ -138,6 +138,19 @@
   }
   .join-inner h2 { font-size: 1.35rem; font-weight: 500; letter-spacing: -.01em; margin-bottom: 8px; }
   .join-inner p { font-size: 14.5px; color: var(--ink-secondary); line-height: 1.6; max-width: 500px; margin: 0 auto 20px; }
+
+  /* Akun demo */
+  .demo-creds { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 0 auto 22px; max-width: 520px; }
+  .cred-card {
+    flex: 1 1 200px; background: var(--surface); border: 1px solid var(--rule-soft);
+    border-radius: var(--radius); padding: 14px 16px; text-align: left;
+  }
+  .cred-role { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--brand); margin-bottom: 6px; }
+  .cred-row { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.7; }
+  .cred-row code {
+    font-family: var(--f-mono); font-size: 13px; background: var(--surface-container);
+    color: var(--ink); padding: 1px 7px; border-radius: 5px;
+  }
 </style>
 {% endblock %}
 
@@ -298,11 +311,23 @@
     </div>
   </section>
 
-  <!-- CTA MASUK -->
+  <!-- CTA MASUK + AKUN DEMO -->
   <section class="join-cta" id="masuk">
     <div class="join-inner">
-      <h2>Anda operator atau pemilik kapal ini?</h2>
-      <p>Masuk ke sistem untuk mencatat operasional, memantau hasil tangkap, dan mengelola bagi hasil ABK.</p>
+      <h2>Coba langsung demo-nya</h2>
+      <p>Login pakai akun demo di bawah untuk menjelajah sistem. Semua data hanya contoh, jadi bebas dicoba-coba.</p>
+      <div class="demo-creds">
+        <div class="cred-card">
+          <div class="cred-role">Pemilik (Owner)</div>
+          <div class="cred-row">Username: <code>owner</code></div>
+          <div class="cred-row">Password: <code>owner</code></div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-role">Operator Kapal</div>
+          <div class="cred-row">Username: <code>operator</code></div>
+          <div class="cred-row">Password: <code>operator</code></div>
+        </div>
+      </div>
       <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Masuk ke sistem</a>
     </div>
   </section>
