@@ -54,12 +54,19 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static di production/gunicorn
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'apps.core.middleware.DemoWindowMiddleware',  # tutup akses demo setelah DEMO_OPEN_UNTIL
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Jendela demo: tutup akses publik setelah waktu ini (kosong = selalu buka).
+# Format waktu lokal Asia/Jakarta, mis. "2026-06-24 12:30".
+DEMO_OPEN_UNTIL = os.environ.get('DEMO_OPEN_UNTIL', '').strip()
+# Kunci opsional untuk melewati penutupan: buka https://domain/?buka=KUNCI
+DEMO_BYPASS_KEY = os.environ.get('DEMO_BYPASS_KEY', '').strip()
 
 ROOT_URLCONF = 'config.urls'
 
