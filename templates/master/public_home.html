@@ -8,44 +8,44 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
 
-  /* ── Hero ────────────────────────────────────────────── */
-  .hero { padding: 80px 0 64px; border-bottom: 1px solid var(--rule-soft); }
+  /* Hero */
+  .hero { padding: 48px 0 36px; border-bottom: 1px solid var(--rule-soft); }
   .hero-tag {
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 600; letter-spacing: .06em;
     text-transform: uppercase; color: var(--brand);
     background: rgba(26,115,232,.08); border-radius: 20px;
-    padding: 4px 12px; margin-bottom: 20px;
+    padding: 4px 12px; margin-bottom: 16px;
   }
   .hero h1 {
-    font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 500;
-    line-height: 1.12; letter-spacing: -.02em; max-width: 740px; margin-bottom: 20px;
+    font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 500;
+    line-height: 1.15; letter-spacing: -.02em; max-width: 680px; margin-bottom: 16px;
   }
   .hero h1 span { color: var(--brand); }
   .hero .lead {
-    font-size: 17px; color: var(--ink-secondary); line-height: 1.6;
-    max-width: 620px; margin-bottom: 36px;
+    font-size: 16px; color: var(--ink-secondary); line-height: 1.65;
+    max-width: 580px; margin-bottom: 28px;
   }
   .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
 
-  /* ── Foto bagan (banner) ──────────────────────────────── */
-  .hero-photo { margin: 40px 0; }
+  /* Foto bagan */
+  .hero-photo { margin: 28px 0; }
   .hero-photo img {
-    width: 100%; height: clamp(220px, 40vw, 440px); object-fit: cover;
+    width: 100%; height: clamp(200px, 36vw, 400px); object-fit: cover;
     border-radius: var(--radius-lg); border: 1px solid var(--rule-soft); display: block;
   }
 
-  /* ── Metric strip ─────────────────────────────────────── */
+  /* Metric strip */
   .metric-strip {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
     border: 1px solid var(--rule-soft); border-radius: var(--radius-lg);
-    overflow: hidden; margin: 40px 0; background: var(--surface);
+    overflow: hidden; margin: 0 0 32px; background: var(--surface);
   }
-  .metric-strip .metric { padding: 20px 24px; border-right: 1px solid var(--rule-soft); }
+  .metric-strip .metric { padding: 18px 20px; border-right: 1px solid var(--rule-soft); }
   .metric-strip .metric:last-child { border-right: 0; }
-  .metric-label { font-size: 11.5px; color: var(--ink-muted); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px; }
-  .metric-value { font-size: 1.55rem; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
-  .metric-unit  { font-size: .75em; font-weight: 400; color: var(--ink-muted); margin-left: 3px; }
+  .metric-label { font-size: 11px; color: var(--ink-muted); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 5px; }
+  .metric-value { font-size: 1.5rem; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
+  .metric-unit  { font-size: .72em; font-weight: 400; color: var(--ink-muted); margin-left: 3px; }
   .metric-note  { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
   @media (max-width: 767px) {
     .metric-strip { grid-template-columns: 1fr 1fr; }
@@ -54,43 +54,43 @@
     .metric-strip .metric:nth-child(4) { border-top: 1px solid var(--rule-soft); }
   }
 
-  /* ── Section ──────────────────────────────────────────── */
-  .section { padding: 56px 0; border-bottom: 1px solid var(--rule-soft); }
+  /* Section */
+  .section { padding: 40px 0; border-bottom: 1px solid var(--rule-soft); }
   .section:last-of-type { border-bottom: 0; }
   .section-eyebrow {
     font-size: 11px; font-weight: 600; letter-spacing: .08em;
-    text-transform: uppercase; color: var(--brand); margin-bottom: 8px;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 6px;
   }
-  .section h2 { font-size: 1.6rem; font-weight: 500; letter-spacing: -.01em; line-height: 1.2; margin-bottom: 10px; }
-  .section .section-lead { font-size: 15.5px; color: var(--ink-secondary); line-height: 1.65; max-width: 680px; margin-bottom: 32px; }
+  .section h2 { font-size: 1.45rem; font-weight: 500; letter-spacing: -.01em; line-height: 1.25; margin-bottom: 8px; }
+  .section .section-lead { font-size: 15px; color: var(--ink-secondary); line-height: 1.65; max-width: 640px; margin-bottom: 24px; }
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  @media (max-width: 767px) { .two-col { grid-template-columns: 1fr; gap: 32px; } }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 767px) { .two-col { grid-template-columns: 1fr; gap: 24px; } }
 
-  /* ── How it works ─────────────────────────────────────── */
+  /* How it works */
   .how-list { list-style: none; padding: 0; margin: 0; counter-reset: how; }
   .how-list li {
-    display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 16px 0;
+    display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 0;
     border-bottom: 1px solid var(--rule-soft); counter-increment: how;
   }
   .how-list li:last-child { border-bottom: 0; }
   .how-list li::before {
     content: counter(how); font-family: var(--f-mono); font-size: 11px; color: var(--ink-muted);
-    background: var(--surface-container); border-radius: 50%; width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+    background: var(--surface-container); border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
   }
-  .how-list h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 3px; }
-  .how-list p  { font-size: 13.5px; color: var(--ink-muted); margin: 0; line-height: 1.55; }
+  .how-list h3 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .how-list p  { font-size: 13px; color: var(--ink-muted); margin: 0; line-height: 1.55; }
 
-  /* ── Rekam jejak ──────────────────────────────────────── */
+  /* Rekam jejak */
   .consist-row {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
     border: 1px solid var(--rule-soft); border-radius: var(--radius-lg);
     overflow: hidden; background: var(--surface);
   }
-  .consist-item { padding: 20px; text-align: center; border-right: 1px solid var(--rule-soft); }
+  .consist-item { padding: 18px 16px; text-align: center; border-right: 1px solid var(--rule-soft); }
   .consist-item:last-child { border-right: 0; }
-  .consist-num { font-size: 1.65rem; font-weight: 700; color: var(--ink); }
+  .consist-num { font-size: 1.55rem; font-weight: 700; color: var(--ink); }
   .consist-lbl { font-size: 12px; color: var(--ink-muted); margin-top: 3px; }
   @media (max-width: 600px) {
     .consist-row { grid-template-columns: 1fr; }
@@ -98,30 +98,30 @@
     .consist-item:last-child { border-bottom: 0; }
   }
 
-  /* ── Top tangkapan ────────────────────────────────────── */
+  /* Top tangkapan */
   .ikan-list { list-style: none; padding: 0; margin: 0; }
-  .ikan-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule-soft); }
+  .ikan-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--rule-soft); }
   .ikan-row:last-child { border-bottom: 0; }
-  .ikan-rank { font-family: var(--f-mono); font-size: 11px; color: var(--ink-muted); width: 18px; flex-shrink: 0; }
-  .ikan-name { flex: 1; font-size: 14px; font-weight: 500; }
-  .ikan-bar-wrap { flex: 2; height: 6px; background: var(--surface-container); border-radius: 3px; overflow: hidden; }
+  .ikan-rank { font-family: var(--f-mono); font-size: 11px; color: var(--ink-muted); width: 16px; flex-shrink: 0; }
+  .ikan-name { flex: 1; font-size: 13.5px; font-weight: 500; }
+  .ikan-bar-wrap { flex: 2; height: 5px; background: var(--surface-container); border-radius: 3px; overflow: hidden; }
   .ikan-bar { height: 100%; background: var(--brand); border-radius: 3px; }
-  .ikan-val { font-size: 13px; color: var(--ink-muted); width: 70px; text-align: right; flex-shrink: 0; }
+  .ikan-val { font-size: 12.5px; color: var(--ink-muted); width: 68px; text-align: right; flex-shrink: 0; }
 
-  /* ── Fleet grid ───────────────────────────────────────── */
-  .fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
-  .fleet-card { border: 1px solid var(--rule-soft); border-radius: var(--radius); padding: 16px; background: var(--surface); }
-  .fleet-card .fc-id { font-family: var(--f-mono); font-size: 10.5px; color: var(--ink-muted); margin-bottom: 6px; }
-  .fleet-card .fc-name { font-size: 14.5px; font-weight: 600; margin-bottom: 3px; }
-  .fleet-card .fc-cap { font-size: 12.5px; color: var(--ink-muted); }
-  .fleet-card .fc-foto { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; background: var(--surface-container); }
+  /* Fleet grid */
+  .fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-top: 8px; }
+  .fleet-card { border: 1px solid var(--rule-soft); border-radius: var(--radius); padding: 14px; background: var(--surface); }
+  .fleet-card .fc-id { font-family: var(--f-mono); font-size: 10.5px; color: var(--ink-muted); margin-bottom: 5px; }
+  .fleet-card .fc-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .fleet-card .fc-cap { font-size: 12px; color: var(--ink-muted); }
+  .fleet-card .fc-foto { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; background: var(--surface-container); }
   .fleet-placeholder {
-    width: 100%; height: 100px; border-radius: 6px; background: var(--surface-container);
+    width: 100%; height: 90px; border-radius: 6px; background: var(--surface-container);
     display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: var(--ink-muted);
   }
 
-  /* ── Kontak ───────────────────────────────────────────── */
-  .contact-box { border: 1px solid var(--rule-soft); border-radius: var(--radius-lg); padding: 32px 36px; background: var(--surface); }
+  /* Kontak */
+  .contact-box { border: 1px solid var(--rule-soft); border-radius: var(--radius-lg); padding: 28px 32px; background: var(--surface); }
   .cta-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
   .btn-wa {
     display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: #fff;
@@ -130,14 +130,14 @@
   }
   .btn-wa:hover { background: #1ebe5a; color: #fff; }
 
-  /* ── Bagian dari usaha ini? (CTA login) ───────────────── */
-  .join-cta { padding: 56px 0; border-bottom: 1px solid var(--rule-soft); }
+  /* CTA masuk */
+  .join-cta { padding: 40px 0; border-bottom: 1px solid var(--rule-soft); }
   .join-inner {
     background: var(--brand-subtle); border: 1px solid var(--rule-soft);
-    border-radius: var(--radius-lg); padding: 44px 32px; text-align: center;
+    border-radius: var(--radius-lg); padding: 36px 28px; text-align: center;
   }
-  .join-inner h2 { font-size: 1.5rem; font-weight: 500; letter-spacing: -.01em; margin-bottom: 10px; }
-  .join-inner p { font-size: 15px; color: var(--ink-secondary); line-height: 1.6; max-width: 540px; margin: 0 auto 24px; }
+  .join-inner h2 { font-size: 1.35rem; font-weight: 500; letter-spacing: -.01em; margin-bottom: 8px; }
+  .join-inner p { font-size: 14.5px; color: var(--ink-secondary); line-height: 1.6; max-width: 500px; margin: 0 auto 20px; }
 </style>
 {% endblock %}
 
@@ -152,14 +152,13 @@
   <!-- HERO -->
   <section class="hero" id="top">
     <div class="hero-tag">Perikanan Bagan · Sumatera Barat</div>
-    <h1>Hasil laut yang dicatat jujur, <span>untuk semua yang ikut melaut</span>.</h1>
+    <h1>Operasional kapal bagan, dicatat <span>langsung dari laut</span>.</h1>
     <p class="lead">
-      Dari biaya berangkat, hasil tangkap, penjualan, sampai bagi hasil ABK — semuanya
-      dicatat langsung oleh operator dari kapal. Pemilik dan awak melihat angka yang sama,
-      jadi tidak ada yang ditutup-tutupi.
+      Operator catat biaya, hasil tangkap, dan penjualan dari ponsel saat masih di kapal.
+      Pemilik buka dashboard, semua sudah ada. Tidak perlu diingat-ingat lagi setelah pulang.
     </p>
     <div class="hero-cta">
-      <a href="#overview" class="btn btn-primary">Pelajari sistemnya</a>
+      <a href="#overview" class="btn btn-primary">Lihat cara kerjanya</a>
       <a href="#kontak" class="btn btn-outline-secondary">Hubungi kami</a>
     </div>
   </section>
@@ -179,7 +178,7 @@
     <div class="metric">
       <div class="metric-label">Trip bulan ini</div>
       <div class="metric-value">{{ trip_bulan_ini }}</div>
-      <div class="metric-note">Rata-rata {{ avg_trip_per_bulan }}/bulan historis</div>
+      <div class="metric-note">Rata-rata {{ avg_trip_per_bulan }}/bulan</div>
     </div>
     <div class="metric">
       <div class="metric-label">Tangkap bulan ini</div>
@@ -195,38 +194,67 @@
 
   <!-- CARA SISTEM BEKERJA -->
   <section class="section" id="overview">
-    <div class="section-eyebrow">Sistem Operasional</div>
-    <h2>Bagaimana data mengalir dari kapal ke laporan</h2>
+    <div class="section-eyebrow">Cara Kerja</div>
+    <h2>Dari kapal ke laporan, semua terlacak</h2>
     <p class="section-lead">
-      Di usaha bagan, pencatatan biasanya cuma lisan dan susah dicek ulang.
-      Kami pindahkan seluruh siklusnya ke aplikasi, dengan beberapa prinsip sederhana.
+      Pencatatan usaha bagan biasanya cuma lisan dan susah diingat ulang.
+      Di sini, seluruh siklus dipindahkan ke aplikasi dengan alur yang sederhana.
     </p>
 
     <div class="two-col">
       <ol class="how-list">
-        <li><div><h3>Dicatat langsung dari kapal</h3><p>Operator mencatat biaya, hasil tangkap, dan penjualan saat itu juga lewat ponsel — bukan diingat-ingat lagi setelah pulang.</p></div></li>
-        <li><div><h3>Foto bukti &amp; titik lokasi</h3><p>Hasil tangkap bisa dilengkapi foto dan koordinat GPS dari ponsel, jadi jelas kapan dan di mana ikan didapat.</p></div></li>
-        <li><div><h3>Laporan dikunci setelah trip selesai</h3><p>Pemilik mengaudit lalu mengunci laporan per trip. Setelah terkunci, data tidak bisa diubah lagi oleh operator.</p></div></li>
-        <li><div><h3>Bagi hasil ABK terbuka</h3><p>Pembayaran ke setiap awak tercatat dengan nominal dan status (sudah/belum dibayar), supaya semua tahu haknya.</p></div></li>
+        <li>
+          <div>
+            <h3>Dicatat saat itu juga</h3>
+            <p>Operator input biaya, hasil tangkap, dan penjualan dari ponsel, tidak tunggu pulang ke darat.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Foto dan titik lokasi</h3>
+            <p>Hasil tangkap bisa dilengkapi foto dan koordinat GPS dari ponsel, jelas kapan dan di mana.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Pemilik kunci laporan</h3>
+            <p>Setelah trip selesai, pemilik audit lalu kunci laporan. Sesudahnya data tidak bisa diubah lagi.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Bagi hasil ABK terbuka</h3>
+            <p>Setiap awak tahu berapa yang ia terima dan sudah dibayar apa belum, tanpa harus tanya-tanya.</p>
+          </div>
+        </li>
       </ol>
 
       <div>
         <p class="text-muted small mb-3">Rekam jejak operasional</p>
         <div class="consist-row mb-3">
-          <div class="consist-item"><div class="consist-num">{{ lifetime_trip }}</div><div class="consist-lbl">Total trip tercatat</div></div>
-          <div class="consist-item"><div class="consist-num">{{ pct_trip_sukses }}%</div><div class="consist-lbl">Trip sukses (selesai)</div></div>
-          <div class="consist-item"><div class="consist-num">{{ bulan_aktif }}</div><div class="consist-lbl">Bulan beroperasi</div></div>
+          <div class="consist-item">
+            <div class="consist-num">{{ lifetime_trip }}</div>
+            <div class="consist-lbl">Total trip</div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-num">{{ pct_trip_sukses }}%</div>
+            <div class="consist-lbl">Trip selesai</div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-num">{{ bulan_aktif }}</div>
+            <div class="consist-lbl">Bulan aktif</div>
+          </div>
         </div>
-        <p class="text-muted small">Beroperasi sejak <strong>{{ beroperasi_sejak }}</strong>. Data diperbarui setiap halaman dimuat.</p>
+        <p class="text-muted small">Beroperasi sejak <strong>{{ beroperasi_sejak }}</strong>. Data diperbarui tiap halaman dimuat.</p>
 
         {% if top_ikan %}
-        <p class="text-muted small mb-2 mt-4">Top tangkapan sepanjang masa</p>
+        <p class="text-muted small mb-2 mt-4">Tangkapan terbanyak sepanjang masa</p>
         <ul class="ikan-list">
           {% with max_kg=top_ikan.0.total_kg %}
           {% for item in top_ikan %}
           <li class="ikan-row">
             <span class="ikan-rank">{{ forloop.counter }}</span>
-            <span class="ikan-name">{{ item.jenis_ikan__nama|default:"—" }}</span>
+            <span class="ikan-name">{{ item.jenis_ikan__nama|default:"?" }}</span>
             <div class="ikan-bar-wrap">
               <div class="ikan-bar" style="width: calc({{ item.total_kg }} / {{ max_kg }} * 100%)"></div>
             </div>
@@ -243,9 +271,9 @@
   <!-- ARMADA -->
   <section class="section" id="fleet">
     <div class="section-eyebrow">Armada</div>
-    <h2>{{ total_kapal }} kapal terdaftar di sistem</h2>
+    <h2>{{ total_kapal }} kapal terdaftar</h2>
     <p class="section-lead">
-      Setiap kapal memiliki riwayat trip, biaya, dan hasil tangkap yang dapat ditelusuri sampai level transaksi individual.
+      Setiap kapal punya riwayat trip, biaya, dan hasil tangkap yang bisa dilihat sampai level transaksi.
     </p>
 
     <div class="fleet-grid">
@@ -255,14 +283,13 @@
         <img src="{{ kapal.foto.url }}" alt="{{ kapal.nama_kapal }}" class="fc-foto">
         {% else %}
         <div class="fleet-placeholder">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l1.5-8.5L12 5l7.5 3.5L21 17"/><path d="M3 17c0 2 4 3 9 3s9-1 9-3"/><path d="M12 5V3"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l1.5-8.5L12 5l7.5 3.5L21 17"/><path d="M3 17c0 2 4 3 9 3s9-1 9-3"/><path d="M12 5V3"/></svg>
         </div>
         {% endif %}
         <div class="fc-id">KPL-{{ kapal.id|stringformat:"03d" }}</div>
         <div class="fc-name">{{ kapal.nama_kapal }}</div>
         <div class="fc-cap">
-          {{ kapal.jenis }}
-          {% if kapal.kapasitas %} · {{ kapal.kapasitas|floatformat:"-2" }} ton{% endif %}
+          {{ kapal.jenis }}{% if kapal.kapasitas %} · {{ kapal.kapasitas|floatformat:"-2" }} ton{% endif %}
         </div>
       </div>
       {% empty %}
@@ -271,12 +298,12 @@
     </div>
   </section>
 
-  <!-- BAGIAN DARI USAHA INI? -->
+  <!-- CTA MASUK -->
   <section class="join-cta" id="masuk">
     <div class="join-inner">
-      <h2>Apakah Anda bagian dari usaha ini?</h2>
-      <p>Operator dan pemilik masuk di sini untuk mencatat operasional kapal, memantau dashboard, serta mengelola laporan dan bagi hasil.</p>
-      <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Masuk ke sistem &rarr;</a>
+      <h2>Anda operator atau pemilik kapal ini?</h2>
+      <p>Masuk ke sistem untuk mencatat operasional, memantau hasil tangkap, dan mengelola bagi hasil ABK.</p>
+      <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Masuk ke sistem</a>
     </div>
   </section>
 
@@ -285,12 +312,12 @@
     <div class="section-eyebrow">Kontak</div>
     <h2>Hubungi kami</h2>
     <p class="section-lead">
-      Untuk pertanyaan seputar usaha atau kerja sama, hubungi kami lewat WhatsApp atau email.
+      Ada pertanyaan soal usaha atau sistem ini? Kami bisa dihubungi lewat WhatsApp atau email.
     </p>
 
     <div class="contact-box">
       <div class="cta-group">
-        <a href="https://wa.me/6282173927763?text=Halo%2C+saya+ingin+bertanya+soal+usaha+bagan." class="btn-wa" target="_blank" rel="noopener">
+        <a href="https://wa.me/62800000000?text=Halo%2C+saya+ingin+bertanya+soal+usaha+bagan." class="btn-wa" target="_blank" rel="noopener">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.979-1.393A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.96 7.96 0 01-4.073-1.12l-.292-.174-3.038.85.822-3.002-.19-.308A7.96 7.96 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>
           WhatsApp
         </a>

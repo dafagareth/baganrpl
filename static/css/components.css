@@ -724,23 +724,35 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
 /* ── Mobile: Bottom Sheet Modal + Touch Targets ─────────── */
 @media (max-width: 991.98px) {
-    /* Modal slides up from bottom (native bottom sheet) */
-    .modal-dialog {
-        position  : fixed !important;
-        bottom    : 0;
-        left      : 0;
-        right     : 0;
-        margin    : 0 !important;
-        max-width : 100% !important;
-        transform : translateY(100%) !important;
-        transition: transform var(--t-emphasized) !important;
+    /* Semua modal jadi bottom sheet — override centered + sm juga */
+    .modal-dialog,
+    .modal-dialog.modal-dialog-centered,
+    .modal-dialog.modal-sm,
+    .modal-dialog.modal-lg,
+    .modal-dialog.modal-xl {
+        position   : fixed !important;
+        bottom     : 0 !important;
+        left       : 0 !important;
+        right      : 0 !important;
+        top        : auto !important;
+        margin     : 0 !important;
+        width      : 100% !important;
+        max-width  : 100% !important;
+        min-height : unset !important;
+        transform  : translateY(100%) !important;
+        transition : transform var(--t-emphasized) !important;
+        /* override flexbox centering dari modal-dialog-centered */
+        display    : block !important;
+        align-items: unset !important;
     }
-    .modal.show .modal-dialog {
+    .modal.show .modal-dialog,
+    .modal.show .modal-dialog.modal-dialog-centered {
         transform: translateY(0) !important;
     }
     .modal-content {
         border-radius: var(--radius-xxl) var(--radius-xxl) 0 0 !important;
         border-bottom: 0 !important;
+        width: 100% !important;
     }
     .modal-body {
         max-height: 60vh;
