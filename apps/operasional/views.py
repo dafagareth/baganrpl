@@ -81,15 +81,24 @@ def operasional_feed(request):
     entries.sort(key=lambda e: e['tgl'] or _date.min, reverse=True)
 
     trip_aktif = Trip.objects.filter(
-        kapal__jenis__icontains='bagan',
         status__in=['persiapan', 'berlayar'],
-    ).select_related('kapal').first()
+    ).select_related('kapal').order_by('-tgl_berangkat').first()
+
+    # Target trip untuk input biaya: biaya operasional harus SELALU bisa diinput.
+    # Utamakan trip aktif; jika tidak ada, pakai trip terbaru yang belum dikunci;
+    # terakhir pakai trip terbaru apa pun. Bisa None hanya jika belum ada trip sama sekali.
+    trip_biaya = (
+        trip_aktif
+        or Trip.objects.filter(is_laporan_locked=False).select_related('kapal').order_by('-tgl_berangkat').first()
+        or Trip.objects.select_related('kapal').order_by('-tgl_berangkat').first()
+    )
 
     return render(request, 'operasional/feed.html', {
         'entries': entries,
         'tipe': tipe,
         'q': q,
         'trip_aktif': trip_aktif,
+        'trip_biaya': trip_biaya,
         'biaya_form': BiayaOperasionalForm(),
     })
 

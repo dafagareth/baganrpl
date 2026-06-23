@@ -33,8 +33,8 @@
             <tbody id="formset-body">
                 {% for form in formset %}
                 <tr class="formset-row">
-                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
                     <td data-label="Barang">
+                        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
                         {{ form.keterangan }}
                         {% if form.keterangan.errors %}<div class="text-danger small mt-1">{{ form.keterangan.errors.0 }}</div>{% endif %}
                     </td>

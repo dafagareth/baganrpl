@@ -130,6 +130,7 @@ class BagiHasilListView(OwnerRequiredMixin, ListView):
     model = BagiHasil
     template_name = 'penjualan/bagi_hasil_list.html'
     context_object_name = 'bagi_hasil_list'
+    paginate_by = 15
 
     def get_queryset(self):
         return BagiHasil.objects.select_related(

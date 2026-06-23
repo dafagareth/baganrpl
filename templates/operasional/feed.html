@@ -5,8 +5,8 @@
 {% block content %}
 <header class="page-header-row">
     <h1 class="page-title">Operasional</h1>
-    {% if trip_aktif %}
-    <a href="{% url 'operasional:biaya_multi_create' trip_aktif.id %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah biaya</a>
+    {% if trip_biaya %}
+    <a href="{% url 'operasional:biaya_multi_create' trip_biaya.id %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah biaya</a>
     {% else %}
     <a href="{% url 'operasional:trip_list' %}" class="btn btn-outline-secondary d-none d-lg-inline-flex">Mulai trip dulu</a>
     {% endif %}
@@ -57,8 +57,8 @@
 {% endblock %}
 
 {% block fab %}
-{% if trip_aktif %}
-<a href="{% url 'operasional:biaya_multi_create' trip_aktif.id %}" class="fab-add d-lg-none" title="Tambah biaya">
+{% if trip_biaya %}
+<a href="{% url 'operasional:biaya_multi_create' trip_biaya.id %}" class="fab-add d-lg-none" title="Tambah biaya">
     <span class="material-symbols-outlined">add</span>
 </a>
 {% else %}
