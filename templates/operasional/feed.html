@@ -8,56 +8,53 @@
 </header>
 
 <form method="get" class="search-inline">
-    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari ikan, kapal, atau pembeli">
-    {% if f %}<input type="hidden" name="f" value="{{ f }}">{% endif %}
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari aktivitas…">
+    <input type="hidden" name="tipe" value="{{ tipe }}">
     <button type="submit" class="btn btn-outline-secondary">Cari</button>
-    {% if q %}<a href="{% url 'operasional:feed' %}{% if f %}?f={{ f }}{% endif %}" class="btn btn-link">Reset</a>{% endif %}
+    {% if q %}<a href="{% url 'operasional:feed' %}?tipe={{ tipe }}" class="btn btn-link">Reset</a>{% endif %}
 </form>
 
-<div class="feed-filters">
-    <a href="?{% if q %}q={{ q }}{% endif %}" class="chip {% if not f %}chip-active{% endif %}">Semua <span class="feed-count">{{ count_semua }}</span></a>
-    <a href="?f=tangkap{% if q %}&q={{ q }}{% endif %}" class="chip {% if f == 'tangkap' %}chip-active{% endif %}">Tangkap <span class="feed-count">{{ count_tangkap }}</span></a>
-    <a href="?f=jual{% if q %}&q={{ q }}{% endif %}" class="chip {% if f == 'jual' %}chip-active{% endif %}">Jual <span class="feed-count">{{ count_jual }}</span></a>
+<div class="feed-chips">
+    <a href="?tipe=semua{% if q %}&q={{ q }}{% endif %}" class="chip {% if tipe == 'semua' %}chip-active{% endif %}">Semua</a>
+    <a href="?tipe=biaya{% if q %}&q={{ q }}{% endif %}" class="chip {% if tipe == 'biaya' %}chip-active{% endif %}">Biaya</a>
+    <a href="?tipe=tangkap{% if q %}&q={{ q }}{% endif %}" class="chip {% if tipe == 'tangkap' %}chip-active{% endif %}">Tangkap</a>
+    <a href="?tipe=jual{% if q %}&q={{ q }}{% endif %}" class="chip {% if tipe == 'jual' %}chip-active{% endif %}">Jual</a>
 </div>
 
-<div class="feed-list">
-    {% for item in feed_items %}
-    {% if item.type == 'tangkap' %}
-    <a href="{% url 'operasional:trip_detail' item.obj.trip.id %}" class="list-row">
-        <div class="d-flex align-items-start gap-3">
-            <span class="material-symbols-outlined feed-icon feed-icon-tangkap">set_meal</span>
-            <div>
-                <div class="list-row-title">{{ item.obj.jenis_ikan }}</div>
-                <div class="list-row-meta">
-                    {{ item.obj.trip.kapal }} · {{ item.obj.berat_kg }} kg · {{ item.obj.trip.tgl_berangkat|tgl_indo }}
-                </div>
+<section class="section">
+    {% for e in entries %}
+    <div class="list-row">
+        <div>
+            <div class="list-row-title">{{ e.judul }}</div>
+            <div class="list-row-meta">
+                {% if e.tipe == 'biaya' %}Biaya{% elif e.tipe == 'tangkap' %}Tangkap{% else %}Jual{% endif %}
+                · {{ e.tgl|tgl_indo }}
             </div>
         </div>
-        <span class="badge {% if item.obj.kondisi == 'segar' %}bg-success{% elif item.obj.kondisi == 'beku' %}bg-info{% else %}bg-secondary{% endif %}">{{ item.obj.get_kondisi_display }}</span>
-    </a>
-    {% else %}
-    <a href="{% url 'penjualan:list' %}" class="list-row">
-        <div class="d-flex align-items-start gap-3">
-            <span class="material-symbols-outlined feed-icon feed-icon-jual">payments</span>
-            <div>
-                <div class="list-row-title">{{ item.obj.hasil_tangkap.jenis_ikan }}</div>
-                <div class="list-row-meta">
-                    {{ item.obj.pembeli }} · {{ item.obj.berat_terjual }} kg · {{ item.obj.tgl_jual|tgl_indo }}
-                </div>
-            </div>
-        </div>
-        <span class="fw-medium text-success">{{ item.obj.total_nilai|rupiah }}</span>
-    </a>
-    {% endif %}
+        {% if e.satuan == 'kg' %}
+        <span class="fw-medium text-success">{{ e.nilai|floatformat:"-2" }} kg</span>
+        {% elif e.satuan == 'jual' %}
+        <span class="fw-medium text-success">{{ e.nilai|rupiah }}</span>
+        {% else %}
+        <span class="fw-medium">{{ e.nilai|rupiah }}</span>
+        {% endif %}
+    </div>
     {% empty %}
     <div class="empty-state">
-        <span class="material-symbols-outlined">{% if q or f %}search_off{% else %}inbox{% endif %}</span>
+        <span class="material-symbols-outlined">receipt_long</span>
         <p class="mb-0">
-            {% if q or f %}Tidak ada hasil yang cocok.{% else %}Belum ada aktivitas operasional.{% endif %}
+            {% if q %}Tidak ada aktivitas untuk &ldquo;{{ q }}&rdquo;.{% else %}Belum ada aktivitas tercatat.{% endif %}
         </p>
     </div>
     {% endfor %}
-</div>
+</section>
 
-{% include 'includes/pagination.html' %}
+{% endblock %}
+
+{% block fab %}
+{% if trip_aktif %}
+<a href="{% url 'operasional:biaya_multi_create' trip_aktif.id %}" class="fab-add d-lg-none" title="Tambah biaya">
+    <span class="material-symbols-outlined">add</span>
+</a>
+{% endif %}
 {% endblock %}

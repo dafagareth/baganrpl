@@ -3,9 +3,22 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<header class="page-header">
+<header class="page-header-row">
     <h1 class="page-title">Dashboard</h1>
+    <form method="get" class="d-flex align-items-center gap-2" style="margin-top: 14px;">
+        <label class="text-muted small mb-0" for="rangeSel">Rentang grafik</label>
+        <select name="range" id="rangeSel" class="form-select" style="max-width:150px;" onchange="this.form.submit()">
+            {% for opt in range_options %}
+            <option value="{{ opt }}" {% if opt == chart_months %}selected{% endif %}>{{ opt }} bulan</option>
+            {% endfor %}
+        </select>
+    </form>
 </header>
+
+<div class="notice notice-info mb-3">
+    <span class="material-symbols-outlined">info</span>
+    <span>Data pada dashboard ini adalah <strong>data contoh (dummy)</strong> untuk demo, disimulasikan sejak Januari 2025.</span>
+</div>
 
 {# ── KPI ──────────────────────────────────────────────────────── #}
 <div class="metrics">
@@ -42,7 +55,7 @@
     <section class="section">
         <div class="section-head">
             <h2 class="section-title">Pendapatan &amp; biaya</h2>
-            <span class="section-meta mb-0">6 bulan terakhir</span>
+            <span class="section-meta mb-0">{{ chart_months }} bulan terakhir</span>
         </div>
         <div style="position:relative;min-height:220px;height:32vh;">
             <canvas id="chartRevenue"></canvas>
@@ -52,7 +65,7 @@
     <section class="section">
         <div class="section-head">
             <h2 class="section-title">Laba bersih</h2>
-            <span class="section-meta mb-0">6 bulan terakhir</span>
+            <span class="section-meta mb-0">{{ chart_months }} bulan terakhir</span>
         </div>
         <div style="position:relative;min-height:220px;height:32vh;">
             <canvas id="chartLaba"></canvas>
@@ -87,14 +100,15 @@
 <div class="row-2col">
     <section class="section">
         <div class="section-head">
-            <h2 class="section-title">Komposisi biaya</h2>
-            <span class="section-meta mb-0">Per kategori (tahun ini)</span>
+            <h2 class="section-title">Biaya per bulan</h2>
+            <span class="section-meta mb-0">{{ chart_months }} bulan terakhir</span>
         </div>
         <div style="position:relative;min-height:200px;height:28vh;">
-            <canvas id="chartKat"></canvas>
+            <canvas id="chartBiayaBulan"></canvas>
         </div>
     </section>
 
+    {% if show_utilisasi %}
     <section class="section">
         <div class="section-head">
             <h2 class="section-title">Utilisasi armada</h2>
@@ -104,6 +118,7 @@
             <canvas id="chartUtil"></canvas>
         </div>
     </section>
+    {% endif %}
 </div>
 
 {# ── Trip terbaru ─────────────────────────────────────────────── #}
@@ -174,8 +189,6 @@
     "ikanData":     {{ chart_ikan_data|safe }},
     "pembeliLabels":{{ chart_pembeli_labels|safe }},
     "pembeliData":  {{ chart_pembeli_data|safe }},
-    "katLabels":    {{ chart_kat_labels|safe }},
-    "katData":      {{ chart_kat_data|safe }},
     "utilLabels":   {{ chart_util_labels|safe }},
     "utilData":     {{ chart_util_data|safe }}
 }

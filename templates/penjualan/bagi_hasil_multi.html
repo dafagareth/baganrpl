@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tambah bagi hasil{% endblock %}
+
+{% block content %}
+<header class="page-header-row">
+    <div>
+        <p class="text-muted mb-1" style="font-size: 13px;">
+            <a href="{% url 'operasional:trip_list' %}" class="text-muted text-decoration-none">Trip</a>
+            <span class="mx-1">›</span>
+            <a href="{% url 'operasional:trip_detail' trip.pk %}" class="text-muted text-decoration-none">{{ trip.kapal }}</a>
+            <span class="mx-1">›</span>
+            Bagi Hasil
+        </p>
+        <h1 class="page-title">Tambah bagi hasil ABK</h1>
+    </div>
+    <button type="button" class="btn btn-outline-secondary" id="btn-add-row">Tambah baris</button>
+</header>
+
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div class="table-responsive">
+        <table class="table-plain" id="formset-table">
+            <thead>
+                <tr>
+                    <th style="min-width: 220px;">ABK</th>
+                    <th style="min-width: 180px;">Nominal (Rp)</th>
+                    <th style="width: 1%;"></th>
+                </tr>
+            </thead>
+            <tbody id="formset-body">
+                {% for form in formset %}
+                <tr class="formset-row">
+                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                    <td data-label="ABK">
+                        {{ form.abk }}
+                        {% if form.abk.errors %}<div class="text-danger small mt-1">{{ form.abk.errors.0 }}</div>{% endif %}
+                    </td>
+                    <td data-label="Nominal (Rp)">
+                        {{ form.nominal }}
+                        {% if form.nominal.errors %}<div class="text-danger small mt-1">{{ form.nominal.errors.0 }}</div>{% endif %}
+                    </td>
+                    <td data-label="">
+                        <button type="button" class="btn btn-link text-danger btn-sm btn-remove-row" title="Hapus baris">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:-4px;">delete</span> Hapus
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if formset.non_form_errors %}
+    <div class="alert alert-danger mt-3">
+        {% for error in formset.non_form_errors %}<div>{{ error }}</div>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="{% url 'operasional:trip_detail' trip.pk %}" class="btn btn-link">Batal</a>
+        <button type="submit" class="btn btn-primary">Simpan semua</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/formset_rows.js' %}"></script>
+{% endblock %}

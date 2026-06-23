@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from apps.core.mixins import OwnerRequiredMixin
 from django.views.generic import TemplateView
 from apps.operasional.models import Trip
@@ -138,13 +139,13 @@ class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
             if abs(v) >= 1e3: return f"Rp {int(v/1e3)} rb"
             return f"Rp {int(v):,}"
 
+        # Tabel hitam-putih: tanpa warna, hanya garis tipis hitam.
         tbl_style = TableStyle([
-            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1a56db')),
-            ('TEXTCOLOR',  (0,0), (-1,0), colors.white),
             ('FONTNAME',   (0,0), (-1,0), 'Helvetica-Bold'),
             ('FONTSIZE',   (0,0), (-1,-1), 8),
-            ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor('#F8F9FA')]),
-            ('GRID', (0,0), (-1,-1), 0.4, colors.HexColor('#DEE2E6')),
+            ('TEXTCOLOR',  (0,0), (-1,-1), colors.black),
+            ('LINEBELOW',  (0,0), (-1,0), 0.8, colors.black),
+            ('LINEBELOW',  (0,1), (-1,-2), 0.3, colors.black),
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ('TOPPADDING',  (0,0), (-1,-1), 4),
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
@@ -154,7 +155,7 @@ class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
 
         # Header
         story.append(Paragraph('Laporan Trip Usaha Bagan', h1))
-        story.append(HRFlowable(width='100%', thickness=1, color=colors.HexColor('#1a56db')))
+        story.append(HRFlowable(width='100%', thickness=1, color=colors.black))
         story.append(Spacer(1, 0.3*cm))
 
         # Info trip

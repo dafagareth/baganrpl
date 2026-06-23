@@ -55,51 +55,49 @@
 
     <!-- Sidebar / Drawer -->
     <aside class="sidebar" id="sidebar">
+        {% if is_owner %}
         <ul class="nav flex-column">
-            {% if is_owner %}
             <li class="nav-item">
                 <a href="{% url 'dashboard' %}" class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}">
                     <span class="material-symbols-outlined">dashboard</span> Dashboard
                 </a>
             </li>
-            {% else %}
-            <li class="nav-item">
-                <a href="{% url 'operasional:trip_list' %}" class="nav-link {% if '/operasional/' in request.path %}active{% endif %}">
-                    <span class="material-symbols-outlined">explore</span> Trip Saya
-                </a>
-            </li>
-            {% endif %}
         </ul>
 
-        {% if is_owner %}
-        <div class="sidebar-section-label">Master Data</div>
+        <div class="sidebar-section-label">Trip</div>
         <ul class="nav flex-column">
-            <li><a href="{% url 'master:kapal_list' %}" class="nav-link"><span class="material-symbols-outlined">directions_boat</span> Kapal</a></li>
-            <li><a href="{% url 'master:abk_list' %}" class="nav-link"><span class="material-symbols-outlined">groups</span> ABK</a></li>
-            <li><a href="{% url 'master:ikan_list' %}" class="nav-link"><span class="material-symbols-outlined">set_meal</span> Jenis Ikan</a></li>
-            <li><a href="{% url 'master:pembeli_list' %}" class="nav-link"><span class="material-symbols-outlined">storefront</span> Pembeli</a></li>
+            <li><a href="{% url 'operasional:trip_list' %}" class="nav-link {% if '/operasional/trip' in request.path %}active{% endif %}"><span class="material-symbols-outlined">explore</span> Trip</a></li>
+            <li><a href="{% url 'tangkap:list' %}" class="nav-link {% if '/tangkap/' in request.path %}active{% endif %}"><span class="material-symbols-outlined">shopping_basket</span> Hasil Tangkap</a></li>
+            <li><a href="{% url 'penjualan:list' %}" class="nav-link {% if '/penjualan/' in request.path and 'bagi-hasil' not in request.path %}active{% endif %}"><span class="material-symbols-outlined">payments</span> Penjualan</a></li>
+            <li><a href="{% url 'penjualan:bagi_hasil_list' %}" class="nav-link {% if 'bagi-hasil' in request.path %}active{% endif %}"><span class="material-symbols-outlined">account_balance_wallet</span> Bagi Hasil</a></li>
         </ul>
-        {% endif %}
+
+        <div class="sidebar-section-label">Laporan</div>
+        <ul class="nav flex-column">
+            <li><a href="{% url 'laporan:index' %}" class="nav-link {% if '/laporan/' in request.path %}active{% endif %}"><span class="material-symbols-outlined">bar_chart</span> Laporan</a></li>
+        </ul>
+
+        <div class="sidebar-section-label">Data Master</div>
+        <ul class="nav flex-column">
+            <li><a href="{% url 'master:kapal_list' %}" class="nav-link {% if '/master/kapal' in request.path %}active{% endif %}"><span class="material-symbols-outlined">directions_boat</span> Kapal</a></li>
+            <li><a href="{% url 'master:abk_list' %}" class="nav-link {% if '/master/abk' in request.path %}active{% endif %}"><span class="material-symbols-outlined">groups</span> ABK</a></li>
+            <li><a href="{% url 'master:ikan_list' %}" class="nav-link {% if '/master/ikan' in request.path %}active{% endif %}"><span class="material-symbols-outlined">set_meal</span> Jenis Ikan</a></li>
+            <li><a href="{% url 'master:pembeli_list' %}" class="nav-link {% if '/master/pembeli' in request.path %}active{% endif %}"><span class="material-symbols-outlined">storefront</span> Pembeli</a></li>
+        </ul>
+
+        {% else %}
+        {# Operator — cocok dengan dock HP: Trip + Operasional #}
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="{% url 'operasional:trip_list' %}" class="nav-link {% if '/operasional/trip' in request.path %}active{% endif %}">
+                    <span class="material-symbols-outlined">explore</span> Trip
+                </a>
+            </li>
+        </ul>
 
         <div class="sidebar-section-label">Operasional</div>
         <ul class="nav flex-column">
-            <li><a href="{% url 'operasional:trip_list' %}" class="nav-link"><span class="material-symbols-outlined">explore</span> Trip</a></li>
-            <li><a href="{% url 'operasional:feed' %}" class="nav-link {% if '/operasional/aktivitas' in request.path %}active{% endif %}"><span class="material-symbols-outlined">receipt_long</span> Aktivitas</a></li>
-        </ul>
-
-        <div class="sidebar-section-label">Produksi</div>
-        <ul class="nav flex-column">
-            <li><a href="{% url 'tangkap:list' %}" class="nav-link"><span class="material-symbols-outlined">shopping_basket</span> Hasil Tangkap</a></li>
-            <li><a href="{% url 'penjualan:list' %}" class="nav-link"><span class="material-symbols-outlined">payments</span> Penjualan</a></li>
-            {% if is_owner %}
-            <li><a href="{% url 'penjualan:bagi_hasil_list' %}" class="nav-link"><span class="material-symbols-outlined">account_balance_wallet</span> Bagi Hasil</a></li>
-            {% endif %}
-        </ul>
-
-        {% if is_owner %}
-        <div class="sidebar-section-label">Laporan</div>
-        <ul class="nav flex-column">
-            <li><a href="{% url 'laporan:index' %}" class="nav-link"><span class="material-symbols-outlined">bar_chart</span> Laporan</a></li>
+            <li><a href="{% url 'operasional:feed' %}" class="nav-link {% if '/operasional/aktivitas' in request.path %}active{% endif %}"><span class="material-symbols-outlined">receipt_long</span> Operasional</a></li>
         </ul>
         {% endif %}
 
@@ -113,24 +111,24 @@
         <div class="content-area">
             {% if messages %}
                 {% for message in messages %}
+                    {# Hanya tampilkan peringatan/error (level >= 30). Notifikasi sukses/info disembunyikan. #}
+                    {% if message.level >= 30 %}
                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                         {% if message.tags == 'warning' %}<span class="material-symbols-outlined flex-shrink-0">lock</span>
-                        {% elif message.tags == 'success' %}<span class="material-symbols-outlined flex-shrink-0">check_circle</span>
                         {% elif message.tags == 'danger' or message.tags == 'error' %}<span class="material-symbols-outlined flex-shrink-0">warning</span>
                         {% else %}<span class="material-symbols-outlined flex-shrink-0">info</span>{% endif %}
                         <span>{{ message }}</span>
                         <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Tutup"></button>
                     </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
 
             {% block content %}{% endblock %}
 
-            {% if is_owner %}
             <footer class="text-muted small py-4 mt-5" style="border-top: 1px solid var(--rule-soft);">
                 <p class="mb-0">&copy; {{ now_year|default:"2026" }} Usaha bagan.</p>
             </footer>
-            {% endif %}
         </div>
     </main>
 
@@ -143,21 +141,17 @@
         <span class="material-symbols-outlined">speed</span>
         <span>Dashboard</span>
     </a>
-    <a href="{% url 'master:kapal_list' %}" class="mobile-nav-item {% if '/master/' in request.path %}active{% endif %}">
-        <span class="material-symbols-outlined">storage</span>
-        <span>Master</span>
-    </a>
-    <a href="{% url 'operasional:trip_list' %}" class="mobile-nav-item {% if '/operasional/' in request.path %}active{% endif %}">
+    <a href="{% url 'operasional:trip_list' %}" class="mobile-nav-item {% if '/operasional/' in request.path or '/tangkap/' in request.path or '/penjualan/' in request.path %}active{% endif %}">
         <span class="material-symbols-outlined">explore</span>
         <span>Trip</span>
-    </a>
-    <a href="{% url 'tangkap:list' %}" class="mobile-nav-item {% if '/tangkap/' in request.path or '/penjualan/' in request.path %}active{% endif %}">
-        <span class="material-symbols-outlined">shopping_basket</span>
-        <span>Produksi</span>
     </a>
     <a href="{% url 'laporan:index' %}" class="mobile-nav-item {% if '/laporan/' in request.path %}active{% endif %}">
         <span class="material-symbols-outlined">bar_chart</span>
         <span>Laporan</span>
+    </a>
+    <a href="{% url 'master:index' %}" class="mobile-nav-item {% if '/master/' in request.path %}active{% endif %}">
+        <span class="material-symbols-outlined">storage</span>
+        <span>Data Master</span>
     </a>
 </nav>
 {% else %}

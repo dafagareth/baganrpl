@@ -40,7 +40,9 @@
                     <td data-label="Tgl jual">{{ form.tgl_jual }}</td>
                     <td data-label="Catatan">{{ form.catatan }}</td>
                     <td data-label="">
-                        <button type="button" class="btn-icon text-danger btn-remove-row" title="Hapus baris"><span class="material-symbols-outlined">delete</span></button>
+                        <button type="button" class="btn btn-link text-danger btn-sm btn-remove-row" title="Hapus baris">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:-4px;">delete</span> Hapus
+                        </button>
                     </td>
                 </tr>
                 {% if form.errors %}

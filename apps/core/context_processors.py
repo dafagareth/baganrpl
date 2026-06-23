@@ -9,8 +9,10 @@ def user_role(request):
         ctx['is_owner'] = is_owner(request.user)
         if not ctx['is_owner']:
             from apps.operasional.models import Trip
+            # Kapal dipakai bersama — trip aktif ditentukan per kapal bagan,
+            # bukan per pembuat, agar semua operator melihat trip yang sama.
             ctx['trip_aktif'] = Trip.objects.filter(
-                dibuat_oleh=request.user,
+                kapal__jenis__icontains='bagan',
                 status__in=['persiapan', 'berlayar'],
             ).select_related('kapal').first()
     return ctx

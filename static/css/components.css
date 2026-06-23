@@ -321,9 +321,14 @@
 
 .form-control::placeholder { color: var(--ink-muted); }
 
+/* Hilangkan tombol spinner angka biar lebih rapi */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
 .form-control:hover,
 .form-select:hover {
-    background-color: #DCDFE4;
+    background-color: var(--rule);
 }
 
 .form-control:focus,
@@ -447,6 +452,23 @@
     border-left-color: var(--brand);
     color       : var(--on-brand-light);
 }
+
+/* ── Notice (banner berisi, tanpa garis kiri, teks ikut tema) ──── */
+.notice {
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-sm);
+    border       : none;
+    border-radius: var(--radius-sm);
+    padding      : var(--space-sm) var(--space-md);
+    font-size    : 14px;
+    color        : var(--ink);
+}
+.notice .material-symbols-outlined { flex-shrink: 0; }
+.notice-warning { background: var(--warning-bg); }
+.notice-warning .material-symbols-outlined { color: var(--ink); }
+.notice-info { background: var(--info-bg); }
+.notice-info .material-symbols-outlined { color: var(--info); }
 
 /* ── Modals (Material dialog — radius 28) ────────────────── */
 .modal-content {
@@ -727,6 +749,10 @@
     .modal-footer {
         padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
     }
+    /* Bottom sheet harus di atas dock (mobile-nav z-index 1080) supaya
+       tombolnya tidak tertutup — sheet naik menyatu dengan dock. */
+    .modal          { z-index: 1090; }
+    .modal-backdrop { z-index: 1085; }
 
     /* Larger touch targets */
     .btn-icon,

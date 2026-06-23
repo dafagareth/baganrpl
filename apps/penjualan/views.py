@@ -1,17 +1,22 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
-from django.shortcuts import render, redirect, get_object_or_404
+from datetime import date
 
-# Create your views here.
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
-from apps.core.mixins import OwnerRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy, reverse
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.db.models import Sum, F, Q
+from apps.core.mixins import OwnerRequiredMixin, is_owner
 from .models import Penjualan, BagiHasil
-from .forms import PenjualanForm, PenjualanFormSet, BagiHasilForm, BagiHasilGlobalForm
+from .forms import (
+    PenjualanForm, PenjualanFormSet, BagiHasilForm, BagiHasilGlobalForm,
+    BagiHasilMultiFormSet,
+)
 
 class PenjualanListView(LoginRequiredMixin, ListView):
     model = Penjualan
@@ -40,9 +45,6 @@ class PenjualanListView(LoginRequiredMixin, ListView):
             total=Sum(F('berat_terjual') * F('harga_per_kg'))
         )['total'] or 0
         ctx['q'] = self.request.GET.get('q', '')
-        ctx['edit_forms'] = [
-            (p, PenjualanForm(instance=p)) for p in ctx['penjualan_list']
-        ]
         return ctx
 
 class PenjualanCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -51,6 +53,30 @@ class PenjualanCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'penjualan/form.html'
     success_url = reverse_lazy('penjualan:list')
     success_message = 'Data penjualan berhasil ditambahkan'
+
+class PenjualanCreateForTripView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """Tambah penjualan dari dalam trip — tangkapan difilter ke trip tsb."""
+    model = Penjualan
+    form_class = PenjualanForm
+    template_name = 'penjualan/form.html'
+    success_message = 'Penjualan berhasil ditambahkan'
+
+    def dispatch(self, request, *args, **kwargs):
+        from apps.operasional.models import Trip
+        self.trip = get_object_or_404(Trip, pk=kwargs['trip_id'])
+        if self.trip.is_laporan_locked and not request.user.is_superuser:
+            messages.error(request, 'Laporan dikunci — tidak bisa menambah penjualan.')
+            return redirect('operasional:trip_detail', pk=self.trip.pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw['trip'] = self.trip
+        return kw
+
+    def get_success_url(self):
+        return reverse('operasional:trip_detail', kwargs={'pk': self.trip.pk})
+
 
 class PenjualanUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Penjualan
@@ -86,6 +112,20 @@ def penjualan_multi_create(request):
         'stock_data_json': stock_data_json,
     })
 
+@login_required
+def bagi_hasil_mark_paid(request, pk):
+    bh = get_object_or_404(BagiHasil, pk=pk)
+    if not is_owner(request.user):
+        raise PermissionDenied
+    if request.method == 'POST' and not bh.sudah_dibayar:
+        bh.sudah_dibayar = True
+        bh.tgl_bayar = date.today()
+        bh.save(update_fields=['sudah_dibayar', 'tgl_bayar'])
+        messages.success(request, f'Bagi hasil {bh.abk.nama} ditandai lunas.')
+    next_url = request.POST.get('next') or reverse('penjualan:bagi_hasil_list')
+    return redirect(next_url)
+
+
 class BagiHasilListView(OwnerRequiredMixin, ListView):
     model = BagiHasil
     template_name = 'penjualan/bagi_hasil_list.html'
@@ -117,6 +157,52 @@ class BagiHasilCreateView(OwnerRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return reverse('operasional:trip_detail', kwargs={'pk': self.kwargs['trip_id']})
+
+class BagiHasilMultiCreateView(OwnerRequiredMixin, View):
+    """Tambah bagi hasil beberapa ABK sekaligus (multi-baris) untuk satu trip."""
+    template_name = 'penjualan/bagi_hasil_multi.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        from apps.operasional.models import Trip
+        self.trip = get_object_or_404(Trip, pk=kwargs['trip_id'])
+        if self.trip.is_laporan_locked and not request.user.is_superuser:
+            messages.error(request, 'Laporan dikunci — tidak bisa menambah bagi hasil.')
+            return redirect('operasional:trip_detail', pk=self.trip.pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def _abk_queryset(self):
+        from apps.operasional.models import TripABK
+        from apps.master.models import ABK
+        existing = BagiHasil.objects.filter(trip=self.trip).values_list('abk_id', flat=True)
+        trip_abk = TripABK.objects.filter(trip=self.trip).values_list('abk_id', flat=True)
+        return ABK.objects.filter(id__in=trip_abk).exclude(id__in=existing)
+
+    def _bind_abk(self, formset):
+        qs = self._abk_queryset()
+        for form in formset:
+            form.fields['abk'].queryset = qs
+        return formset
+
+    def get(self, request, trip_id):
+        formset = self._bind_abk(BagiHasilMultiFormSet(queryset=BagiHasil.objects.none()))
+        return render(request, self.template_name, {'formset': formset, 'trip': self.trip})
+
+    def post(self, request, trip_id):
+        formset = self._bind_abk(BagiHasilMultiFormSet(request.POST, queryset=BagiHasil.objects.none()))
+        if formset.is_valid():
+            count = 0
+            seen = set()
+            for form in formset:
+                abk = form.cleaned_data.get('abk')
+                nominal = form.cleaned_data.get('nominal')
+                if abk and nominal is not None and abk.id not in seen:
+                    BagiHasil.objects.create(trip=self.trip, abk=abk, nominal=nominal)
+                    seen.add(abk.id)
+                    count += 1
+            messages.success(request, f'{count} bagi hasil ditambahkan.')
+            return redirect('operasional:trip_detail', pk=self.trip.pk)
+        return render(request, self.template_name, {'formset': formset, 'trip': self.trip})
+
 
 class BagiHasilCreateGlobalView(OwnerRequiredMixin, SuccessMessageMixin, CreateView):
     model = BagiHasil

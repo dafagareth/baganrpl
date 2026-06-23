@@ -6,42 +6,67 @@ from apps.master.models import ABK
 class TripForm(forms.ModelForm):
     class Meta:
         model = Trip
-        fields = ['kapal', 'tgl_berangkat', 'tgl_kembali', 'status', 'catatan']
+        fields = ['kapal', 'tgl_berangkat']
         widgets = {
-            'kapal': forms.Select(attrs={'class': 'form-select'}),
+            'kapal'        : forms.Select(attrs={'class': 'form-select'}),
             'tgl_berangkat': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'tgl_kembali': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
-            'catatan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from apps.master.models import Kapal
+        from datetime import date
+        kapal_qs = Kapal.objects.filter(jenis__icontains='bagan', status='aktif')
+        self.fields['kapal'].queryset = kapal_qs
+        if not self.instance.pk:
+            self.fields['tgl_berangkat'].initial = date.today()
+        if kapal_qs.count() == 1:
+            if not self.instance.pk:
+                self.fields['kapal'].initial = kapal_qs.first()
+            self.fields['kapal'].widget = forms.HiddenInput()
 
     def clean(self):
         cleaned_data = super().clean()
         kapal = cleaned_data.get('kapal')
-        status = cleaned_data.get('status')
-
-        if kapal and status == 'berlayar':
-            # Cari trip lain dari kapal yang sama yang sedang berlayar
-            qs = Trip.objects.filter(kapal=kapal, status='berlayar')
+        if kapal:
+            qs = Trip.objects.filter(kapal=kapal, status__in=['persiapan', 'berlayar'])
             if self.instance and self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
-
             if qs.exists():
                 raise forms.ValidationError(
-                    f"Kapal {kapal.nama_kapal} sedang dalam pelayaran (status: Sedang Berlayar). "
-                    "Satu kapal tidak boleh memiliki lebih dari satu trip aktif secara bersamaan."
+                    f"Kapal {kapal.nama_kapal} masih memiliki trip aktif. "
+                    "Selesaikan trip sebelumnya terlebih dahulu."
                 )
         return cleaned_data
 
+class TripStatusForm(forms.ModelForm):
+    """Owner hanya boleh mengubah status trip (bukan kapal/tanggal)."""
+    class Meta:
+        model = Trip
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-select'}),
+        }
+
 class BiayaOperasionalForm(forms.ModelForm):
+    """Input biaya operator — cukup nama barang + jumlah (tanpa kategori)."""
     class Meta:
         model = BiayaOperasional
-        fields = ['kategori', 'jumlah', 'keterangan']
+        fields = ['keterangan', 'jumlah']
+        labels = {'keterangan': 'Barang', 'jumlah': 'Jumlah (Rp)'}
         widgets = {
-            'kategori': forms.Select(attrs={'class': 'form-select'}),
-            'jumlah': forms.NumberInput(attrs={'class': 'form-control'}),
-            'keterangan': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama barang / pengeluaran'}),
+            'jumlah': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['keterangan'].required = True
+
+
+BiayaOperasionalFormSet = forms.modelformset_factory(
+    BiayaOperasional, form=BiayaOperasionalForm, extra=1, can_delete=False,
+)
 
 class TripABKForm(forms.Form):
     """Multi-select checkbox form for adding ABK to a trip."""

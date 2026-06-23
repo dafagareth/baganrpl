@@ -18,6 +18,8 @@ class HasilTangkap(models.Model):
     kondisi = models.CharField(max_length=10, choices=KONDISI_CHOICES, default='segar')
     catatan = models.TextField(blank=True, null=True)
     foto_bukti = models.ImageField(null=True, blank=True, upload_to='tangkap/bukti/')
+    lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    lng = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     dibuat_pada = models.DateTimeField(auto_now_add=True, null=True)
 
     @property

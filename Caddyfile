@@ -1,0 +1,8 @@
+# Caddy reverse proxy — HTTPS otomatis (Let's Encrypt).
+# Ganti "namadomain.my.id" dengan domainmu, lalu jalankan Caddy di host VPS.
+# Static (CSS/JS) dilayani WhiteNoise & media oleh Django, semuanya lewat :8000.
+
+namadomain.my.id {
+    encode gzip zstd
+    reverse_proxy 127.0.0.1:8000
+}

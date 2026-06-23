@@ -4,7 +4,14 @@
 
 {% block content %}
 <header class="page-header-row">
-    <h1 class="page-title">Kapal</h1>
+    <div>
+        <p class="text-muted mb-1" style="font-size: 13px;">
+            <a href="{% url 'master:index' %}" class="text-muted text-decoration-none">Data Master</a>
+            <span class="mx-1">›</span>
+            Kapal
+        </p>
+        <h1 class="page-title">Kapal</h1>
+    </div>
     <a href="{% url 'master:kapal_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah kapal</a>
 </header>
 
@@ -39,7 +46,11 @@
                 <td>
                     <div class="row-actions">
                         <a href="{% url 'master:kapal_update' kapal.id %}" class="btn-icon" title="Ubah"><span class="material-symbols-outlined">edit</span></a>
+                        {% if kapal.jml_trip %}
+                        <button type="button" class="btn-icon text-warning" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}" title="Nonaktifkan"><span class="material-symbols-outlined">block</span></button>
+                        {% else %}
                         <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}" title="Hapus"><span class="material-symbols-outlined">delete</span></button>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -63,7 +74,11 @@
             <span class="badge {% if kapal.status == 'aktif' %}bg-success{% elif kapal.status == 'perbaikan' %}bg-warning{% else %}bg-secondary{% endif %}">{{ kapal.get_status_display }}</span>
             <div class="row-actions">
                 <a href="{% url 'master:kapal_update' kapal.id %}" class="btn-icon"><span class="material-symbols-outlined">edit</span></a>
+                {% if kapal.jml_trip %}
+                <button type="button" class="btn-icon text-warning" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}"><span class="material-symbols-outlined">block</span></button>
+                {% else %}
                 <button type="button" class="btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ kapal.id }}"><span class="material-symbols-outlined">delete</span></button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -82,12 +97,21 @@
         <div class="modal-content">
             <form method="post" action="{% url 'master:kapal_delete' kapal.id %}">
                 {% csrf_token %}
+                {% if kapal.jml_trip %}
+                <div class="modal-header"><h5 class="modal-title">Nonaktifkan kapal?</h5></div>
+                <div class="modal-body"><strong>{{ kapal.nama_kapal }}</strong> punya riwayat trip, jadi tidak dihapus permanen. Kapal akan dinonaktifkan dan tidak muncul lagi saat membuat trip baru. Data laporan tetap aman.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning">Nonaktifkan</button>
+                </div>
+                {% else %}
                 <div class="modal-header"><h5 class="modal-title">Hapus kapal?</h5></div>
                 <div class="modal-body">Data <strong>{{ kapal.nama_kapal }}</strong> akan dihapus permanen.</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-danger">Hapus</button>
                 </div>
+                {% endif %}
             </form>
         </div>
     </div>

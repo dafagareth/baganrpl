@@ -39,6 +39,15 @@
                 <td>{{ bh.tgl_bayar|tgl_indo }}</td>
                 <td>
                     <div class="row-actions">
+                        {% if not bh.sudah_dibayar %}
+                        <form method="post" action="{% url 'penjualan:bagi_hasil_mark_paid' bh.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'penjualan:bagi_hasil_list' %}">
+                            <button type="submit" class="btn-icon text-success" title="Tandai lunas">
+                                <span class="material-symbols-outlined">check_circle</span>
+                            </button>
+                        </form>
+                        {% endif %}
                         <a href="{% url 'penjualan:bagi_hasil_update' bh.id %}" class="btn-icon" title="Ubah"><span class="material-symbols-outlined">edit</span></a>
                     </div>
                 </td>

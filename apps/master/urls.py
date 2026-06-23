@@ -5,6 +5,8 @@ from . import views
 app_name = 'master'
 
 urlpatterns = [
+    path('', views.DataMasterIndexView.as_view(), name='index'),
+
     # Kapal
     path('kapal/', views.KapalListView.as_view(), name='kapal_list'),
     path('kapal/tambah/', views.KapalCreateView.as_view(), name='kapal_create'),

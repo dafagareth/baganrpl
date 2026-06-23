@@ -21,13 +21,15 @@ class PenjualanForm(forms.ModelForm):
             'catatan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, trip=None, **kwargs):
         super().__init__(*args, **kwargs)
         qs = HasilTangkap.objects.annotate(
             terjual=Coalesce(Sum('penjualan__berat_terjual'), 0.0, output_field=DecimalField())
         ).annotate(
             tersedia=ExpressionWrapper(F('berat_kg') - F('terjual'), output_field=DecimalField())
         )
+        if trip is not None:
+            qs = qs.filter(trip=trip)
         if self.instance and self.instance.pk:
             qs = qs.filter(Q(tersedia__gt=0) | Q(pk=self.instance.hasil_tangkap.pk))
         else:
@@ -168,3 +170,19 @@ class BagiHasilGlobalForm(BagiHasilForm):
         super().__init__(*args, **kwargs)
         # Tampilkan Trip terbaru terlebih dahulu
         self.fields['trip'].queryset = Trip.objects.order_by('-tgl_berangkat')
+
+
+class BagiHasilMultiForm(forms.ModelForm):
+    """Satu baris bagi hasil: pilih ABK + nominal (untuk input multi-baris)."""
+    class Meta:
+        model = BagiHasil
+        fields = ['abk', 'nominal']
+        widgets = {
+            'abk': forms.Select(attrs={'class': 'form-select'}),
+            'nominal': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Nominal (Rp)'}),
+        }
+
+
+BagiHasilMultiFormSet = forms.modelformset_factory(
+    BagiHasil, form=BagiHasilMultiForm, extra=1, can_delete=False,
+)

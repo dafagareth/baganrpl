@@ -4,7 +4,14 @@
 
 {% block content %}
 <header class="page-header-row">
-    <h1 class="page-title">Pembeli</h1>
+    <div>
+        <p class="text-muted mb-1" style="font-size: 13px;">
+            <a href="{% url 'master:index' %}" class="text-muted text-decoration-none">Data Master</a>
+            <span class="mx-1">›</span>
+            Pembeli
+        </p>
+        <h1 class="page-title">Pembeli</h1>
+    </div>
     <a href="{% url 'master:pembeli_create' %}" class="btn btn-primary d-none d-lg-inline-flex">Tambah pembeli</a>
 </header>
 

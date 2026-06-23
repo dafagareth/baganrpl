@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Data Master{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1 class="page-title">Data Master</h1>
+    <p class="page-subtitle">Kelola data acuan: kapal, ABK, jenis ikan, dan pembeli.</p>
+</header>
+
+<div class="master-grid">
+    <div class="master-card">
+        <a href="{% url 'master:kapal_list' %}" class="master-card-link">
+            <span class="material-symbols-outlined">directions_boat</span>
+            <div>
+                <div class="master-card-title">Kapal</div>
+                <div class="master-card-meta">{{ kapal_count }} data</div>
+            </div>
+        </a>
+        <a href="{% url 'master:kapal_create' %}" class="btn btn-sm btn-outline-secondary">Tambah</a>
+    </div>
+
+    <div class="master-card">
+        <a href="{% url 'master:abk_list' %}" class="master-card-link">
+            <span class="material-symbols-outlined">groups</span>
+            <div>
+                <div class="master-card-title">ABK</div>
+                <div class="master-card-meta">{{ abk_count }} data</div>
+            </div>
+        </a>
+        <a href="{% url 'master:abk_create' %}" class="btn btn-sm btn-outline-secondary">Tambah</a>
+    </div>
+
+    <div class="master-card">
+        <a href="{% url 'master:ikan_list' %}" class="master-card-link">
+            <span class="material-symbols-outlined">set_meal</span>
+            <div>
+                <div class="master-card-title">Jenis Ikan</div>
+                <div class="master-card-meta">{{ ikan_count }} data</div>
+            </div>
+        </a>
+        <a href="{% url 'master:ikan_create' %}" class="btn btn-sm btn-outline-secondary">Tambah</a>
+    </div>
+
+    <div class="master-card">
+        <a href="{% url 'master:pembeli_list' %}" class="master-card-link">
+            <span class="material-symbols-outlined">storefront</span>
+            <div>
+                <div class="master-card-title">Pembeli</div>
+                <div class="master-card-meta">{{ pembeli_count }} data</div>
+            </div>
+        </a>
+        <a href="{% url 'master:pembeli_create' %}" class="btn btn-sm btn-outline-secondary">Tambah</a>
+    </div>
+</div>
+{% endblock %}

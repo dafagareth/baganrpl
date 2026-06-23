@@ -34,7 +34,6 @@ class PublicHomeView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         now = timezone.now()
-        today = date.today()
 
         ctx['total_kapal']     = Kapal.objects.filter(status='aktif').count()
         ctx['trip_bulan_ini']  = Trip.objects.filter(
@@ -45,13 +44,7 @@ class PublicHomeView(TemplateView):
             trip__tgl_berangkat__year=now.year,
         ).aggregate(total=Sum('berat_kg'))['total'] or 0
 
-        ctx['lifetime_trip']       = Trip.objects.count()
-        ctx['lifetime_tangkap']    = HasilTangkap.objects.aggregate(
-            total=Sum('berat_kg'))['total'] or 0
-        ctx['lifetime_pendapatan'] = Penjualan.objects.aggregate(
-            total=Sum(F('berat_terjual') * F('harga_per_kg')))['total'] or 0
-        ctx['lifetime_biaya']      = BiayaOperasional.objects.aggregate(
-            total=Sum('jumlah'))['total'] or 0
+        ctx['lifetime_trip'] = Trip.objects.count()
 
         trip_pertama = Trip.objects.order_by('tgl_berangkat').first()
         if trip_pertama:
@@ -60,21 +53,9 @@ class PublicHomeView(TemplateView):
         else:
             ctx['beroperasi_sejak'] = '—'
 
-        trip_selesai_n = Trip.objects.filter(status='selesai').count() or 1
+        trip_selesai_n = Trip.objects.filter(status='selesai').count()
         trip_total_n   = ctx['lifetime_trip'] or 1
-
-        ctx['trip_selesai']            = trip_selesai_n
-        ctx['pct_trip_sukses']         = round(trip_selesai_n / trip_total_n * 100)
-        ctx['avg_pendapatan_per_trip'] = float(ctx['lifetime_pendapatan']) / trip_selesai_n
-        ctx['avg_biaya_per_trip']      = float(ctx['lifetime_biaya']) / trip_selesai_n
-        ctx['avg_laba_per_trip']       = (ctx['avg_pendapatan_per_trip']
-                                          - ctx['avg_biaya_per_trip'])
-
-        if ctx['avg_pendapatan_per_trip'] > 0:
-            ctx['avg_margin_pct'] = round(
-                ctx['avg_laba_per_trip'] / ctx['avg_pendapatan_per_trip'] * 100, 1)
-        else:
-            ctx['avg_margin_pct'] = 0
+        ctx['pct_trip_sukses'] = round(trip_selesai_n / trip_total_n * 100)
 
         if trip_pertama:
             bulan_aktif = max(1, (
@@ -94,32 +75,6 @@ class PublicHomeView(TemplateView):
             .annotate(total_kg=Sum('berat_kg'))
             .order_by('-total_kg')[:5]
         )
-
-        labels, pend_data, biaya_data, laba_data, tangkap_data = [], [], [], [], []
-        for i in range(5, -1, -1):
-            d = today - relativedelta(months=i)
-            p = float(Penjualan.objects.filter(
-                tgl_jual__month=d.month, tgl_jual__year=d.year
-            ).aggregate(total=Sum(F('berat_terjual') * F('harga_per_kg')))['total'] or 0)
-            b = float(BiayaOperasional.objects.filter(
-                trip__tgl_berangkat__month=d.month,
-                trip__tgl_berangkat__year=d.year,
-            ).aggregate(total=Sum('jumlah'))['total'] or 0)
-            t = float(HasilTangkap.objects.filter(
-                trip__tgl_berangkat__month=d.month,
-                trip__tgl_berangkat__year=d.year,
-            ).aggregate(total=Sum('berat_kg'))['total'] or 0)
-            labels.append(f"{_NAMA_BULAN[d.month]}'{str(d.year)[2:]}")
-            pend_data.append(p)
-            biaya_data.append(b)
-            laba_data.append(round(p - b, 2))
-            tangkap_data.append(t)
-
-        ctx['chart_labels']     = json.dumps(labels)
-        ctx['chart_pendapatan'] = json.dumps(pend_data)
-        ctx['chart_biaya']      = json.dumps(biaya_data)
-        ctx['chart_laba']       = json.dumps(laba_data)
-        ctx['chart_tangkap']    = json.dumps(tangkap_data)
         return ctx
 
 
@@ -152,8 +107,18 @@ class DashboardView(OwnerRequiredMixin, TemplateView):
         ctx['laba_bulan_ini']       = float(pendapatan_bulan) - float(biaya_bulan)
         ctx['trip_terbaru']         = Trip.objects.select_related('kapal').order_by('-tgl_berangkat')[:5]
 
+        # Rentang bulan grafik tren bisa dipilih owner (default 6).
+        try:
+            n_bulan = int(self.request.GET.get('range', 6))
+        except (TypeError, ValueError):
+            n_bulan = 6
+        if n_bulan not in (3, 6, 12, 24):
+            n_bulan = 6
+        ctx['chart_months'] = n_bulan
+        ctx['range_options'] = [3, 6, 12, 24]
+
         labels, pend_data, biaya_data, laba_data = [], [], [], []
-        for i in range(5, -1, -1):
+        for i in range(n_bulan - 1, -1, -1):
             d = today - relativedelta(months=i)
             p = float(Penjualan.objects.filter(
                 tgl_jual__month=d.month, tgl_jual__year=d.year
@@ -187,17 +152,12 @@ class DashboardView(OwnerRequiredMixin, TemplateView):
         ctx['chart_pembeli_labels'] = json.dumps([x['pembeli__nama'] for x in top_pembeli])
         ctx['chart_pembeli_data']   = json.dumps([float(x['total']) for x in top_pembeli])
 
-        KAT = {'bbm': 'BBM', 'es': 'Es Balok', 'logistik': 'Logistik',
-               'perawatan': 'Perawatan', 'lainnya': 'Lainnya'}
-        kat_data = list(BiayaOperasional.objects.filter(
-            trip__tgl_berangkat__year=today.year,
-        ).values('kategori').annotate(total=Sum('jumlah')).order_by('-total'))
-        ctx['chart_kat_labels'] = json.dumps([KAT.get(x['kategori'], x['kategori']) for x in kat_data])
-        ctx['chart_kat_data']   = json.dumps([float(x['total']) for x in kat_data])
-
         util = list(Trip.objects.filter(tgl_berangkat__year=today.year)
                     .values('kapal__nama_kapal').annotate(jumlah=Count('id')).order_by('-jumlah'))
         ctx['chart_util_labels'] = json.dumps([x['kapal__nama_kapal'] for x in util])
         ctx['chart_util_data']   = json.dumps([x['jumlah'] for x in util])
+
+        # Utilisasi armada hanya relevan bila ada lebih dari satu kapal.
+        ctx['show_utilisasi'] = Kapal.objects.count() > 1
 
         return ctx

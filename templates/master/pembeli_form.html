@@ -4,6 +4,13 @@
 {% block content %}
 <div class="content-narrow">
     <header class="page-header">
+        <p class="text-muted mb-1" style="font-size: 13px;">
+            <a href="{% url 'master:index' %}" class="text-muted text-decoration-none">Data Master</a>
+            <span class="mx-1">›</span>
+            <a href="{% url 'master:pembeli_list' %}" class="text-muted text-decoration-none">Pembeli</a>
+            <span class="mx-1">›</span>
+            {% if object %}Ubah{% else %}Tambah{% endif %}
+        </p>
         <h1 class="page-title">{% if object %}Ubah pembeli{% else %}Tambah pembeli{% endif %}</h1>
     </header>
 

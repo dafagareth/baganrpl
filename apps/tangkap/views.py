@@ -48,6 +48,9 @@ class HasilTangkapCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView
         if trip.status != 'selesai':
             messages.error(request, 'Hasil tangkap hanya bisa diinput jika trip sudah selesai.')
             return redirect('operasional:trip_detail', pk=trip.pk)
+        if trip.is_laporan_locked and not request.user.is_superuser:
+            messages.error(request, 'Laporan sudah dikunci — tidak bisa menambah data.')
+            return redirect('operasional:trip_detail', pk=trip.pk)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -75,6 +78,13 @@ class HasilTangkapUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView
 class HasilTangkapDeleteView(LoginRequiredMixin, DeleteView):
     model = HasilTangkap
     template_name = 'master/confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.trip.is_laporan_locked and not request.user.is_superuser:
+            messages.error(request, 'Laporan sudah dikunci — tidak bisa menghapus data.')
+            return redirect('operasional:trip_detail', pk=obj.trip_id)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('operasional:trip_detail', kwargs={'pk': self.object.trip_id})

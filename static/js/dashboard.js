@@ -11,6 +11,14 @@
     const FONT   = { family: 'Google Sans Text, Roboto', size: 12 };
     const COLORS = ['#1E8E3E', '#1A73E8', '#E37400', '#D93025', '#9334E6', '#00796B'];
 
+    // Warna mengikuti tema (terang/gelap) — ambil dari CSS variable supaya
+    // teks sumbu, gridline, dan border donut tidak "putih" saat mode gelap.
+    const css     = getComputedStyle(document.documentElement);
+    const TEXT    = css.getPropertyValue('--ink-muted').trim()  || '#5F6368';
+    const GRID    = css.getPropertyValue('--rule-soft').trim()  || '#E8EAED';
+    const SURFACE = css.getPropertyValue('--surface').trim()    || '#fff';
+    Chart.defaults.color = TEXT;
+
     function rpShort(v) {
         if (v >= 1e9) return 'Rp ' + (v / 1e9).toFixed(1) + ' M';
         if (v >= 1e6) return 'Rp ' + (v / 1e6).toFixed(1) + ' jt';
@@ -36,7 +44,7 @@
             },
             scales: {
                 x: { ticks: { font: FONT }, grid: { display: false } },
-                y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } },
+                y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: GRID } },
             },
         },
     });
@@ -61,7 +69,7 @@
             },
             scales: {
                 x: { ticks: { font: FONT }, grid: { display: false } },
-                y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } },
+                y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: GRID } },
             },
         },
     });
@@ -77,7 +85,7 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => (c.raw || 0).toFixed(1) + ' kg' } } },
             scales: {
-                x: { ticks: { font: FONT, callback: v => v + ' kg' }, grid: { color: '#E8EAED' } },
+                x: { ticks: { font: FONT, callback: v => v + ' kg' }, grid: { color: GRID } },
                 y: { ticks: { font: FONT }, grid: { display: false } },
             },
         },
@@ -94,42 +102,53 @@
             indexAxis: 'y', responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => rpShort(c.raw || 0) } } },
             scales: {
-                x: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: '#E8EAED' } },
+                x: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: GRID } },
                 y: { ticks: { font: FONT }, grid: { display: false } },
             },
         },
     });
 
-    // Chart 5 — Komposisi biaya (donut)
-    new Chart(document.getElementById('chartKat'), {
-        type: 'doughnut',
-        data: {
-            labels: d.katLabels,
-            datasets: [{ data: d.katData, backgroundColor: COLORS, borderWidth: 2, borderColor: '#fff' }],
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { font: FONT, usePointStyle: true, padding: 12, boxWidth: 8 } },
-                tooltip: { callbacks: { label: c => c.label + ': ' + rpShort(c.raw || 0) } },
+    // Chart 5 — Biaya per bulan (garis)
+    const biayaBulanCanvas = document.getElementById('chartBiayaBulan');
+    if (biayaBulanCanvas) {
+        new Chart(biayaBulanCanvas, {
+            type: 'line',
+            data: {
+                labels: d.labels,
+                datasets: [{
+                    label: 'Biaya', data: d.biaya,
+                    borderColor: '#D93025', backgroundColor: '#D93025',
+                    tension: 0.3, fill: false, pointRadius: 3,
+                }],
             },
-        },
-    });
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => rpShort(c.raw || 0) } } },
+                scales: {
+                    x: { ticks: { font: FONT }, grid: { display: false } },
+                    y: { ticks: { font: FONT, callback: v => rpShort(v) }, grid: { color: GRID } },
+                },
+            },
+        });
+    }
 
-    // Chart 6 — Utilisasi armada (horizontal)
-    new Chart(document.getElementById('chartUtil'), {
-        type: 'bar',
-        data: {
-            labels: d.utilLabels,
-            datasets: [{ label: 'Trip', data: d.utilData, backgroundColor: '#1A73E8', borderRadius: 4 }],
-        },
-        options: {
-            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => (c.raw || 0) + ' trip' } } },
-            scales: {
-                x: { ticks: { font: FONT, stepSize: 1 }, grid: { color: '#E8EAED' } },
-                y: { ticks: { font: FONT }, grid: { display: false } },
+    // Chart 6 — Utilisasi armada (horizontal) — hanya bila canvas ada (>1 kapal)
+    const utilCanvas = document.getElementById('chartUtil');
+    if (utilCanvas) {
+        new Chart(utilCanvas, {
+            type: 'bar',
+            data: {
+                labels: d.utilLabels,
+                datasets: [{ label: 'Trip', data: d.utilData, backgroundColor: '#1A73E8', borderRadius: 4 }],
             },
-        },
-    });
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => (c.raw || 0) + ' trip' } } },
+                scales: {
+                    x: { ticks: { font: FONT, stepSize: 1 }, grid: { color: GRID } },
+                    y: { ticks: { font: FONT }, grid: { display: false } },
+                },
+            },
+        });
+    }
 })();

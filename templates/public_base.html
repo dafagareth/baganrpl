@@ -242,6 +242,15 @@
       .public-footer-cols { grid-template-columns: 1fr; gap: var(--space-xl); }
       .public-topbar-inner { gap: var(--space-md); padding: 6px var(--space-md); }
       .public-topbar .sep  { display: none; }
+
+      /* Navbar: brand di atas, menu + Masuk + tema satu baris penuh di bawah */
+      .public-navbar-inner {
+        flex-direction: column; align-items: stretch;
+        height: auto; padding: 10px var(--space-md); gap: 10px;
+      }
+      .public-nav-right { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+      .public-nav { gap: 2px; flex-wrap: wrap; }
+      .public-nav a { padding: 6px 10px; font-size: 13px; }
     }
   </style>
 
@@ -271,6 +280,7 @@
           <li><a href="/#fleet">Armada</a></li>
           <li><a href="{% url 'disclaimer' %}">Disclaimer</a></li>
         </ul>
+        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Masuk</a>
         <button type="button" id="themeToggle" class="theme-toggle" aria-label="Ganti tema" title="Ganti tema">
           <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
         </button>
@@ -294,7 +304,7 @@
           <ul>
             <li><a href="/#overview">Ikhtisar</a></li>
             <li><a href="/#fleet">Armada</a></li>
-            <li><a href="/#performance">Performa</a></li>
+            <li><a href="/#kontak">Kontak</a></li>
           </ul>
         </div>
         <div>
@@ -314,7 +324,7 @@
       </div>
 
       <p class="public-disclaimer">
-        Situs ini bukan penawaran efek atau ajakan investasi publik sebagaimana diatur UU Pasar Modal dan POJK. Diskusi kemitraan dilakukan privat langsung dengan pihak yang dihubungi. Data operasional ditarik real-time dari sistem internal, bukan laporan keuangan teraudit. Selengkapnya di <a href="{% url 'disclaimer' %}">halaman disclaimer</a>.
+        Situs ini adalah sistem manajemen operasional usaha bagan untuk keperluan demo/akademik. Seluruh angka yang ditampilkan merupakan <strong>data contoh (dummy)</strong> yang disimulasikan, bukan laporan keuangan riil. Selengkapnya di <a href="{% url 'disclaimer' %}">halaman disclaimer</a>.
       </p>
     </div>
   </footer>

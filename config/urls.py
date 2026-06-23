@@ -46,5 +46,13 @@ admin.site.site_header = 'Sistem Informasi Usaha Bagan'
 admin.site.site_title = 'SI Usaha Bagan'
 admin.site.index_title = 'Panel Administrasi'
 
-# Serve media files in development (foto bukti penjualan, dll)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Media (foto bukti). Di dev dilayani static(); di produksi (DEBUG=False) tetap
+# dilayani via Django serve() — cukup untuk trafik demo. Skala besar: pakai Caddy/Nginx.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    from django.urls import re_path
+    from django.views.static import serve as _media_serve
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', _media_serve, {'document_root': settings.MEDIA_ROOT}),
+    ]

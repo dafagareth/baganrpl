@@ -12,10 +12,12 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
 
+# Domain produksi diisi lewat env (pisahkan dengan koma), mis:
+# CSRF_TRUSTED_ORIGINS=https://namadomain.my.id
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.ngrok-free.dev',
+    o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://*.ngrok-free.dev').split(',') if o.strip()
 ]
 
 # CORS — hanya dibutuhkan REST API (app Flutter). Nonaktif karena fokus web.
@@ -134,6 +136,19 @@ LOGOUT_REDIRECT_URL = '/'
 # Session berakhir saat browser ditutup (bukan persistent cookie)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600
+
+# ── Pengamanan produksi (aktif saat DEBUG=False, mis. di belakang Caddy/HTTPS) ──
+if not DEBUG:
+    # Caddy/Nginx meneruskan header proto; percayai agar Django tahu request HTTPS
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
+    SECURE_HSTS_SECONDS = 2592000          # 30 hari
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # Konfigurasi REST API (app Flutter) — nonaktif, fokus web.
 # REST_FRAMEWORK = {
