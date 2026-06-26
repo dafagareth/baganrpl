@@ -16,9 +16,15 @@ from apps.tangkap.models import HasilTangkap
 from .mixins import OwnerRequiredMixin, is_owner
 
 
+# View "umum": login, halaman publik (landing), dan dashboard owner.
+# Dashboard banyak menghitung ringkasan/grafik, jadi paling panjang.
+
+
+# Pakai LoginView bawaan Django, cuma diganti templatenya + tujuan setelah login.
 class CustomLoginView(LoginView):
     template_name = 'auth/login.html'
 
+    # Setelah login berhasil: owner ke dashboard, operator ke daftar trip.
     def get_success_url(self):
         if is_owner(self.request.user):
             return '/dashboard/'
@@ -28,6 +34,8 @@ _NAMA_BULAN = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
                'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']
 
 
+# Halaman depan untuk umum (tanpa login). Menghitung angka ringkasan buat dipamerkan:
+# jumlah kapal, trip bulan ini, total tangkapan, ikan terbanyak, dll.
 class PublicHomeView(TemplateView):
     template_name = 'master/public_home.html'
 
@@ -78,6 +86,9 @@ class PublicHomeView(TemplateView):
         return ctx
 
 
+# Dashboard owner. Mengumpulkan KPI bulan ini + menyiapkan data grafik (Chart.js).
+# Pola umum di sini: query agregat (Sum/Count) lalu hasilnya di-json.dumps supaya bisa
+# dibaca JavaScript di template.
 class DashboardView(OwnerRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
 
@@ -117,9 +128,11 @@ class DashboardView(OwnerRequiredMixin, TemplateView):
         ctx['chart_months'] = n_bulan
         ctx['range_options'] = [3, 6, 12, 24]
 
+        # Bangun data tren per bulan: mundur dari (n_bulan-1) bulan lalu sampai bulan ini.
+        # Tiap putaran menghitung pendapatan & biaya bulan itu, lalu dimasukkan ke list sejajar.
         labels, pend_data, biaya_data, laba_data = [], [], [], []
         for i in range(n_bulan - 1, -1, -1):
-            d = today - relativedelta(months=i)
+            d = today - relativedelta(months=i)   # relativedelta: mundur i bulan dengan benar (lewat tahun pun aman)
             p = float(Penjualan.objects.filter(
                 tgl_jual__month=d.month, tgl_jual__year=d.year
             ).aggregate(total=Sum(F('berat_terjual') * F('harga_per_kg')))['total'] or 0)

@@ -2,10 +2,14 @@
 from django import forms
 from .models import Kapal, ABK, JenisIkan, Pembeli
 
+# Form data master. Semua pakai fields = '__all__' artinya "tampilkan semua kolom model".
+# widgets cuma mengatur tampilan input (kelas Bootstrap), bukan mengubah logika.
+
+
 class KapalForm(forms.ModelForm):
     class Meta:
         model = Kapal
-        fields = '__all__'
+        fields = '__all__'   # semua field model Kapal otomatis jadi input form
         widgets = {
             'nama_kapal': forms.TextInput(attrs={'class': 'form-control'}),
             'jenis': forms.TextInput(attrs={'class': 'form-control'}),

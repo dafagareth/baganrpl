@@ -42,15 +42,23 @@ def _aware(d, hour=8):
     return timezone.make_aware(datetime.combine(d, time(hour, 0)))
 
 
+# Management command = skrip yang dijalankan lewat `python manage.py <nama>`. Caranya:
+# bikin kelas bernama Command turunan BaseCommand, lalu tulis logikanya di method handle().
+# Nama perintah = nama file ini (seed_dummy).
 class Command(BaseCommand):
     help = 'Isi data dummy realistis untuk demo usaha bagan.'
 
+    # daftarkan opsi --flush. action='store_true' artinya opsi tanpa nilai (ada/tidak).
     def add_arguments(self, parser):
         parser.add_argument('--flush', action='store_true',
                             help='Hapus semua data operasional + master dulu (akun tidak dihapus).')
 
+    # @transaction.atomic: semua perubahan di handle() dianggap satu paket. Kalau ada yang
+    # gagal di tengah, SEMUA dibatalkan (database tidak setengah jadi).
     @transaction.atomic
     def handle(self, *args, **opts):
+        # seed angka tetap (20260101) supaya "acak"-nya selalu sama tiap dijalankan.
+        # Jadi data dummy bisa dibuat ulang persis sama (deterministik).
         rnd = random.Random(20260101)
 
         if opts['flush']:
@@ -67,8 +75,11 @@ class Command(BaseCommand):
             self.stdout.write('Data lama dihapus (akun dibiarkan).')
 
         # ── Akun owner & operator ───────────────────────────────
+        # get_or_create: ambil user 'owner' kalau sudah ada, kalau belum buat baru.
+        # Mengembalikan (objek, dibuat_atau_tidak); kita abaikan flag kedua dengan _.
         owner, _ = User.objects.get_or_create(
             username='owner', defaults={'first_name': 'Pemilik Usaha'})
+        # password tidak boleh diisi mentah; set_password() yang meng-hash-nya dengan aman.
         owner.set_password('owner'); owner.save()
         UserProfile.objects.update_or_create(user=owner, defaults={'role': 'owner'})
 
@@ -89,13 +100,15 @@ class Command(BaseCommand):
                         for i, n in enumerate(PEMBELI_NAMA, 1)]
 
         # ── Trip mingguan sejak Jan 2025 ────────────────────────
+        # Bangun daftar tanggal Senin tiap minggu dari awal 2025 sampai hari ini,
+        # lalu untuk tiap minggu dibuatkan satu trip (dengan variasi di loop bawah).
         start = date(2025, 1, 6)          # Senin pertama
         end = date.today()
         weeks = []
         d = start
         while d <= end:
             weeks.append(d)
-            d += timedelta(days=7)
+            d += timedelta(days=7)        # maju 7 hari = minggu berikutnya
 
         n_trip = n_skip = n_nihil = 0
         for i, wk in enumerate(weeks):

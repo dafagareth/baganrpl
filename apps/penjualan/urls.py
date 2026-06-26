@@ -1,4 +1,8 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
+#
+# Daftar URL app penjualan. app_name + name tiap path dipakai untuk memanggil URL dari
+# kode/template, mis. {% url 'penjualan:bagi_hasil_list' %}. <int:trip_id> menangkap
+# angka dari alamat lalu dikirim ke view sebagai argumen.
 from django.urls import path
 from . import views
 

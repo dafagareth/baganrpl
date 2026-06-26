@@ -1,0 +1,192 @@
+<div class="modal fade" id="addABKModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_add_abk' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Tambah ABK ke trip</h5></div>
+                <div class="modal-body">
+                    {% if abk_form.fields.abk_ids.choices %}
+                    <div class="list-group" id="abkChoiceList">
+                        <label class="list-group-item d-flex align-items-center gap-2 fw-medium">
+                            <input type="checkbox" id="abkSelectAll" class="form-check-input mt-0">
+                            <span>Pilih semua</span>
+                        </label>
+                        {% for choice in abk_form.abk_ids %}
+                        <label class="list-group-item d-flex align-items-center gap-2">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">Semua ABK aktif sudah ditambahkan ke trip ini.</p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    {% if abk_form.fields.abk_ids.choices %}
+                    <button type="submit" class="btn btn-primary">Tambah</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addTangkapModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'tangkap:create' trip.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Tambah hasil tangkap</h5></div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in tangkap_form %}
+                        {% if field.is_hidden %}
+                        {{ field }}
+                        {% else %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div id="gps-status-wrap" class="text-muted small mt-2" style="display:none;">
+                        <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">location_on</span>
+                        Lokasi GPS: <span id="gps-preview">—</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addJualModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'penjualan:create_for_trip' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header"><h5 class="modal-title">Tambah penjualan</h5></div>
+                <div class="modal-body">
+                    {% if penjualan_form.fields.hasil_tangkap.queryset.exists %}
+                    <div class="form-stack">
+                        {% for field in penjualan_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">Belum ada stok hasil tangkap yang bisa dijual untuk trip ini.</p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    {% if penjualan_form.fields.hasil_tangkap.queryset.exists %}
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if is_owner %}
+<div class="modal fade" id="editStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_status_update' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah status trip</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in trip_status_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="modal fade" id="editTripModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'operasional:trip_update' trip.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah trip</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in trip_edit_form %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% for h, edit_form in tangkap_edit_forms %}
+<div class="modal fade" id="editTangkapModal{{ h.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'tangkap:update' h.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah hasil tangkap</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-stack">
+                        {% for field in edit_form %}
+                        {% if field.is_hidden %}
+                        {{ field }}
+                        {% else %}
+                        <div>
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}

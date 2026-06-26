@@ -1,0 +1,162 @@
+/* components/surfaces.css
+   Cards · Tables · Badges/Chips
+   (dipecah dari components.css — Material 3 / Google) */
+
+/* ── Cards ───────────────────────────────────────────────── */
+.card {
+    background   : var(--surface) !important;
+    border       : 1px solid var(--rule-soft) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow   : none !important;
+    margin-bottom: var(--space-md);
+}
+
+.card-header {
+    background   : var(--surface) !important;
+    border-bottom: 1px solid var(--rule-soft) !important;
+    padding      : var(--space-md) var(--space-lg);
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-sm);
+    font-family  : var(--f-body);
+    font-size    : 14px;
+    font-weight  : 500;
+    letter-spacing: 0.01em;
+    color        : var(--ink);
+}
+
+.card-body  { padding: var(--space-lg); }
+.card-footer{
+    background   : var(--surface) !important;
+    border-top   : 1px solid var(--rule-soft) !important;
+    padding      : var(--space-md) var(--space-lg);
+}
+
+/* Reset Bootstrap colored cards — kalau masih ada page pakai .bg-* + .text-white,
+   netralize jadi surface biasa. Pola baru: pakai .metrics + .metric (lihat pages.css). */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-warning,
+.card.bg-danger,
+.card.bg-info {
+    background  : var(--surface) !important;
+    border-color: var(--rule-soft) !important;
+    color       : var(--ink) !important;
+}
+
+.card.text-white,
+.card.text-white .card-body,
+.card.text-white .small,
+.card.text-white .fw-bold,
+.card.text-white .fs-3 { color: var(--ink) !important; }
+
+.card.text-white .small { color: var(--ink-muted) !important; }
+
+.card.bg-primary i,
+.card.bg-success i,
+.card.bg-warning i,
+.card.bg-danger  i,
+.card.bg-info    i { color: var(--ink-muted) !important; opacity: 1 !important; }
+
+/* ── Tables ──────────────────────────────────────────────── */
+.table {
+    color        : var(--ink);
+    border-color : var(--rule-soft);
+    margin-bottom: 0;
+}
+
+.table th {
+    font-family    : var(--f-body);
+    font-size      : 12px;
+    font-weight    : 500;
+    letter-spacing : 0.02em;
+    color          : var(--ink-muted);
+    border-bottom  : 1px solid var(--rule-soft) !important;
+    background     : transparent !important;
+    padding        : var(--space-sm) var(--space-md);
+    white-space    : nowrap;
+    text-transform : none;
+}
+
+.table td {
+    vertical-align : middle;
+    border-bottom  : 1px solid var(--rule-soft) !important;
+    padding        : var(--space-sm) var(--space-md);
+    font-size      : 14px;
+    color          : var(--ink);
+    background     : transparent;
+}
+
+.table tbody tr:hover td {
+    background: var(--surface-hover);
+    transition: background var(--t-fast);
+}
+
+.table-light,
+.table thead.table-light th {
+    background-color: transparent !important;
+    color           : var(--ink-muted) !important;
+    border-color    : var(--rule-soft) !important;
+}
+
+.table-responsive {
+    border-radius: var(--radius-lg);
+    overflow     : hidden;
+}
+
+.card-body.p-0 {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table td:last-child { white-space: nowrap; }
+
+.table td.num,
+.table .text-end {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Badges / Chips (Material chip) ──────────────────────── */
+.badge {
+    font-family   : var(--f-body);
+    font-size     : 11px;
+    font-weight   : 500;
+    padding       : 4px 10px;
+    border-radius : var(--radius-sm);
+    letter-spacing: 0.02em;
+    text-transform: none;
+    display       : inline-flex;
+    align-items   : center;
+    gap           : 4px;
+}
+
+.badge.bg-success { background: transparent !important; color: var(--success) !important; }
+.badge.bg-danger  { background: transparent !important; color: var(--danger)  !important; }
+.badge.bg-warning { background: transparent !important; color: var(--warning-ink) !important; }
+.badge.bg-primary { background: transparent !important; color: var(--on-brand-light) !important; }
+.badge.bg-info    { background: transparent !important; color: var(--brand) !important; }
+.badge.bg-secondary { background: transparent !important; color: var(--ink-secondary) !important; }
+
+.badge.bg-primary-subtle  { background: transparent !important; color: var(--on-brand-light) !important; }
+.badge.bg-success-subtle  { background: transparent !important; color: var(--success) !important; }
+.badge.bg-danger-subtle   { background: transparent !important; color: var(--danger) !important; }
+.badge.bg-warning-subtle  { background: transparent !important; color: var(--warning-ink) !important; }
+
+/* Material chip */
+.chip {
+    display      : inline-flex;
+    align-items  : center;
+    gap          : 6px;
+    padding      : 6px 12px;
+    background   : var(--surface-container);
+    color        : var(--ink-secondary);
+    border-radius: var(--radius-sm);
+    font-size    : 13px;
+    font-weight  : 500;
+    border       : 1px solid var(--rule-soft);
+    transition   : background var(--t-fast);
+}
+
+.chip:hover { background: var(--surface-container-hi); }
+.chip.chip-active { background: var(--brand-light); color: var(--on-brand-light); border-color: transparent; }

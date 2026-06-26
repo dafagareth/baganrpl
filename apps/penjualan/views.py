@@ -18,6 +18,11 @@ from .forms import (
     BagiHasilMultiFormSet,
 )
 
+# View penjualan & bagi hasil. Sebagian pakai class-based view (CBV) bawaan Django,
+# sebagian pakai function-based view (FBV, fungsi biasa berdekorasi @login_required)
+# untuk aksi yang tidak pas dipaksakan ke pola CBV.
+
+
 class PenjualanListView(LoginRequiredMixin, ListView):
     model = Penjualan
     template_name = 'penjualan/list.html'
@@ -41,6 +46,8 @@ class PenjualanListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        # Total seluruh pendapatan = jumlah dari (berat x harga) semua penjualan.
+        # Dihitung di database lewat aggregate, ditampilkan sebagai ringkasan di atas tabel.
         ctx['total_pendapatan'] = Penjualan.objects.aggregate(
             total=Sum(F('berat_terjual') * F('harga_per_kg'))
         )['total'] or 0
@@ -55,7 +62,7 @@ class PenjualanCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_message = 'Data penjualan berhasil ditambahkan'
 
 class PenjualanCreateForTripView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    """Tambah penjualan dari dalam trip — tangkapan difilter ke trip tsb."""
+    """Tambah penjualan dari dalam halaman trip; pilihan ikan dibatasi ke trip itu."""
     model = Penjualan
     form_class = PenjualanForm
     template_name = 'penjualan/form.html'
@@ -69,6 +76,8 @@ class PenjualanCreateForTripView(LoginRequiredMixin, SuccessMessageMixin, Create
             return redirect('operasional:trip_detail', pk=self.trip.pk)
         return super().dispatch(request, *args, **kwargs)
 
+    # get_form_kwargs: "titipkan" data ke form saat dibuat. Di sini kita kirim trip
+    # supaya PenjualanForm.__init__ bisa membatasi pilihan ikan ke trip ini saja.
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()
         kw['trip'] = self.trip
@@ -90,18 +99,21 @@ class PenjualanDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'master/confirm_delete.html'
     success_url = reverse_lazy('penjualan:list')
 
+# FBV (function-based view): view berupa fungsi biasa. request.method dicek manual.
+# Pola umum form: GET = tampilkan form kosong, POST = proses data yang dikirim.
 @login_required
 def penjualan_multi_create(request):
-    """View untuk input banyak penjualan sekaligus."""
+    """Input banyak baris penjualan sekaligus (pakai formset)."""
     if request.method == 'POST':
+        # queryset=...none(): formset ini untuk MENAMBAH data baru, bukan mengedit yang lama.
         formset = PenjualanFormSet(request.POST, queryset=Penjualan.objects.none())
         if formset.is_valid():
-            instances = formset.save()
+            instances = formset.save()   # simpan semua baris valid sekaligus
             messages.success(request, f'{len(instances)} data penjualan berhasil ditambahkan')
             return redirect('penjualan:list')
     else:
         formset = PenjualanFormSet(queryset=Penjualan.objects.none())
-    # Get stock data from first form in formset
+    # Ambil data stok dari form pertama untuk dipakai tombol "Semua" di JS.
     stock_data_json = '{}'
     if formset.forms:
         form = formset.forms[0]
@@ -112,16 +124,19 @@ def penjualan_multi_create(request):
         'stock_data_json': stock_data_json,
     })
 
+# Tandai satu bagi hasil sebagai "sudah dibayar". Hanya owner yang boleh.
 @login_required
 def bagi_hasil_mark_paid(request, pk):
     bh = get_object_or_404(BagiHasil, pk=pk)
     if not is_owner(request.user):
-        raise PermissionDenied
+        raise PermissionDenied   # bukan owner -> langsung tolak (HTTP 403)
     if request.method == 'POST' and not bh.sudah_dibayar:
         bh.sudah_dibayar = True
         bh.tgl_bayar = date.today()
+        # update_fields: simpan kolom ini saja, lebih hemat daripada menulis ulang semua kolom.
         bh.save(update_fields=['sudah_dibayar', 'tgl_bayar'])
         messages.success(request, f'Bagi hasil {bh.abk.nama} ditandai lunas.')
+    # balik ke halaman asal (dikirim lewat input 'next'), atau ke daftar bagi hasil.
     next_url = request.POST.get('next') or reverse('penjualan:bagi_hasil_list')
     return redirect(next_url)
 
@@ -171,6 +186,8 @@ class BagiHasilMultiCreateView(OwnerRequiredMixin, View):
             return redirect('operasional:trip_detail', pk=self.trip.pk)
         return super().dispatch(request, *args, **kwargs)
 
+    # ABK yang boleh dipilih: ikut trip ini TAPI belum punya bagi hasil. (Method bantu,
+    # diawali _ sebagai penanda "dipakai internal", bukan dipanggil dari luar.)
     def _abk_queryset(self):
         from apps.operasional.models import TripABK
         from apps.master.models import ABK
@@ -178,6 +195,7 @@ class BagiHasilMultiCreateView(OwnerRequiredMixin, View):
         trip_abk = TripABK.objects.filter(trip=self.trip).values_list('abk_id', flat=True)
         return ABK.objects.filter(id__in=trip_abk).exclude(id__in=existing)
 
+    # Pasang daftar ABK yang sama ke setiap baris formset (dropdown-nya jadi konsisten).
     def _bind_abk(self, formset):
         qs = self._abk_queryset()
         for form in formset:
@@ -192,10 +210,11 @@ class BagiHasilMultiCreateView(OwnerRequiredMixin, View):
         formset = self._bind_abk(BagiHasilMultiFormSet(request.POST, queryset=BagiHasil.objects.none()))
         if formset.is_valid():
             count = 0
-            seen = set()
+            seen = set()   # catat id ABK yang sudah diproses, cegah dobel dalam satu submit
             for form in formset:
                 abk = form.cleaned_data.get('abk')
                 nominal = form.cleaned_data.get('nominal')
+                # simpan hanya baris yang lengkap (ada ABK & nominal) dan ABK-nya belum dipakai
                 if abk and nominal is not None and abk.id not in seen:
                     BagiHasil.objects.create(trip=self.trip, abk=abk, nominal=nominal)
                     seen.add(abk.id)

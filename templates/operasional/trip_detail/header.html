@@ -1,0 +1,121 @@
+{% load format_tags %}
+<header class="page-header-row">
+    <div>
+        <p class="text-muted mb-1" style="font-size: 13px;">
+            <a href="{% url 'operasional:trip_list' %}" class="text-muted text-decoration-none">Trip</a>
+            <span class="mx-1">›</span>
+            {{ trip.kapal }}
+        </p>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h1 class="page-title mb-0">{{ trip.kapal }}</h1>
+            <span class="badge {% if trip.status == 'berlayar' %}bg-primary{% elif trip.status == 'selesai' %}bg-success{% elif trip.status == 'batal' %}bg-danger{% else %}bg-secondary{% endif %}">{{ trip.get_status_display }}</span>
+        </div>
+    </div>
+    <div class="page-actions">
+        {% if is_owner %}
+        <a href="{% url 'laporan:export_pdf_trip' trip.id %}" class="btn btn-outline-secondary" target="_blank">
+            Ekspor PDF
+        </a>
+        {% if not trip.is_laporan_locked or request.user.is_superuser %}
+        <button type="button" class="btn btn-outline-secondary"
+                data-bs-toggle="modal" data-bs-target="#editStatusModal">Ubah status</button>
+        {% endif %}
+        {% else %}
+        {% if trip.status != 'selesai' and not trip.is_laporan_locked or request.user.is_superuser %}
+        <button type="button" class="btn btn-outline-secondary"
+                data-bs-toggle="modal" data-bs-target="#editTripModal">Ubah trip</button>
+        {% endif %}
+        {% endif %}
+    </div>
+</header>
+
+{% if trip.is_laporan_locked %}
+<div class="notice notice-warning mb-3">
+    <span class="material-symbols-outlined">lock</span>
+    <span><strong>Laporan dikunci.</strong> Data tidak bisa diubah.{% if request.user.is_superuser %} (admin tetap bisa mengedit){% endif %}</span>
+</div>
+{% elif trip.status == 'selesai' and is_owner %}
+<div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded" style="background:var(--surface-container);">
+    <span class="text-muted small">Trip selesai — audit data lalu kunci laporan agar tidak bisa diubah.</span>
+    <form method="post" action="{% url 'operasional:trip_lock' trip.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-secondary">
+            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px;">lock</span> Kunci laporan
+        </button>
+    </form>
+</div>
+{% elif trip.status == 'selesai' and not request.user.is_superuser %}
+<div class="notice notice-info mb-3">
+    <span class="material-symbols-outlined">info</span>
+    <span>Trip sudah selesai, hanya admin yang bisa mengubah.</span>
+</div>
+{% endif %}
+
+{% if trip.status == 'batal' %}
+<div class="mb-4"><span class="badge bg-danger">Trip dibatalkan</span></div>
+{% else %}
+<ol class="trip-stepper" aria-label="Status trip">
+    <li class="{% if trip.status == 'persiapan' %}is-active{% else %}is-done{% endif %}">
+        <span class="trip-step-num">1</span>
+        <span class="trip-step-label">Persiapan</span>
+    </li>
+    <li class="{% if trip.status == 'berlayar' %}is-active{% elif trip.status == 'selesai' %}is-done{% endif %}">
+        <span class="trip-step-num">2</span>
+        <span class="trip-step-label">Berlayar</span>
+    </li>
+    <li class="{% if trip.status == 'selesai' %}is-active{% endif %}">
+        <span class="trip-step-num">3</span>
+        <span class="trip-step-label">Selesai</span>
+    </li>
+</ol>
+{% endif %}
+
+<div class="metrics">
+    <div class="metric">
+        <div class="metric-label">Berangkat</div>
+        <div class="metric-value" style="font-size: 17px;">{{ trip.tgl_berangkat|tgl_indo }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Kembali</div>
+        <div class="metric-value" style="font-size: 17px;">{{ trip.tgl_kembali|tgl_indo|default:"Belum kembali" }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Total biaya</div>
+        <div class="metric-value">{{ trip.total_biaya_operasional|rupiah }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Laba bersih</div>
+        <div class="metric-value {% if trip.laba_bersih < 0 %}text-danger{% else %}text-success{% endif %}">{{ trip.laba_bersih|rupiah }}</div>
+    </div>
+</div>
+
+{% if not is_owner and trip.status != 'batal' %}
+<div class="trip-action-bar">
+    {% if trip.status == 'persiapan' %}
+    <form method="post" action="{% url 'operasional:trip_berlayar' trip.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" {% if not abk_list %}disabled{% endif %}>
+            <span class="material-symbols-outlined">sailing</span> Mulai Berlayar
+        </button>
+    </form>
+    {% if abk_list %}
+    <p class="trip-action-hint">Tambahkan biaya juga sebelum berlayar bila ada.</p>
+    {% else %}
+    <p class="trip-action-hint text-danger">Pilih minimal satu ABK dulu sebelum bisa berlayar.</p>
+    {% endif %}
+    {% elif trip.status == 'berlayar' %}
+    <form method="post" action="{% url 'operasional:trip_selesai' trip.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            <span class="material-symbols-outlined">anchor</span> Kapal Sudah Kembali
+        </button>
+    </form>
+    <p class="trip-action-hint">Setelah ini kamu bisa mencatat hasil tangkap.</p>
+    {% elif trip.status == 'selesai' %}
+    <p class="trip-action-done">
+        <span class="material-symbols-outlined">check_circle</span>
+        Trip Selesai, harap selesaikan pencatatan di bawah ini.
+    </p>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
    style.css — entry point.
    Sistem Informasi Usaha Bagan · web admin.
-   Material 3 / Google · light mode · selaras bagan_app (Flutter).
-   Palette: Google Blue #1A73E8 di atas scaffold #F8F9FA.
+   Material 3 / Google · light + dark mode · selaras bagan_app (Flutter).
+   Palette: Google Blue #1A73E8 di atas netral hangat (krem #FAF8F4).
 
    File ini hanya meng-import. Edit token / komponen di file
    masing-masing supaya rapi & maintainable.
@@ -10,7 +10,20 @@
 
 @import url('tokens.css');
 @import url('base.css');
-@import url('layout.css');
-@import url('components.css');
+
+/* layout (app bar, drawer, shell, mobile nav) */
+@import url('layout/chrome.css');
+@import url('layout/content.css');
+
+/* components (Bootstrap overrides) — urutan = cascade lama components.css */
+@import url('components/surfaces.css');
+@import url('components/controls.css');
+@import url('components/overlays.css');
+@import url('components/navigation.css');
+
 @import url('utilities.css');
-@import url('pages.css');
+
+/* pages (page-specific) — urutan = cascade lama pages.css */
+@import url('pages/auth-data.css');
+@import url('pages/tables.css');
+@import url('pages/operasional.css');

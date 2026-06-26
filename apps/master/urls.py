@@ -1,4 +1,6 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
+# URL data master. Tiap entitas (kapal/abk/ikan/pembeli) punya 4 alamat seragam:
+# list, tambah, edit, hapus. <int:pk> = id objek yang mau diedit/dihapus.
 from django.urls import path
 from . import views
 

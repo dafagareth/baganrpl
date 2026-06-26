@@ -8,6 +8,13 @@ from apps.operasional.models import Trip
 from apps.tangkap.models import HasilTangkap
 from apps.master.models import ABK
 
+# File ini berisi semua form penjualan & bagi hasil. Bagian yang perlu diperhatikan:
+# - PenjualanForm: cuma boleh jual ikan yang stoknya masih ada, dan tidak melebihi stok.
+# - BagiHasilForm: cuma boleh kasih jatah ke ABK yang ikut trip, dan tidak dobel.
+# Aturan-aturan itu ada di method __init__ (membatasi pilihan) dan clean (validasi akhir).
+
+
+# Form jual untuk SATU transaksi (dipakai modal "Tambah jual" di detail trip).
 class PenjualanForm(forms.ModelForm):
     class Meta:
         model = Penjualan
@@ -21,8 +28,13 @@ class PenjualanForm(forms.ModelForm):
             'catatan': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
+    # __init__ dipanggil saat form dibuat. trip= dikirim dari view supaya pilihan ikan
+    # dibatasi ke trip itu saja. Kita juga hitung sisa stok tiap ikan biar yang habis tidak muncul.
     def __init__(self, *args, trip=None, **kwargs):
         super().__init__(*args, **kwargs)
+        # Hitung di database: total terjual per ikan, lalu tersedia = berat tangkap - terjual.
+        # Coalesce(..., 0.0): kalau belum ada penjualan (NULL), anggap 0.
+        # ExpressionWrapper: bungkus operasi pengurangan antar-kolom + tetapkan tipenya Decimal.
         qs = HasilTangkap.objects.annotate(
             terjual=Coalesce(Sum('penjualan__berat_terjual'), 0.0, output_field=DecimalField())
         ).annotate(
@@ -31,35 +43,46 @@ class PenjualanForm(forms.ModelForm):
         if trip is not None:
             qs = qs.filter(trip=trip)
         if self.instance and self.instance.pk:
+            # Saat EDIT: tampilkan yang stoknya > 0, plus ikan yang sedang dipakai baris ini
+            # (walaupun stoknya 0) supaya pilihan lamanya tetap kelihatan.
             qs = qs.filter(Q(tersedia__gt=0) | Q(pk=self.instance.hasil_tangkap.pk))
         else:
-            qs = qs.filter(tersedia__gt=0)
+            qs = qs.filter(tersedia__gt=0)   # saat TAMBAH: hanya yang masih ada stok
         self.fields['hasil_tangkap'].queryset = qs
-        # Build stock data for JS "Semua" button
+        # Data stok per-ikan untuk tombol "Semua" di JS (isi otomatis berat = sisa stok).
         self._stock_data = {ht.pk: float(ht.tersedia) for ht in qs}
 
+    # @property: dipanggil tanpa kurung (form.stock_data_json). Ubah dict stok jadi teks JSON
+    # supaya bisa ditaruh di atribut HTML dan dibaca JavaScript.
     @property
     def stock_data_json(self):
         return json.dumps(self._stock_data)
 
+    # clean(): validasi terakhir yang melibatkan beberapa field sekaligus. Di sini cek
+    # supaya berat yang dijual tidak melebihi stok yang tersedia.
     def clean(self):
         cleaned_data = super().clean()
         hasil_tangkap = cleaned_data.get('hasil_tangkap')
         berat_terjual = cleaned_data.get('berat_terjual')
         if hasil_tangkap and berat_terjual is not None:
             tersedia = hasil_tangkap.berat_tersedia
-            # Jika edit, tambahkan kembali berat lama agar tidak double-count
+            # Kalau ini proses EDIT pada ikan yang sama, kembalikan dulu berat lamanya
+            # ke "tersedia" supaya tidak terhitung dobel (kalau tidak, edit jadi salah dianggap kelebihan).
             if self.instance and self.instance.pk and self.instance.hasil_tangkap_id == hasil_tangkap.pk:
                 tersedia += self.instance.berat_terjual
             if berat_terjual > tersedia:
+                # raise ValidationError = batalkan simpan, tampilkan pesan error ke user.
                 raise forms.ValidationError(
                     f'Stok tidak cukup! Tersedia {tersedia:g} kg, '
                     f'tapi diinput {berat_terjual:g} kg.'
                 )
         return cleaned_data
 
+# Versi ringkas PenjualanForm untuk input BANYAK baris sekaligus (tabel multi-input).
+# Logikanya mirip (batasi ke ikan yang masih ada stok + cek tidak melebihi stok),
+# bedanya widget-nya kecil (kelas form-*-sm) biar muat dalam tabel.
 class PenjualanMultiForm(forms.ModelForm):
-    """Compact form for multi-row input table."""
+    """Form ringkas untuk input penjualan multi-baris."""
     class Meta:
         model = Penjualan
         fields = ['hasil_tangkap', 'pembeli', 'berat_terjual', 'harga_per_kg', 'tgl_jual', 'catatan']
@@ -99,6 +122,8 @@ class PenjualanMultiForm(forms.ModelForm):
                 )
         return cleaned_data
 
+# modelformset_factory: pabrik yang membuat "kumpulan form" dari satu form, supaya bisa
+# input beberapa baris Penjualan dalam satu halaman. extra=1 = sediakan 1 baris kosong.
 PenjualanFormSet = forms.modelformset_factory(
     Penjualan,
     form=PenjualanMultiForm,
@@ -106,6 +131,8 @@ PenjualanFormSet = forms.modelformset_factory(
     can_delete=False,
 )
 
+
+# Form jatah bagi hasil per ABK. Nominal diisi manual oleh owner.
 class BagiHasilForm(forms.ModelForm):
     class Meta:
         model = BagiHasil
@@ -117,16 +144,21 @@ class BagiHasilForm(forms.ModelForm):
             'tgl_bayar': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+    # Batasi pilihan ABK: hanya yang ikut trip ini DAN belum punya jatah bagi hasil.
     def __init__(self, *args, trip=None, **kwargs):
         self.trip = trip
         super().__init__(*args, **kwargs)
         if trip:
             from apps.operasional.models import TripABK
+            # ABK yang sudah punya bagi hasil di trip ini (biar tidak muncul lagi / tidak dobel).
+            # values_list('abk_id', flat=True) = ambil daftar id-nya saja, bukan objek penuh.
             existing_abk_ids = BagiHasil.objects.filter(trip=trip).values_list('abk_id', flat=True)
             if self.instance and self.instance.pk:
+                # Kalau lagi EDIT, jangan keluarkan ABK milik baris yang sedang diedit.
                 existing_abk_ids = existing_abk_ids.exclude(abk_id=self.instance.abk.id)
 
             trip_abk_ids = TripABK.objects.filter(trip=trip).values_list('abk_id', flat=True)
+            # Pilihan akhir = (ABK yang ikut trip) dikurangi (yang sudah dapat jatah).
             self.fields['abk'].queryset = ABK.objects.filter(
                 id__in=trip_abk_ids
             ).exclude(

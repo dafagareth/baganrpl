@@ -1,4 +1,6 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
+# URL app operasional (inti): feed aktivitas, CRUD trip, transisi status (berlayar/
+# selesai/kunci), serta biaya & ABK per trip. <int:pk> dan <int:trip_id> = id dari alamat.
 from django.urls import path
 from . import views
 

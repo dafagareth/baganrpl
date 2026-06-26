@@ -1,0 +1,228 @@
+/* pages/auth-data.css
+   Login · Empty state · Detail meta · Form section · KPI · Snackbar · Page header · Metrics
+   (dipecah dari pages.css — Material 3 / Google) */
+
+/* ── Login ───────────────────────────────────────────────── */
+.login-page {
+    background     : var(--canvas);
+    min-height     : 100vh;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    padding        : var(--space-xl);
+}
+
+.login-card {
+    background   : var(--surface);
+    border       : 1px solid var(--rule-soft);
+    border-radius: var(--radius-xxl);
+    box-shadow   : var(--shadow-sm);
+    width        : 100%;
+    max-width    : 420px;
+    padding      : var(--space-xxl);
+}
+
+.login-card .login-logo {
+    font-family   : var(--f-display);
+    font-size     : 1.75rem;
+    font-weight   : 400;
+    letter-spacing: 0;
+    color         : var(--ink);
+    text-align    : center;
+    margin-bottom : var(--space-xl);
+}
+
+.login-card .login-subtitle {
+    text-align : center;
+    color      : var(--ink-muted);
+    font-size  : 14px;
+    margin-bottom: var(--space-xl);
+}
+
+.login-card .text-muted {
+    color: var(--ink-muted) !important;
+}
+
+.login-card .form-control,
+.login-card .form-select {
+    padding   : 14px 16px;
+    font-size : 15px;
+}
+
+.login-card .btn-primary {
+    padding   : 14px 24px;
+    font-size : 15px;
+    width     : 100%;
+    margin-top: var(--space-sm);
+}
+
+.login-card .login-back {
+    text-align: center;
+    margin    : var(--space-lg) 0 0;
+    font-size : 13.5px;
+}
+.login-card .login-back a {
+    color          : var(--ink-muted);
+    text-decoration: none;
+    display        : inline-flex;
+    align-items    : center;
+    gap            : 4px;
+}
+.login-card .login-back a .material-symbols-outlined { font-size: 18px; }
+.login-card .login-back a:hover { color: var(--brand); }
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding   : var(--space-section) var(--space-xl);
+    color     : var(--ink-muted);
+}
+
+.empty-state i,
+.empty-state .material-symbols-outlined {
+    font-size    : 56px;
+    color        : var(--ink-disabled);
+    margin-bottom: var(--space-md);
+    display      : block;
+    text-align   : center;
+    width        : 100%;
+}
+
+.empty-state h5 {
+    color        : var(--ink);
+    font-size    : 16px;
+    font-weight  : 500;
+    margin-bottom: 4px;
+}
+
+.empty-state p {
+    font-size    : 14px;
+    color        : var(--ink-muted);
+    margin-bottom: var(--space-md);
+}
+
+/* ── Detail meta / definition list ───────────────────────── */
+.detail-meta {
+    display              : grid;
+    grid-template-columns: max-content 1fr;
+    column-gap           : var(--space-xl);
+    row-gap              : var(--space-sm);
+    font-size            : 14px;
+}
+
+.detail-meta dt {
+    font-family   : var(--f-body);
+    font-size     : 13px;
+    font-weight   : 500;
+    color         : var(--ink-muted);
+    align-self    : center;
+}
+
+.detail-meta dd {
+    color : var(--ink);
+    margin: 0;
+}
+
+/* ── Form section divider ────────────────────────────────── */
+.form-section-title {
+    font-family    : var(--f-body);
+    font-size      : 13px;
+    font-weight    : 500;
+    letter-spacing : 0.02em;
+    color          : var(--ink-secondary);
+    padding-bottom : var(--space-xs);
+    border-bottom  : 1px solid var(--rule-soft);
+    margin-bottom  : var(--space-md);
+    margin-top     : var(--space-xl);
+}
+
+.form-section-title:first-child { margin-top: 0; }
+
+/* ── KPI ribbon (dashboard) ──────────────────────────────── */
+.kpi-ribbon {
+    display              : grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap                  : var(--space-md);
+    margin-bottom        : var(--space-xl);
+}
+
+/* ── Snackbar (Material) ─────────────────────────────────── */
+.snackbar {
+    position     : fixed;
+    bottom       : 24px;
+    left         : 50%;
+    transform    : translateX(-50%);
+    background   : var(--ink);
+    color        : var(--surface);
+    padding      : 14px 16px;
+    border-radius: var(--radius-xs);
+    font-size    : 14px;
+    box-shadow   : var(--shadow-md);
+    z-index      : 1090;
+    min-width    : 280px;
+    max-width    : 560px;
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-md);
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.page-header-row {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : baseline;
+    gap            : var(--space-md);
+    flex-wrap      : wrap;
+    margin-bottom  : var(--space-lg);
+}
+
+.page-actions {
+    display    : flex;
+    align-items: center;
+    gap        : 8px;
+    flex-wrap  : wrap;
+}
+
+/* ── Metrics row (no card, hairlines only) ───────────────── */
+.metrics {
+    display              : grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap                  : 0;
+    border-top           : 1px solid var(--rule-soft);
+    border-bottom        : 1px solid var(--rule-soft);
+    margin               : var(--space-md) 0 var(--space-xxl);
+}
+
+.metric {
+    padding     : var(--space-md) var(--space-lg) var(--space-md) 0;
+    border-right: 1px solid var(--rule-soft);
+}
+
+.metric:last-child { border-right: none; }
+
+.metric-label {
+    font-size    : 13px;
+    color        : var(--ink-muted);
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    font-family : var(--f-display);
+    font-size   : 26px;
+    font-weight : 500;
+    color       : var(--ink);
+    line-height : 1.1;
+    letter-spacing: 0;
+}
+
+.metric-unit {
+    font-size : 13px;
+    color     : var(--ink-muted);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+@media (max-width: 575px) {
+    .metric { border-right: none; border-bottom: 1px solid var(--rule-soft); padding: var(--space-md) 0; }
+    .metric:last-child { border-bottom: none; }
+}

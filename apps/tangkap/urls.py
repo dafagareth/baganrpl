@@ -1,4 +1,5 @@
 # Copyright (c) 2026 Dafa Al Hafiz. All rights reserved.
+# URL hasil tangkap. 'create' butuh <int:trip_id> karena tangkap selalu milik satu trip.
 from django.urls import path
 from . import views
 

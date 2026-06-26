@@ -11,6 +11,15 @@ from .utils import get_rekap_periode, get_rekap_trip
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 
+
+# Dua cara ekspor laporan:
+# - ExportExcelView: bikin file .xlsx pakai library openpyxl.
+# - ExportPDFTripView: bikin file .pdf pakai library ReportLab.
+# Intinya sama: ambil data -> susun ke worksheet/dokumen -> kirim sebagai file download
+# (lewat HttpResponse + header Content-Disposition: attachment).
+
+
+# Ekspor rekap satu bulan ke Excel.
 class ExportExcelView(OwnerRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
@@ -99,6 +108,8 @@ class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
     """Ekspor laporan satu trip ke PDF menggunakan ReportLab."""
 
     def get(self, request, pk, *args, **kwargs):
+        # Import ReportLab di dalam method, bukan di atas file: library-nya berat dan
+        # cuma dibutuhkan saat tombol ekspor PDF ditekan, jadi tidak membebani startup.
         from reportlab.lib.pagesizes import A4
         from reportlab.lib.units import cm
         from reportlab.lib import colors
@@ -132,6 +143,8 @@ class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
                                 leading=14)
         right  = ParagraphStyle('right', parent=normal, alignment=TA_RIGHT)
 
+        # Fungsi kecil di dalam method (boleh, namanya nested function) untuk meringkas Rupiah:
+        # 1.5e9 -> "Rp 1.5 M", 2.3e6 -> "Rp 2.3 jt", dst, biar muat di kolom PDF.
         def rp(v):
             v = float(v or 0)
             if abs(v) >= 1e9: return f"Rp {v/1e9:.1f} M"
@@ -151,6 +164,8 @@ class ExportPDFTripView(OwnerRequiredMixin, TemplateView):
             ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ])
 
+        # story = daftar "flowables" (potongan isi: judul, tabel, jarak). ReportLab menyusunnya
+        # berurutan dari atas ke bawah saat doc.build(story) dipanggil di akhir.
         story = []
 
         # Header

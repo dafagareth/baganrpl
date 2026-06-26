@@ -1,7 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
-   tokens.css — Design tokens (light mode, Google Material 3).
-   Selaras dengan bagan_app (Flutter) — primary #1A73E8,
-   scaffold #F8F9FA, card border bukan shadow, input filled.
+   tokens.css — Design tokens. Brand Google Blue #1A73E8,
+   netral hangat (cozy) supaya nyaman di mata untuk sesi lama:
+   light di atas krem #FAF8F4, dark di charcoal hangat #1A1714.
+   Card border bukan shadow, input filled.
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Fonts ───────────────────────────────────────────────── */
@@ -16,25 +17,25 @@
     --f-display : 'Google Sans Text', 'Roboto', system-ui, sans-serif;
     --f-mono    : 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* ── Canvas / surfaces (Google Gray 50 base) ────────── */
-    --canvas               : #F8F9FA;   /* Gray 50 — scaffold */
-    --canvas-alt           : #F1F3F4;   /* Gray 100 */
-    --surface              : #FFFFFF;
-    --surface-hover        : #F1F3F4;
-    --surface-sunken       : #F1F3F4;
-    --surface-container    : #F1F3F4;   /* M3 surfaceContainer */
-    --surface-container-hi : #E8EAED;   /* M3 surfaceContainerHighest — input fill */
+    /* ── Canvas / surfaces (warm / cozy, rendah silau) ───── */
+    --canvas               : #FAF8F4;   /* krem sangat tipis, bukan putih terang */
+    --canvas-alt           : #F2EFE8;   /* krem sedikit lebih dalam */
+    --surface              : #FFFDF9;   /* kartu off-white hangat (kurangi silau) */
+    --surface-hover        : #F4F0E9;
+    --surface-sunken       : #F0ECE3;
+    --surface-container    : #F2EFE8;
+    --surface-container-hi : #E9E4D9;   /* isian input, hangat */
 
     /* ── Ink / text (Google Gray scale) ─────────────────── */
     --ink            : #202124;   /* Gray 900 — primary text */
     --ink-secondary  : #3C4043;   /* Gray 800 */
-    --ink-muted      : #5F6368;   /* Gray 700 — onSurfaceVariant */
-    --ink-faint      : #80868B;   /* Gray 600 */
-    --ink-disabled   : #BDC1C6;   /* Gray 400 */
+    --ink-muted      : #6E635A;   /* abu hangat — onSurfaceVariant */
+    --ink-faint      : #8E867A;   /* abu hangat lebih terang */
+    --ink-disabled   : #C5BEB2;   /* abu hangat (disabled) */
 
-    /* ── Hairlines / outlines ───────────────────────────── */
-    --rule           : #DADCE0;   /* Gray 300 — outline */
-    --rule-soft      : #E8EAED;   /* Gray 200 — outlineVariant */
+    /* ── Hairlines / outlines (hangat) ──────────────────── */
+    --rule           : #E4DED3;   /* garis tepi, hangat */
+    --rule-soft      : #EDE8DE;   /* garis tepi lembut */
 
     /* ── Brand — Google Blue ────────────────────────────── */
     --brand          : #1A73E8;   /* Google Blue 600 */
@@ -166,24 +167,24 @@
     --warning-bg: #33290F;
     --info-bg: #1A2230;
 
-    --ink: #E3E3E3;
-    --ink-secondary: #C7C7C7;
-    --ink-muted: #9AA0A6;
-    --ink-faint: #80868B;
-    --ink-disabled: #5F6368;
+    --ink: #E9E4DC;            /* off-white hangat */
+    --ink-secondary: #D0C9BE;
+    --ink-muted: #A39A8C;
+    --ink-faint: #847B6F;
+    --ink-disabled: #5E574D;
 
-    --canvas: #131314;
-    --canvas-alt: #1A1B1E;
-    --surface: #1E1F22;
-    --surface-hover: #2A2B2E;
-    --surface-sunken: #181A1C;
-    --surface-container: #181A1C;
-    --surface-container-hi: #2A2B2E;
-    --surface-active: #28344A;
+    --canvas: #1A1714;         /* charcoal kecoklatan, bukan hitam pekat */
+    --canvas-alt: #211D19;
+    --surface: #241F1A;        /* kartu gelap hangat */
+    --surface-hover: #2F2925;
+    --surface-sunken: #1E1A16;
+    --surface-container: #1E1A16;
+    --surface-container-hi: #2F2925;
+    --surface-active: #322A20; /* state terpilih, hangat */
 
-    --rule: #3C4043;
-    --rule-soft: #2A2C2F;
-    --rule-strong: #5F6368;
+    --rule: #423E37;
+    --rule-soft: #2A2620;
+    --rule-strong: #6A6157;
 
     --shadow-color: 0 0% 0%;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);

@@ -10,9 +10,14 @@ from django.db.models import Count, Q
 from .models import Kapal, ABK, JenisIkan, Pembeli
 from .forms import KapalForm, ABKForm, JenisIkanForm, PembeliForm
 
+# CRUD data master. Semua view di sini cuma boleh diakses owner (lihat OwnerRequiredMixin).
+# Polanya berulang: tiap entitas (Kapal/ABK/JenisIkan/Pembeli) punya 4 view sejenis,
+# yaitu List + Create + Update + Delete. Django sudah menyediakan kelas "generic"-nya,
+# jadi kita tinggal sebut model, form, template, dan ke mana balik setelah simpan.
+
 
 class DataMasterIndexView(OwnerRequiredMixin, TemplateView):
-    """Halaman hub Data Master — pintu masuk ke kapal, ABK, jenis ikan, pembeli."""
+    """Halaman hub Data Master: pintu masuk ke kapal, ABK, jenis ikan, pembeli."""
     template_name = 'master/index.html'
 
     def get_context_data(self, **kwargs):
@@ -23,31 +28,43 @@ class DataMasterIndexView(OwnerRequiredMixin, TemplateView):
         ctx['pembeli_count'] = Pembeli.objects.count()
         return ctx
 
+# ListView = halaman daftar. Cukup tentukan model + template, Django yang ambil datanya.
 class KapalListView(OwnerRequiredMixin, ListView):
     model = Kapal
     template_name = 'master/kapal_list.html'
-    context_object_name = 'kapal_list'
-    paginate_by = 15
+    context_object_name = 'kapal_list'   # nama variabel daftar yang dipakai di template
+    paginate_by = 15                     # data otomatis dipecah jadi 15 per halaman
 
+    # get_queryset: tentukan data apa yang ditampilkan. Di sini ditambah fitur cari.
     def get_queryset(self):
+        # annotate(jml_trip=Count('trips')): hitung jumlah trip tiap kapal sekalian, biar bisa ditampilkan.
         qs = super().get_queryset().annotate(jml_trip=Count('trips')).order_by('nama_kapal')
-        q = self.request.GET.get('q', '').strip()
+        q = self.request.GET.get('q', '').strip()   # ambil kata kunci dari URL, mis. ?q=anugrah
         if q:
+            # __icontains = "mengandung teks", huruf besar/kecil diabaikan. Q(..) | Q(..) artinya ATAU.
             qs = qs.filter(
                 Q(nama_kapal__icontains=q) |
                 Q(jenis__icontains=q)
             )
         return qs
 
+    # get_context_data: kirim variabel tambahan ke template. Di sini kata kunci 'q'
+    # dikirim balik supaya kotak pencarian tetap terisi setelah ditekan cari.
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['q'] = self.request.GET.get('q', '')
         return ctx
 
+# CreateView = form tambah data. form_class menentukan field-nya, success_url tujuan
+# setelah tersimpan, success_message teks notifikasi sukses. UpdateView di bawahnya sama
+# persis tapi untuk edit (form otomatis terisi data lama berdasarkan id di URL).
 class KapalCreateView(OwnerRequiredMixin, SuccessMessageMixin, CreateView):
     model = Kapal
     form_class = KapalForm
     template_name = 'master/kapal_form.html'
+    # reverse_lazy: cari URL dari namanya ('master:kapal_list'), penghitungannya ditunda
+    # sampai benar-benar dibutuhkan (aman dipakai di level atribut kelas).
+
     success_url = reverse_lazy('master:kapal_list')
     success_message = 'Data kapal berhasil ditambahkan'
 
@@ -66,6 +83,7 @@ class KapalDeleteView(OwnerRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         # Kapal yang punya riwayat trip tidak dihapus permanen (jaga data laporan) —
         # cukup dinonaktifkan agar tidak muncul lagi di pilihan trip baru.
+
         kapal = self.get_object()
         if kapal.trips.exists():
             if kapal.status != 'nonaktif':
@@ -80,6 +98,8 @@ class KapalDeleteView(OwnerRequiredMixin, DeleteView):
         messages.success(request, f'Kapal {kapal.nama_kapal} berhasil dihapus.')
         return super().post(request, *args, **kwargs)
 
+# Mulai dari sini (ABK, JenisIkan, Pembeli) polanya sama persis dengan Kapal di atas:
+# List berisi pencarian, lalu Create/Update/Delete. Yang beda cuma model, form, & template.
 class ABKListView(OwnerRequiredMixin, ListView):
     model = ABK
     template_name = 'master/abk_list.html'

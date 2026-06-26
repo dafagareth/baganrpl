@@ -1,0 +1,259 @@
+/* components/navigation.css
+   List group · Pagination · Dropdown · Tabs · FAB · Progress · Tooltip · Mobile bottom sheet
+   (dipecah dari components.css — Material 3 / Google) */
+
+/* ── List group ──────────────────────────────────────────── */
+.list-group {
+    border-radius: var(--radius-lg);
+    overflow     : hidden;
+    border       : 1px solid var(--rule-soft);
+}
+
+.list-group-item {
+    background  : var(--surface);
+    border-color: var(--rule-soft);
+    color       : var(--ink);
+    cursor      : pointer;
+    font-size   : 14px;
+    transition  : background var(--t-fast);
+    padding     : var(--space-sm) var(--space-md);
+}
+
+.list-group-item:hover {
+    background: var(--surface-hover);
+}
+
+.list-group-item.active {
+    background  : var(--brand-light);
+    border-color: var(--rule-soft);
+    color       : var(--on-brand-light);
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+.pagination { gap: 2px; }
+
+.page-link {
+    background  : transparent;
+    border      : none;
+    color       : var(--ink-secondary);
+    font-family : var(--f-body);
+    font-size   : 13px;
+    padding     : 8px 14px;
+    border-radius: var(--radius-pill);
+    transition  : background var(--t-fast);
+}
+
+.page-link:hover {
+    background: var(--surface-hover);
+    color     : var(--ink);
+}
+
+.page-item.active .page-link {
+    background  : var(--brand-light);
+    border-color: transparent;
+    color       : var(--on-brand-light);
+    font-weight : 600;
+}
+
+.page-item.disabled .page-link {
+    background: transparent;
+    color     : var(--ink-disabled);
+}
+
+/* ── Dropdown (Material menu) ────────────────────────────── */
+.dropdown-menu {
+    background   : var(--surface);
+    border       : 1px solid var(--rule-soft);
+    border-radius: var(--radius-sm);
+    box-shadow   : var(--shadow-md);
+    padding      : var(--space-xs) 0;
+    min-width    : 180px;
+}
+
+.dropdown-item {
+    color        : var(--ink);
+    font-size    : 14px;
+    border-radius: 0;
+    padding      : 10px var(--space-md);
+    transition   : background var(--t-fast);
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-sm);
+}
+
+.dropdown-item:hover {
+    background: var(--surface-hover);
+    color     : var(--ink);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background: var(--brand-light);
+    color     : var(--on-brand-light);
+}
+
+.dropdown-divider {
+    border-color: var(--rule-soft);
+    margin      : var(--space-xs) 0;
+}
+
+.dropdown-header {
+    color          : var(--ink-muted);
+    font-family    : var(--f-body);
+    font-size      : 12px;
+    font-weight    : 500;
+    letter-spacing : 0.02em;
+    padding        : var(--space-xs) var(--space-md);
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.nav-tabs {
+    border-bottom: 1px solid var(--rule-soft);
+    gap          : 0;
+}
+
+.nav-tabs .nav-link {
+    color           : var(--ink-muted);
+    font-size       : 14px;
+    font-weight     : 500;
+    border          : none;
+    border-bottom   : 3px solid transparent;
+    padding         : var(--space-sm) var(--space-md);
+    border-radius   : 0;
+    transition      : color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+    margin-bottom   : -1px;
+}
+
+.nav-tabs .nav-link:hover {
+    color     : var(--ink);
+    background: var(--surface-hover);
+    border-bottom-color: var(--rule);
+}
+
+.nav-tabs .nav-link.active {
+    color              : var(--brand);
+    border-bottom-color: var(--brand);
+    background         : transparent;
+    font-weight        : 500;
+}
+
+/* ── FAB (Material 3) ────────────────────────────────────── */
+.fab-add {
+    position     : fixed;
+    bottom       : 24px;
+    right        : 24px;
+    width        : 56px;
+    height       : 56px;
+    border-radius: var(--radius-lg);
+    background   : var(--brand);
+    color        : var(--on-brand);
+    border       : none;
+    display      : flex;
+    align-items  : center;
+    justify-content: center;
+    font-size    : 1.5rem;
+    z-index      : 1030;
+    text-decoration: none;
+    box-shadow   : var(--shadow-fab);
+    transition   : box-shadow var(--t-fast), background var(--t-fast);
+}
+
+.fab-add:hover {
+    background: var(--brand-hover);
+    box-shadow: 0 6px 10px 4px rgba(60, 64, 67, 0.15), 0 2px 3px 0 rgba(60, 64, 67, 0.3);
+    color     : var(--on-brand);
+}
+
+.fab-add:active { transform: scale(0.96); }
+
+@media (max-width: 991.98px) {
+    .fab-add {
+        bottom: 88px;
+        right : 16px;
+    }
+}
+
+/* ── Progress (Material linear) ──────────────────────────── */
+.progress {
+    background   : var(--surface-container-hi);
+    border-radius: var(--radius-pill);
+    height       : 4px;
+    overflow     : hidden;
+}
+
+.progress-bar { border-radius: var(--radius-pill); }
+
+.progress-bar.bg-success { background: var(--success) !important; }
+.progress-bar.bg-primary { background: var(--brand)   !important; }
+.progress-bar.bg-warning { background: var(--warning) !important; }
+.progress-bar.bg-danger  { background: var(--danger)  !important; }
+
+/* ── Tooltip ─────────────────────────────────────────────── */
+.tooltip-inner {
+    background   : var(--ink);
+    color        : var(--surface);
+    border       : none;
+    font-family  : var(--f-body);
+    font-size    : 12px;
+    border-radius: var(--radius-xs);
+    padding      : 6px 10px;
+    font-weight  : 500;
+}
+
+.tooltip .tooltip-arrow::before { color: var(--ink); }
+
+/* ── Mobile: Bottom Sheet Modal + Touch Targets ─────────── */
+@media (max-width: 991.98px) {
+    /* Semua modal jadi bottom sheet — override centered + sm juga */
+    .modal-dialog,
+    .modal-dialog.modal-dialog-centered,
+    .modal-dialog.modal-sm,
+    .modal-dialog.modal-lg,
+    .modal-dialog.modal-xl {
+        position   : fixed !important;
+        bottom     : 0 !important;
+        left       : 0 !important;
+        right      : 0 !important;
+        top        : auto !important;
+        margin     : 0 !important;
+        width      : 100% !important;
+        max-width  : 100% !important;
+        min-height : unset !important;
+        transform  : translateY(100%) !important;
+        transition : transform var(--t-emphasized) !important;
+        /* override flexbox centering dari modal-dialog-centered */
+        display    : block !important;
+        align-items: unset !important;
+    }
+    .modal.show .modal-dialog,
+    .modal.show .modal-dialog.modal-dialog-centered {
+        transform: translateY(0) !important;
+    }
+    .modal-content {
+        border-radius: var(--radius-xxl) var(--radius-xxl) 0 0 !important;
+        border-bottom: 0 !important;
+        width: 100% !important;
+    }
+    .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    .modal-footer {
+        padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+    }
+    /* Bottom sheet harus di atas dock (mobile-nav z-index 1080) supaya
+       tombolnya tidak tertutup — sheet naik menyatu dengan dock. */
+    .modal          { z-index: 1090; }
+    .modal-backdrop { z-index: 1085; }
+
+    /* Larger touch targets */
+    .btn-icon,
+    .row-actions .btn-icon {
+        width : 44px;
+        height: 44px;
+    }
+    .list-row {
+        padding   : var(--space-lg) 0;
+        min-height: 60px;
+    }
+}

@@ -1,0 +1,285 @@
+/* pages/operasional.css
+   Trip card/stepper · Feed · Multi-input · Foto bukti · Cat-tabs · Master grid · Feed chips
+   (dipecah dari pages.css — Material 3 / Google) */
+
+/* ── Trip aktif card (operator trip list) ──────────────────── */
+.trip-aktif-card {
+    display        : flex;
+    flex-direction : column;
+    gap            : var(--space-md);
+    padding        : var(--space-md) var(--space-lg);
+    border         : 1px solid var(--rule);
+    border-radius  : var(--radius-lg);
+    margin-bottom  : var(--space-xl);
+}
+.trip-aktif-top {
+    display        : flex;
+    align-items    : center;
+    justify-content: space-between;
+    gap            : var(--space-md);
+}
+.trip-aktif-card .trip-stepper {
+    margin     : 0;
+    padding-top: var(--space-md);
+    border-top : 1px solid var(--rule-soft);
+}
+.trip-aktif-label { font-size: 11px; font-weight: 500; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+.trip-aktif-kapal { font-size: 16px; font-weight: 600; color: var(--ink); }
+.trip-aktif-meta  { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ── Trip action bar (operator trip detail) ────────────────── */
+.trip-action-bar {
+    display    : flex;
+    align-items: center;
+    gap        : var(--space-lg);
+    padding    : var(--space-lg) 0;
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: var(--space-xl);
+}
+.trip-action-hint { font-size: 13px; color: var(--ink-muted); margin: 0; }
+.trip-action-done { display: flex; align-items: center; gap: var(--space-xs); font-size: 14px; color: var(--success); margin: 0; }
+
+/* ── Stepper status trip (Persiapan → Berlayar → Selesai) ──── */
+.trip-stepper {
+    display      : flex;
+    list-style   : none;
+    padding      : 0;
+    margin       : 0 0 var(--space-xl);
+}
+.trip-stepper li {
+    flex          : 1;
+    position      : relative;
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+    gap           : 6px;
+    text-align    : center;
+}
+/* garis penghubung ke langkah sebelumnya */
+.trip-stepper li::before {
+    content   : "";
+    position  : absolute;
+    top       : 15px;
+    right      : 50%;
+    width     : 100%;
+    height    : 2px;
+    background: var(--rule);
+    z-index   : 0;
+}
+.trip-stepper li:first-child::before { display: none; }
+.trip-step-num {
+    position       : relative;
+    z-index        : 1;
+    width          : 32px;
+    height         : 32px;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    border-radius  : 8px;
+    background     : var(--surface-container);
+    color          : var(--ink-muted);
+    border         : 1px solid var(--rule);
+    font-weight    : 600;
+    font-size      : 14px;
+}
+.trip-step-label { font-size: 13px; color: var(--ink-muted); }
+
+.trip-stepper li.is-done .trip-step-num {
+    background  : var(--success);
+    border-color: var(--success);
+    color       : #fff;
+}
+.trip-stepper li.is-done::before    { background: var(--success); }
+.trip-stepper li.is-active .trip-step-num {
+    background  : var(--brand);
+    border-color: var(--brand);
+    color       : var(--on-brand);
+}
+.trip-stepper li.is-active::before  { background: var(--brand); }
+.trip-stepper li.is-active .trip-step-label,
+.trip-stepper li.is-done .trip-step-label { color: var(--ink); font-weight: 500; }
+
+/* ── Feed operasional (gabungan tangkap + jual) ────────────── */
+.feed-filters {
+    display      : flex;
+    gap          : var(--space-xs);
+    flex-wrap    : wrap;
+    margin-bottom: var(--space-md);
+}
+.feed-filters .chip { text-decoration: none; }
+.feed-count {
+    font-variant-numeric: tabular-nums;
+    opacity   : 0.7;
+    font-size : 12px;
+    margin-left: 2px;
+}
+.feed-icon {
+    font-size    : 22px;
+    width        : 40px;
+    height       : 40px;
+    border-radius: var(--radius-pill);
+    display      : inline-flex;
+    align-items  : center;
+    justify-content: center;
+    flex-shrink  : 0;
+}
+.feed-icon-tangkap { background: var(--brand-subtle); color: var(--brand); }
+.feed-icon-jual    { background: var(--success-bg);  color: var(--success); }
+
+/* ── Penjualan multi-input: tabel → cards di mobile ────────── */
+@media (max-width: 991.98px) {
+    #formset-table thead { display: none; }
+    #formset-table,
+    #formset-table tbody,
+    #formset-table tr,
+    #formset-table td { display: block; width: 100%; }
+
+    #formset-table .formset-row {
+        padding      : var(--space-sm) 0 var(--space-md);
+        border-bottom: 1px solid var(--rule-soft);
+        margin-bottom: var(--space-md);
+    }
+    #formset-table .formset-row td {
+        border     : 0;
+        padding    : var(--space-sm) 0;
+        white-space: normal;
+    }
+    #formset-table .formset-row td::before {
+        content      : attr(data-label);
+        display      : block;
+        font-size    : 12px;
+        font-weight  : 500;
+        color        : var(--ink-muted);
+        margin-bottom: 6px;
+        letter-spacing: .02em;
+    }
+    #formset-table .formset-row td[data-label=""]::before { display: none; }
+    #formset-table .formset-row .form-control,
+    #formset-table .formset-row .form-select { width: 100%; }
+    #formset-table .formset-row td:last-child {
+        text-align : right;
+        padding-top: var(--space-xs);
+    }
+}
+
+/* ── Foto bukti thumbnail + GPS badge ───────────────────── */
+.foto-bukti-wrap {
+    position    : relative;
+    display     : inline-block;
+    line-height : 0;
+}
+.foto-thumb {
+    width        : 52px;
+    height       : 52px;
+    object-fit   : cover;
+    border-radius: var(--radius-sm);
+    border       : 1px solid var(--rule-soft);
+}
+.gps-badge {
+    position     : absolute;
+    bottom       : 3px;
+    left         : 3px;
+    background   : rgba(0, 0, 0, .62);
+    color        : #fff;
+    font-size    : 9px;
+    line-height  : 1.2;
+    padding      : 2px 4px;
+    border-radius: 3px;
+    white-space  : nowrap;
+    pointer-events: none;
+}
+
+/* Tab per kategori di detail trip — ABK · Biaya · Tangkap · Jual */
+.cat-tabs {
+    display      : flex;
+    gap          : var(--space-lg, 24px);
+    list-style   : none;
+    padding      : 0;
+    margin       : 0 0 var(--space-lg, 20px);
+    border-bottom: 1px solid var(--rule-soft);
+    overflow-x   : auto;
+    -webkit-overflow-scrolling: touch;
+}
+.cat-tabs li { flex: 0 0 auto; }
+.cat-tab {
+    background    : none;
+    border        : 0;
+    border-bottom : 2px solid transparent;
+    margin-bottom : -1px;
+    padding       : 10px 2px;
+    font-family   : inherit;
+    font-size     : 15px;
+    font-weight   : 500;
+    color         : var(--ink-muted, #6b7280);
+    cursor        : pointer;
+    white-space   : nowrap;
+    transition    : color .15s, border-color .15s;
+}
+.cat-tab:hover { color: var(--ink, #1a1a1a); }
+.cat-tab.active {
+    color              : var(--brand, #2563eb);
+    border-bottom-color: var(--brand, #2563eb);
+}
+.cat-panel .section { margin-bottom: 0; }
+.cat-panel .table-responsive { margin: 0; }
+
+/* ── Hub Data Master ─────────────────────────────────────── */
+.master-grid {
+    display              : grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap                  : var(--space-md);
+}
+@media (max-width: 575px) {
+    .master-grid { grid-template-columns: 1fr; }
+}
+.master-card {
+    display      : flex;
+    align-items  : center;
+    gap          : var(--space-md);
+    padding      : var(--space-md) var(--space-lg);
+    border       : 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+}
+.master-card-link {
+    display        : flex;
+    align-items    : center;
+    gap            : var(--space-md);
+    flex           : 1;
+    min-width      : 0;
+    color          : var(--ink);
+    text-decoration: none;
+}
+.master-card-link .material-symbols-outlined {
+    font-size : 28px;
+    color     : var(--brand);
+    flex-shrink: 0;
+}
+.master-card-title { font-size: 16px; font-weight: 600; color: var(--ink); }
+.master-card-meta  { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ── Filter chip feed Operasional ───────────────────────── */
+.feed-chips {
+    display      : flex;
+    gap          : var(--space-sm, 8px);
+    flex-wrap    : wrap;
+    margin-bottom: var(--space-lg, 20px);
+}
+.feed-chips .chip {
+    display        : inline-flex;
+    align-items    : center;
+    padding        : 6px 16px;
+    border-radius  : var(--radius-pill, 999px);
+    border         : 1px solid var(--rule, #d0d0d5);
+    background     : transparent;
+    color          : var(--ink, #1a1a1a);
+    font-size      : 14px;
+    text-decoration: none;
+    white-space    : nowrap;
+    transition     : background .15s, color .15s, border-color .15s;
+}
+.feed-chips .chip:hover { background: var(--surface-container, #f0f0f2); }
+.feed-chips .chip-active {
+    background   : var(--brand, #1a73e8);
+    color        : var(--on-brand, #fff);
+    border-color : var(--brand, #1a73e8);
+}
