@@ -29,7 +29,7 @@ menyesuaikan otomatis setelah login:
 - **Bagi hasil ABK** — nominal ditentukan manual oleh owner
 - **Dashboard** grafik: pendapatan & biaya, laba, top ikan/pembeli, utilisasi armada
 - **Laporan** rekap per bulan & per kapal + **ekspor Excel dan PDF**
-- **Mode gelap**, tampilan **ramah HP** (mobile-friendly), ikon Material Symbols
+- **Light & dark mode** dengan palet hangat (cozy, nyaman di mata untuk sesi lama), tampilan **ramah HP** (mobile-friendly), ikon Material Symbols
 - Halaman **publik** (landing page) untuk pengunjung
 
 ---
@@ -52,7 +52,7 @@ menyesuaikan otomatis setelah login:
 apps/
 ├── core/         ← peran (owner/operator), login, dashboard, halaman publik
 ├── master/       ← Kapal, ABK, JenisIkan, Pembeli
-├── operasional/  ← Trip, BiayaOperasional, halaman Operasional gabungan
+├── operasional/  ← Trip, TripABK, BiayaOperasional (views sebagai paket views/)
 ├── tangkap/      ← HasilTangkap
 ├── penjualan/    ← Penjualan, BagiHasil
 ├── laporan/      ← laporan web + ekspor Excel/PDF
@@ -62,8 +62,8 @@ config/
 ├── settings.py   ← konfigurasi dari .env (DB otomatis Postgres/SQLite)
 └── urls.py
 
-templates/        ← HTML (web admin + landing page)
-static/           ← CSS, JS
+templates/        ← HTML (web admin + landing page), dipecah per partial
+static/css/       ← tokens.css (warna/tema) + base, layout/, components/, pages/
 ```
 
 ---
@@ -110,6 +110,29 @@ python manage.py runserver
 ```
 
 Tersedia juga `Makefile`: `make run`, `make migrate`, `make migrations`, `make test`, `make static`.
+
+---
+
+## Data Dummy (Demo)
+
+Mengisi data contoh realistis (kapal, ABK, trip mingguan, hasil tangkap, penjualan,
+bagi hasil) sekaligus membuat akun demo:
+
+```bash
+python manage.py seed_dummy --flush
+# di Docker:
+docker compose exec web python manage.py seed_dummy --flush
+```
+
+`--flush` menghapus dulu semua data operasional & master (akun lama tidak dihapus).
+Command ini membuat dua akun demo:
+
+| Peran | Username | Password |
+|---|---|---|
+| Pemilik (owner) | `owner` | `owner` |
+| Operator | `operator` | `operator` |
+
+> Akun di atas hanya untuk demo. **Ganti password-nya** sebelum dipakai di produksi nyata.
 
 ---
 
